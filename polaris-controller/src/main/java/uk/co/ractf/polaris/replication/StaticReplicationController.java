@@ -6,6 +6,9 @@ import uk.co.ractf.polaris.controller.Controller;
 
 import java.util.List;
 
+/**
+ * An implementation of {@link ReplicationController} that will ensure there is always a static number of {@link Instance}s
+ */
 public class StaticReplicationController implements ReplicationController {
 
     private final StaticReplication staticReplication;

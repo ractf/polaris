@@ -2,6 +2,9 @@ package uk.co.ractf.polaris;
 
 import io.dropwizard.Configuration;
 
+/**
+ * The config for Polaris
+ */
 public class PolarisConfiguration extends Configuration {
 
     private int threadpoolSize;

@@ -3,7 +3,7 @@ package uk.co.ractf.polaris.instanceallocation;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class EphemeralStickyInstances implements StickyInstances {
+class EphemeralStickyInstances implements StickyInstances {
 
     private final Map<String, String> users = new ConcurrentHashMap<>();
     private final Map<String, String> teams = new ConcurrentHashMap<>();

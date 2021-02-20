@@ -49,7 +49,7 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
         String bestInstanceSticky = null;
         for (final Deployment deployment : deployments) {
             final Allocation allocation = deployment.getAllocation();
-            for (final Instance instance : controller.getInstancesForDeployment(deployment.getId())) {
+            for (final Instance instance : controller.getInstancesForDeployment(deployment.getID())) {
                 if (instanceUsers.get(instance.getID()).size() >= allocation.getUserLimit() ||
                         instanceTeams.get(instance.getID()).size() >= allocation.getTeamLimit() ||
                         userAvoids.get(request.getUserID()).contains(instance.getID()) ||
@@ -71,7 +71,7 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
             int avoided = 0;
             int instanceCount = 0;
             for (final Deployment deployment : deployments) {
-                for (final Instance instance : controller.getInstancesForDeployment(deployment.getId())) {
+                for (final Instance instance : controller.getInstancesForDeployment(deployment.getID())) {
                     if (userAvoids.get(request.getUserID()).contains(instance.getID()) ||
                             teamAvoids.get(request.getTeamID()).contains(instance.getID())) {
                         avoided++;
@@ -85,7 +85,7 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
             }
             //TODO: notify admins
             Collections.shuffle(deployments);
-            List<Instance> instances = controller.getInstancesForDeployment(deployments.get(0).getId());
+            List<Instance> instances = controller.getInstancesForDeployment(deployments.get(0).getID());
             Collections.shuffle(instances);
             return instances.get(0);
         }
@@ -100,7 +100,7 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
     }
 
     @Override
-    public Instance reset(final InstanceRequest request) {
+    public Instance requestNewAllocation(final InstanceRequest request) {
         if (stickyInstances.get(request.getChallengeID()).getTeam(request.getTeamID()) != null) {
             teamAvoids.put(request.getTeamID(), stickyInstances.get(request.getChallengeID()).getTeam(request.getTeamID()));
             stickyInstances.get(request.getChallengeID()).clearTeam(request.getTeamID());
