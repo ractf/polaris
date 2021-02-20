@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://www.ractf.co.uk/brand_assets/combined/wordmark_black.svg" width="70%">
+  <img src="https://cdn.discordapp.com/attachments/721768144296738847/812516613626134609/path5839.png" width="70%">
 </div>
 
 <div align="center">
