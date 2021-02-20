@@ -30,9 +30,10 @@ repositories {
 dependencies {
     implementation project(':polaris-api')
     implementation 'io.dropwizard:dropwizard-core:2.0.19'
+    implementation 'io.dropwizard:dropwizard-auth:2.0.19'
     implementation "io.swagger.core.v3:swagger-core:2.1.7"
     implementation "io.swagger.core.v3:swagger-jaxrs2:2.1.7"
-    implementation "io.swagger.core.v3:swagger-integration:2.1.7"
+    implementation 'io.swagger.core.v3:swagger-integration:2.1.7'
     implementation 'com.github.docker-java:docker-java-core:3.2.7'
     implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.2.7'
     implementation 'org.jetbrains:annotations:20.1.0'

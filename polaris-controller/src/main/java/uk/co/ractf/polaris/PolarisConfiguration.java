@@ -79,4 +79,5 @@ public class PolarisConfiguration extends Configuration {
     public void setThreadpoolTimeoutSeconds(final int threadpoolTimeoutSeconds) {
         this.threadpoolTimeoutSeconds = threadpoolTimeoutSeconds;
     }
+
 }

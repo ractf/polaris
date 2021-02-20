@@ -8,12 +8,15 @@ import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
 import com.google.common.util.concurrent.MoreExecutors;
 import io.dropwizard.Application;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.setup.Environment;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.controller.Controller;
@@ -24,6 +27,9 @@ import uk.co.ractf.polaris.resources.ChallengeResource;
 import uk.co.ractf.polaris.resources.DeploymentResource;
 import uk.co.ractf.polaris.resources.InstanceAllocationResource;
 import uk.co.ractf.polaris.resources.InstanceResource;
+import uk.co.ractf.polaris.security.PolarisAuthenticator;
+import uk.co.ractf.polaris.security.PolarisAuthorizer;
+import uk.co.ractf.polaris.security.PolarisUser;
 
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -78,6 +84,13 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
         environment.jersey().register(new DeploymentResource(controller));
         environment.jersey().register(new InstanceResource(controller));
         environment.jersey().register(new InstanceAllocationResource(controller));
+        environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<PolarisUser>()
+                .setAuthenticator(new PolarisAuthenticator())
+                .setAuthorizer(new PolarisAuthorizer())
+                .setRealm("POLARIS")
+                .buildAuthFilter()
+        ));
+        environment.jersey().register(RolesAllowedDynamicFeature.class);
 
         OpenAPI openAPI = new OpenAPI();
         Info info = new Info()
