@@ -12,7 +12,7 @@ import uk.co.ractf.polaris.controller.Controller;
 public interface Runner<T extends Pod> {
 
     /**
-     * Starts a {@link Pod} with given {@Instance} details
+     * Starts a {@link Pod} with given {@link Instance} details
      *
      * @param pod the pod
      * @param instance instance details

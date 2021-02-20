@@ -45,7 +45,9 @@ public interface Host {
     Map<String, Instance> getInstances();
 
     /**
-     * @param instance
+     * Restarts an {@link Instance}
+     *
+     * @param instance the instance
      */
     void restartInstance(final Instance instance);
 
