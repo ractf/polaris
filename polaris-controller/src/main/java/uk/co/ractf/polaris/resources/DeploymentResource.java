@@ -9,6 +9,7 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.controller.Controller;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import java.util.regex.Pattern;
 
 /**
  * Resource providing API endpoints for {@link Deployment} objects
+ *
+ * Roles defined: DEPLOYMENT_GET, DEPLOYMENT_CREATE, DEPLOYMENT_UPDATE, DEPLOYMENT_DELETE
  */
 @Path("/deployments")
 @Produces(MediaType.APPLICATION_JSON)
@@ -41,6 +44,7 @@ public class DeploymentResource {
     @GET
     @Timed
     @ExceptionMetered
+    @RolesAllowed("DEPLOYMENT_GET")
     @Operation(summary = "Get Deployments", tags = {"Deployment"},
             description = "Gets a map of deployment id to deployment that matches a given regex on id and challenge id.")
     public Map<String, Deployment> getDeployments(@QueryParam("filter") @DefaultValue("") final String deploymentFilter,
@@ -72,6 +76,7 @@ public class DeploymentResource {
     @Path("/{id}")
     @Timed
     @ExceptionMetered
+    @RolesAllowed("DEPLOYMENT_GET")
     @Operation(summary = "Get Deployment", tags = {"Deployment"}, description = "Gets a deployment with a certain id")
     public Deployment getDeployment(@PathParam("id") final String id) {
         return controller.getDeployment(id);
@@ -85,6 +90,7 @@ public class DeploymentResource {
     @POST
     @Timed
     @ExceptionMetered
+    @RolesAllowed("DEPLOYMENT_CREATE")
     @Operation(summary = "Create Deployment", tags = {"Deployment"},
             description = "Creates a deployment on the controller which will roll it out eventually")
     public void createDeployment(final Deployment deployment) {
@@ -99,6 +105,7 @@ public class DeploymentResource {
     @PUT
     @Timed
     @ExceptionMetered
+    @RolesAllowed("DEPLOYMENT_UPDATE")
     @Operation(summary = "Update Deployment", tags = {"Deployment"}, description = "Updates a given deployment")
     public void updateDeployment(final Deployment deployment) {
         controller.updateDeployment(deployment);
@@ -113,6 +120,7 @@ public class DeploymentResource {
     @Path("/{id}")
     @Timed
     @ExceptionMetered
+    @RolesAllowed("DEPLOYMENT_DELETE")
     @Operation(summary = "Delete Deployment", tags = {"Deployment"}, description = "Deletes a deployment with a certain id")
     public void deleteDeployment(@PathParam("id") final String deployment) {
         controller.deleteDeployment(deployment);

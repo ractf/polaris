@@ -85,8 +85,8 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
         environment.jersey().register(new InstanceResource(controller));
         environment.jersey().register(new InstanceAllocationResource(controller));
         environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<PolarisUser>()
-                .setAuthenticator(new PolarisAuthenticator())
-                .setAuthorizer(new PolarisAuthorizer())
+                .setAuthenticator(new PolarisAuthenticator(configuration))
+                .setAuthorizer(new PolarisAuthorizer(configuration))
                 .setRealm("POLARIS")
                 .buildAuthFilter()
         ));

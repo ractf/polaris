@@ -9,6 +9,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.host.Host;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import java.util.regex.Pattern;
 
 /**
  * Resource for controlling {@link Instance} objects.
+ *
+ * Roles defined: INSTANCE_LIST
  */
 @Path("/instances")
 @Produces(MediaType.APPLICATION_JSON)
@@ -41,6 +44,7 @@ public class InstanceResource {
     @GET
     @Timed
     @ExceptionMetered
+    @RolesAllowed("INSTANCE_LIST")
     @Operation(summary = "List Instances", tags = {"Instances"},
             description = "Get a map of instance id to instance which can be filtered by challenge id and host id")
     public Map<String, Instance> getInstances(

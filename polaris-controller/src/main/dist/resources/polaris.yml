@@ -6,3 +6,15 @@ hosts: [embedded]
 reconciliationTickFrequency: 2000
 schedulingAlgorithm: roundRobin
 threadpoolTimeoutSeconds: 30
+singleUserUsername: polaris
+singleUserPassword: polaris
+singleUserRoles:
+  - CHALLENGE_GET
+  - CHALLENGE_SUBMIT
+  - CHALLENGE_DELETE
+  - DEPLOYMENT_GET
+  - DEPLOYMENT_CREATE
+  - DEPLOYMENT_UPDATE
+  - DEPLOYMENT_DELETE
+  - ALLOCATE_INSTANCE
+  - INSTANCE_LIST
