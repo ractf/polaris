@@ -1,0 +1,4 @@
+rootProject.name = 'polaris'
+include 'polaris-api'
+include 'polaris-controller'
+

@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group 'uk.co.ractf'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'io.dropwizard', name: 'dropwizard-jackson', version: '2.0.19'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}

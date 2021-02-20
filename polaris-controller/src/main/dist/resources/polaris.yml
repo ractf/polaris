@@ -1,0 +1,8 @@
+threadpoolSize: 5
+taskThreadpoolSize: 5
+controllerType: ephemeral
+apiKey: 123
+hosts: [embedded]
+reconciliationTickFrequency: 2000
+schedulingAlgorithm: roundRobin
+threadpoolTimeoutSeconds: 30
