@@ -1,6 +1,6 @@
 package uk.co.ractf.polaris.instanceallocation;
 
-public interface StickyInstances {
+interface StickyInstances {
 
     String getUser(final String user);
 

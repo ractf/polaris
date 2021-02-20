@@ -2,16 +2,34 @@ package uk.co.ractf.polaris.api.random;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.jetbrains.annotations.Contract;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+/**
+ * Represents a randomly generated string environment variable
+ *
+ * <pre>
+ *     {
+ *         "type": "string",
+ *         "alphabet": "abcdef1234567890",
+ *         "length": 16
+ *     }
+ * </pre>
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RandomEnvString extends RandomEnv {
 
     private final String alphabet;
     private final Integer length;
 
+    /**
+     * @param type the type of random env (string)
+     * @param alphabet the alphabet to generate from
+     * @param length the length of the string
+     */
+    @Contract(pure = true)
     public RandomEnvString(
             @JsonProperty("type") final String type,
             @JsonProperty("alphabet") final String alphabet,

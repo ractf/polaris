@@ -63,14 +63,14 @@ public class EmbeddedHost implements Host {
     }
 
     @Override
-    public String getId() {
+    public String getID() {
         return "embedded";
     }
 
     @Override
     public Instance createInstance(final Challenge challenge, final Deployment deployment) {
-        log.info("Instance for {} created", challenge.getId());
-        final Instance instance = new Instance(UUID.randomUUID().toString(), deployment.getId(), challenge.getId(), getId());
+        log.info("Instance for {} created", challenge.getID());
+        final Instance instance = new Instance(UUID.randomUUID().toString(), deployment.getID(), challenge.getID(), getID());
         instances.put(instance.getID(), instance);
         return instance;
     }
@@ -101,11 +101,16 @@ public class EmbeddedHost implements Host {
     @Override
     public Map<PortMapping, PortBinding> createPortBindings(final List<PortMapping> portMappings) {
         final Map<PortMapping, PortBinding> portBindings = new HashMap<>();
+        int externalPort = generatePort();
         for (final PortMapping portMapping : portMappings) {
             final InternetProtocol protocol = "udp".equalsIgnoreCase(portMapping.getProtocol()) ? InternetProtocol.UDP : InternetProtocol.TCP;
-            final int externalPort = generatePort();
             portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", externalPort + "/" + protocol.toString()),
                     new ExposedPort(portMapping.getPort(), protocol)));
+            if (!ports.contains(externalPort + 1) && externalPort + 1 < 65536) {
+                externalPort++;
+            } else {
+                externalPort = generatePort();
+            }
         }
         return portBindings;
     }
@@ -123,16 +128,16 @@ public class EmbeddedHost implements Host {
 
     private void reconciliationTick() {
         try {
-            log.info("Running host reconciliation tick");
+            log.debug("Running host reconciliation tick");
             for (final Map.Entry<String, Instance> entry : instances.entrySet()) {
                 final Instance instance = entry.getValue();
                 final Challenge challenge = controller.getChallengeFromDeployment(instance.getDeploymentID());
                 for (final Pod pod : challenge.getPods()) {
-                    if (recentlyStartedInstances.getIfPresent(pod.getId() + instance.getID()) != null) {
+                    if (recentlyStartedInstances.getIfPresent(pod.getID() + instance.getID()) != null) {
                         continue;
                     }
                     if (getRunner(pod).canStartPod(pod)) {
-                        recentlyStartedInstances.put(pod.getId() + instance.getID(), "");
+                        recentlyStartedInstances.put(pod.getID() + instance.getID(), "");
                         executorService.submit(() -> {
                             try {
                                 ensurePodStarted(pod, instance);
@@ -166,7 +171,6 @@ public class EmbeddedHost implements Host {
         do {
             port = ThreadLocalRandom.current().nextInt(10000, 65535);
         } while (ports.contains(port));
-        ports.add(port);
         return port;
     }
 

@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+/**
+ * Represents a pod that can be scheduled on Polaris
+ */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Container.class, name = "container")
@@ -15,6 +18,10 @@ public abstract class Pod {
     private final String type;
     private final String id;
 
+    /**
+     * @param type the type of pod
+     * @param id the pod id
+     */
     public Pod(@JsonProperty("type") final String type, @JsonProperty("id") final String id) {
         this.type = type;
         this.id = id;
@@ -24,7 +31,7 @@ public abstract class Pod {
         return type;
     }
 
-    public String getId() {
+    public String getID() {
         return id;
     }
 

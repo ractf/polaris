@@ -2,6 +2,7 @@ package uk.co.ractf.polaris.resources;
 
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
+import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.instance.Instance;
@@ -14,6 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Resource for controlling {@link Instance} objects.
+ */
 @Path("/instances")
 @Produces(MediaType.APPLICATION_JSON)
 public class InstanceResource {
@@ -26,9 +30,19 @@ public class InstanceResource {
         this.controller = controller;
     }
 
+    /**
+     * Return a {@link Map} of instance id to {@link Instance} for all instances matching the host id regex
+     * and the challenge id regex. Results are only filtered if a filter is not omitted.
+     *
+     * @param hostFilter regex to apply to host ids
+     * @param challengeFilter regex to apply to challenge ids
+     * @return map of instance id to instance
+     */
     @GET
     @Timed
     @ExceptionMetered
+    @Operation(summary = "List Instances", tags = {"Instances"},
+            description = "Get a map of instance id to instance which can be filtered by challenge id and host id")
     public Map<String, Instance> getInstances(
             @QueryParam("hostfilter") @DefaultValue("") final String hostFilter,
             @QueryParam("challengefilter") @DefaultValue("") final String challengeFilter) {

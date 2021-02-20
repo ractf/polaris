@@ -5,6 +5,9 @@ import uk.co.ractf.polaris.controller.Controller;
 
 import java.util.List;
 
+/**
+ * An implementation of {@link ReplicationController} that will ensure there is always 0 of {@link Instance}s
+ */
 public class NullReplicationController implements ReplicationController {
 
     @Override

@@ -9,6 +9,11 @@ import com.github.dockerjava.transport.DockerHttpClient;
 import com.google.common.util.concurrent.MoreExecutors;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.controller.Controller;
@@ -21,6 +26,8 @@ import uk.co.ractf.polaris.resources.InstanceAllocationResource;
 import uk.co.ractf.polaris.resources.InstanceResource;
 
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PolarisApplication extends Application<PolarisConfiguration> {
 
@@ -56,7 +63,7 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
                 configuration.getThreadpoolTimeoutSeconds(), TimeUnit.SECONDS);
 
         if (configuration.getControllerType().equals("ephemeral")) {
-            this.controller = new EphemeralController(scheduledExecutorService, executorService);
+            this.controller = new EphemeralController(scheduledExecutorService, executorService, configuration);
         }
 
         for (final String hostname : configuration.getHosts()) {
@@ -72,9 +79,20 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
         environment.jersey().register(new InstanceResource(controller));
         environment.jersey().register(new InstanceAllocationResource(controller));
 
-        this.scheduledExecutorService.scheduleAtFixedRate(controller::reconciliationTick,
-                configuration.getReconciliationTickFrequency(),
-                configuration.getReconciliationTickFrequency(), TimeUnit.MILLISECONDS);
+        OpenAPI openAPI = new OpenAPI();
+        Info info = new Info()
+                .title("RACTF Polaris")
+                .description("RACTF Polaris Controller API")
+                .contact(new Contact().email("admins@ractf.co.uk"));
+
+        openAPI.info(info);
+        SwaggerConfiguration openAPIConfig = new SwaggerConfiguration()
+                .openAPI(openAPI)
+                .prettyPrint(true)
+                .resourcePackages(Stream.of("uk.co.ractf.polaris.resources")
+                        .collect(Collectors.toSet()));
+        environment.jersey().register(new OpenApiResource()
+                .openApiConfiguration(openAPIConfig));
     }
 
     @Override
