@@ -13,6 +13,7 @@ import uk.co.ractf.polaris.api.instanceallocation.InstanceResponse;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -22,6 +23,8 @@ import javax.ws.rs.core.Response;
 
 /**
  * Resource to control allocation of instances to a user or team
+ *
+ * Roles defined: ALLOCATE_INSTANCE
  */
 @Path("/instanceallocation")
 @Produces(MediaType.APPLICATION_JSON)
@@ -46,6 +49,7 @@ public class InstanceAllocationResource {
     @POST
     @Timed
     @ExceptionMetered
+    @RolesAllowed("ALLOCATE_INSTANCE")
     @Operation(summary = "Allocate Instance", tags = {"Instance Allocation"},
             description = "Allocating an instance to the user, if the user/team has already been allocated an instance, they may be given the same one based on allocation rules.")
     public InstanceResponse getInstance(final InstanceRequest instanceRequest) {
@@ -69,6 +73,7 @@ public class InstanceAllocationResource {
     @Path("/new")
     @Timed
     @ExceptionMetered
+    @RolesAllowed("ALLOCATE_INSTANCE")
     @Operation(summary = "Request New Instance Allocation", tags = {"Instance Allocation"},
             description = "Get an instance allocation that is guaranteed to be different from the last one")
     public InstanceResponse newInstance(final InstanceRequest instanceRequest) {

@@ -2,6 +2,8 @@ package uk.co.ractf.polaris;
 
 import io.dropwizard.Configuration;
 
+import java.util.List;
+
 /**
  * The config for Polaris
  */
@@ -15,6 +17,9 @@ public class PolarisConfiguration extends Configuration {
     private long reconciliationTickFrequency;
     private String schedulingAlgorithm;
     private int threadpoolTimeoutSeconds;
+    private String singleUserUsername;
+    private String singleUserPassword;
+    private List<String> singleUserRoles;
 
     public int getThreadpoolSize() {
         return threadpoolSize;
@@ -80,4 +85,27 @@ public class PolarisConfiguration extends Configuration {
         this.threadpoolTimeoutSeconds = threadpoolTimeoutSeconds;
     }
 
+    public String getSingleUserUsername() {
+        return singleUserUsername;
+    }
+
+    public void setSingleUserUsername(final String singleUserUsername) {
+        this.singleUserUsername = singleUserUsername;
+    }
+
+    public String getSingleUserPassword() {
+        return singleUserPassword;
+    }
+
+    public void setSingleUserPassword(final String singleUserPassword) {
+        this.singleUserPassword = singleUserPassword;
+    }
+
+    public List<String> getSingleUserRoles() {
+        return singleUserRoles;
+    }
+
+    public void setSingleUserRoles(final List<String> singleUserRoles) {
+        this.singleUserRoles = singleUserRoles;
+    }
 }
