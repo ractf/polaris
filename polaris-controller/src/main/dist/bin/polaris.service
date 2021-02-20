@@ -1,0 +1,12 @@
+[Unit]
+Description=The RACTF challenge scheduler
+
+[Service]
+WorkingDirectory=/opt/polaris
+ExecStart=/bin/java -jar /opt/polaris/polaris.jar server /etc/polaris/polaris.yml
+Type=simple
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
