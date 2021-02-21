@@ -9,12 +9,6 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
-      - name: Sanity check
-        id: sanity
-        run: echo -n "::set-output name=action_fruit::" && git rev-parse --short HEAD
-
-      - run: echo ${{ steps.sanity.outputs.action_fruit }}
-
       - name: Get short commit hash
         id: hash
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
@@ -73,11 +67,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./polaris-controller/build/distributions/polaris-${{ steps.sha_short.outputs.sha_short}}-${{ steps.semver.outputs.semver }}.x86_64.rpm
-          asset_name: polaris-${{ steps.sha_short.outputs.sha_short}}-${{ steps.semver.outputs.semver }}.x86_64.rpm
+          asset_path: ./polaris-controller/build/distributions/polaris-${{ steps.hash.outputs.sha_short}}-${{ steps.semver.outputs.semver }}.x86_64.rpm
+          asset_name: polaris-${{ steps.hash.outputs.sha_short }}-${{ steps.semver.outputs.semver }}.x86_64.rpm
           asset_content_type: application/octet-stream
 
-      - name: Upload Release Asset - Jar
+      - name: Upload Release Asset - JAR
         #if: steps.semver_change.outputs.changed == 'true'
         id: upload-release-asset-jar
         uses: actions/upload-release-asset@v1
