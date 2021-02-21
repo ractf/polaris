@@ -61,7 +61,7 @@ jobs:
 
       - name: Upload Release Asset - RPM
         #if: steps.semver_change.outputs.changed == 'true'
-        id: upload-release-asset
+        id: upload-release-asset-rpm
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -73,7 +73,7 @@ jobs:
 
       - name: Upload Release Asset - Jar
         #if: steps.semver_change.outputs.changed == 'true'
-        id: upload-release-asset
+        id: upload-release-asset-jar
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
