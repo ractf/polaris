@@ -2,6 +2,7 @@ package uk.co.ractf.polaris.api.instance;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
  * The ports available on an instance
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Contract;
  *     }
  * </pre>
  */
-public class InstancePortBinding {
+public class InstancePortBinding extends JsonRepresentable {
 
     private final String port;
     private final String ip;

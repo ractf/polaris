@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.api.challenge;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.pod.Pod;
 
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Challenge {
+public class Challenge extends JsonRepresentable {
 
     private final String id;
     private final List<Pod> pods;

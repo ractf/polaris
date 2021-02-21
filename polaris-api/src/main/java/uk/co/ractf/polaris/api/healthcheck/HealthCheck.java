@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.pod.Pod;
 
 /**
@@ -18,7 +19,7 @@ import uk.co.ractf.polaris.api.pod.Pod;
         @JsonSubTypes.Type(value = CommandHealthCheck.class, name = "command")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class HealthCheck {
+public abstract class HealthCheck extends JsonRepresentable {
 
     private final String id;
     private final String type;

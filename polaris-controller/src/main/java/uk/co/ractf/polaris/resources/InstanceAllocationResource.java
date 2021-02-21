@@ -57,7 +57,7 @@ public class InstanceAllocationResource {
         if (instance == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        return new InstanceResponse(controller.getHost(instance.getHostID()).getPublicIp(), instance);
+        return new InstanceResponse(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(), instance);
     }
 
     /**
@@ -81,7 +81,7 @@ public class InstanceAllocationResource {
         if (instance == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        return new InstanceResponse(controller.getHost(instance.getHostID()).getPublicIp(), instance);
+        return new InstanceResponse(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(), instance);
     }
 
 }

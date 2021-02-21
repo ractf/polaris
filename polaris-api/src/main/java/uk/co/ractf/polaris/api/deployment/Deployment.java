@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
  * Represents a deployment of a {@link Challenge}
@@ -25,7 +26,7 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Deployment {
+public class Deployment extends JsonRepresentable {
 
     private final String id;
     private final String challenge;

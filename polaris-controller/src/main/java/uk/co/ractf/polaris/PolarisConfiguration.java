@@ -1,7 +1,11 @@
 package uk.co.ractf.polaris;
 
+import com.smoketurner.dropwizard.consul.ConsulFactory;
+import com.smoketurner.dropwizard.consul.ribbon.RibbonJerseyClientConfiguration;
 import io.dropwizard.Configuration;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -20,6 +24,18 @@ public class PolarisConfiguration extends Configuration {
     private String singleUserUsername;
     private String singleUserPassword;
     private List<String> singleUserRoles;
+    private int advertisedMinPort;
+    private int advertisedMaxPort;
+    private int unadvertisedMinPort;
+    private int unadvertisedMaxPort;
+
+    @NotNull
+    @Valid
+    public final ConsulFactory consul = new ConsulFactory();
+
+    @NotNull
+    @Valid
+    public final RibbonJerseyClientConfiguration client = new RibbonJerseyClientConfiguration();
 
     public int getThreadpoolSize() {
         return threadpoolSize;
@@ -107,5 +123,45 @@ public class PolarisConfiguration extends Configuration {
 
     public void setSingleUserRoles(final List<String> singleUserRoles) {
         this.singleUserRoles = singleUserRoles;
+    }
+
+    public ConsulFactory getConsulFactory() {
+        return consul;
+    }
+
+    public RibbonJerseyClientConfiguration getClient() {
+        return client;
+    }
+
+    public int getAdvertisedMinPort() {
+        return advertisedMinPort;
+    }
+
+    public void setAdvertisedMinPort(final int advertisedMinPort) {
+        this.advertisedMinPort = advertisedMinPort;
+    }
+
+    public int getAdvertisedMaxPort() {
+        return advertisedMaxPort;
+    }
+
+    public void setAdvertisedMaxPort(final int advertisedMaxPort) {
+        this.advertisedMaxPort = advertisedMaxPort;
+    }
+
+    public int getUnadvertisedMinPort() {
+        return unadvertisedMinPort;
+    }
+
+    public void setUnadvertisedMinPort(final int unadvertisedMinPort) {
+        this.unadvertisedMinPort = unadvertisedMinPort;
+    }
+
+    public int getUnadvertisedMaxPort() {
+        return unadvertisedMaxPort;
+    }
+
+    public void setUnadvertisedMaxPort(final int unadvertisedMaxPort) {
+        this.unadvertisedMaxPort = unadvertisedMaxPort;
     }
 }

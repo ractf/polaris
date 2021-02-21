@@ -98,7 +98,7 @@ public class DockerRunner implements Runner<Container> {
         instance.getRandomEnv().putAll(container.getGeneratedRandomEnv());
         for (final Map.Entry<PortMapping, PortBinding> entry : portBindings.entrySet()) {
             instance.addPortBinding(new InstancePortBinding(entry.getValue().getBinding().getHostPortSpec(),
-                    host.getPublicIp(), entry.getKey().isAdvertise()));
+                    host.getHostInfo().getPublicIP(), entry.getKey().isAdvertise()));
         }
     }
 

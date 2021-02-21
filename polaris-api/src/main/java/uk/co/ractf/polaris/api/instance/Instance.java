@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.random.RandomEnv;
 
 import java.util.ArrayList;
@@ -24,14 +25,14 @@ import java.util.Map;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Instance {
+public class Instance extends JsonRepresentable {
 
     private final String id;
     private final String deploymentID;
     private final String challengeID;
     private final String hostID;
-    private final List<InstancePortBinding> portBindings = new ArrayList<>();
-    private final Map<String, String> randomEnv = new HashMap<>();
+    private List<InstancePortBinding> portBindings = new ArrayList<>();
+    private Map<String, String> randomEnv = new HashMap<>();
 
     /**
      * The
@@ -96,4 +97,11 @@ public class Instance {
         portBindings.add(portBinding);
     }
 
+    public void setRandomEnv(final Map<String, String> randomEnv) {
+        this.randomEnv = randomEnv;
+    }
+
+    public void setPortBindings(final List<InstancePortBinding> portBindings) {
+        this.portBindings = portBindings;
+    }
 }

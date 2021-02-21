@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
  * Represents a pod that can be scheduled on Polaris
@@ -13,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = Container.class, name = "container")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class Pod {
+public abstract class Pod extends JsonRepresentable {
 
     private final String type;
     private final String id;

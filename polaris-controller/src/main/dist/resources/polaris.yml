@@ -18,3 +18,10 @@ singleUserRoles:
   - DEPLOYMENT_DELETE
   - ALLOCATE_INSTANCE
   - INSTANCE_LIST
+  - HOST_GET
+client:
+  refreshInterval: 10 seconds
+consul:
+  endpoint: ${CONSUL-URL:-localhost:8500}
+  serviceId: test123
+  retryInterval: 5 seconds
