@@ -10,7 +10,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Sanity check
-        run: git rev-parse --short HEAD && echo "hi"
+        id: sanity
+        run: echo -n "echo "::set-output name=action_fruit::" && git rev-parse --short HEAD
+
+      - run: echo ${{ steps.sanity.outputs.action_fruit }}
 
       - name: Get short commit hash
         id: hash
