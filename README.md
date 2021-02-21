@@ -61,7 +61,7 @@
 ## Table of Contents
 - [Features](#Features)
 - [Installation](#Installation)
-- [Getting Support](#Getting Support)
+- [Support](#Support)
 - [License](#License)
 
 ## Features
@@ -73,7 +73,7 @@
 ## Installation
 Check out the [Installer](https://github.com/ractf/install/). Want a more custom deployment? Check out our [installation docs](https://docs.ractf.co.uk/installer).
 
-## Getting Support
+## Support
 If you need support, check out our [Discord](https://discord.gg/FfW2xXR), or if you've found a bug with the framework, open an issue.
 > 🔒 Found a security issue? Email us at `security@ractf.co.uk`.
 
