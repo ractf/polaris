@@ -21,7 +21,7 @@ apply plugin: 'com.palantir.git-version'
 
 mainClassName = 'uk.co.ractf.polaris.PolarisApplication'
 group = 'uk.co.ractf'
-version = '0.0.3'
+version = '0.0.4'
 
 repositories {
     mavenCentral()
@@ -74,6 +74,8 @@ buildRpm {
     vendor = 'RACTF'
     packageDescription = 'The RACTF challenge scheduler'
     maintainer = 'RACTF <admins@ractf.co.uk>'
+    user = 'root'
+    group = 'root'
 
     requires('systemd')
     requires('java-11-openjdk')
