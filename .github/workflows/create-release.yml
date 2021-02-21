@@ -11,7 +11,7 @@ jobs:
 
       - name: Sanity check
         id: sanity
-        run: echo -n "echo "::set-output name=action_fruit::" && git rev-parse --short HEAD
+        run: echo -n "::set-output name=action_fruit::" && git rev-parse --short HEAD
 
       - run: echo ${{ steps.sanity.outputs.action_fruit }}
 
