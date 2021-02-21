@@ -58,7 +58,7 @@ jobs:
         with:
           tag_name: ${{ steps.semver.outputs.semver }}
           release_name: Release ${{ steps.semver.outputs.semver }}
-          body: Change notes coming soon
+          body: ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
 
