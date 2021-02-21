@@ -9,6 +9,9 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v2
 
+      - name: Sanity check
+        run: git rev-parse --short HEAD && echo "hi"
+
       - name: Get short commit hash
         id: hash
         run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
