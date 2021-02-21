@@ -1,0 +1,84 @@
+name: Create Release
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Get short commit hash
+        id: hash
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: Get the semver
+        id: semver
+        run: echo -n "::set-output name=semver::" && grep "version = " build.gradle | cut -d "'" -f 2
+
+      - name: Check if semver changed
+        id: semver_change
+        run: git log -G "version =" --pretty=format:"%h" ./build.gradle | grep `git rev-parse --short HEAD` &>/dev/null && echo "::set-output name=changed::true" ||  echo "::set-output name=changed::false"
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        #if: steps.semver_change.outputs.changed == 'true'
+        with:
+          java-version: 11
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        #if: steps.semver_change.outputs.changed == 'true'
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build RPM
+        #if: steps.semver_change.outputs.changed == 'true'
+        run: ./gradlew polaris-controller:buildRpm
+
+      - name: Build JAR
+        #if: steps.semver_change.outputs.changed == 'true'
+        run: ./gradlew polaris-controller:shadowJar
+
+      - name: Create Release
+        #if: steps.semver_change.outputs.changed == 'true'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.semver.outputs.semver }}
+          release_name: Release ${{ steps.semver.outputs.semver }}
+          body: Change notes coming soon
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset - RPM
+        #if: steps.semver_change.outputs.changed == 'true'
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./polaris-controller/build/distributions/polaris-${{ steps.sha_short.outputs.sha_short}}-${{ steps.semver.outputs.semver }}.x86_64.rpm
+          asset_name: polaris-${{ steps.sha_short.outputs.sha_short}}-${{ steps.semver.outputs.semver }}.x86_64.rpm
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Asset - Jar
+        #if: steps.semver_change.outputs.changed == 'true'
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./polaris-controller/build/libs/polaris.jar
+          asset_name: polaris.jar
+          asset_content_type: application/java-archive
