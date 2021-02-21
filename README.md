@@ -48,15 +48,21 @@
   </a></sub>
 </div>
 
-[![Create Release](https://github.com/ractf/polaris/actions/workflows/create-release.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/create-release.yml)
-[![Build Polaris Controller Rpm](https://github.com/ractf/polaris/actions/workflows/build-controller-rpm.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/build-controller-rpm.yml) 
-[![Build Polaris Controller Jar](https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml) 
-[![Build Polaris Controller Javadoc](https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml) 
-[![Build Polaris API Javadoc](https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml)
+<br>
+
+<div align="center">
+    <a href="https://github.com/ractf/polaris/actions/workflows/create-release.yml"><img src=https://github.com/ractf/polaris/actions/workflows/create-release.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/build-controller-rpm.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-controller-rpm.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml/badge.svg></a>
+</div>
 
 ## Table of Contents
-- [Installation](#installation)
-- [Support](#support)
+- [Features](#Features)
+- [Installation](#Installation)
+- [Getting Support](#Getting Support)
+- [License](#License)
 
 ## Features
 - __Robust:__ tested on a live event with several thousand users, and artifically stress tested to many more.
