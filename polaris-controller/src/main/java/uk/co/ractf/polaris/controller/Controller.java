@@ -150,4 +150,18 @@ public interface Controller {
      */
     Instance getInstance(final String id);
 
+    /**
+     * Register a newly scheduled {@link Instance} to a {@link Deployment}
+     *
+     * @param deployment the deployment of the instance
+     * @param instance the instance
+     */
+    void registerInstance(final Deployment deployment, final Instance instance);
+
+    void unregisterInstance(final Deployment deployment, final Instance instance);
+
+    boolean lockDeployment(final Deployment deployment);
+
+    boolean unlockDeployment(final Deployment deployment);
+
 }

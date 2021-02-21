@@ -8,17 +8,27 @@ import com.github.dockerjava.api.model.Ports;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.sun.management.OperatingSystemMXBean;
+import io.dropwizard.util.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.ractf.polaris.PolarisConfiguration;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
+import uk.co.ractf.polaris.api.host.HostInfo;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.runner.DockerRunner;
 import uk.co.ractf.polaris.runner.Runner;
+import uk.co.ractf.polaris.util.IPChecker;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -41,16 +51,32 @@ public class EmbeddedHost implements Host {
                 }
             });
 
+    private final int advertisedMinPort;
+    private final int advertisedMaxPort;
+    private final int unadvertisedMinPort;
+    private final int unadvertisedMaxPort;
+
+    private HostInfo hostInfo;
+
     public EmbeddedHost(final Controller controller, final DockerClient dockerClient,
-                        final ScheduledExecutorService scheduledExecutorService, final ExecutorService executorService) {
+                        final ScheduledExecutorService scheduledExecutorService, final ExecutorService executorService,
+                        final PolarisConfiguration polarisConfiguration) {
         this.controller = controller;
         this.scheduledExecutorService = scheduledExecutorService;
         this.executorService = executorService;
 
         this.scheduledExecutorService.scheduleAtFixedRate(this::garbageCollectContainers, 60, 60, TimeUnit.MINUTES);
         this.scheduledExecutorService.scheduleAtFixedRate(this::reconciliationTick, 2, 5, TimeUnit.SECONDS);
+        this.scheduledExecutorService.scheduleAtFixedRate(this::refreshHostInfo, 60, 5, TimeUnit.SECONDS);
 
         registerRunner(new DockerRunner(executorService, dockerClient, controller, this));
+
+        this.advertisedMinPort = polarisConfiguration.getAdvertisedMinPort();
+        this.advertisedMaxPort = polarisConfiguration.getAdvertisedMaxPort();
+        this.unadvertisedMinPort = polarisConfiguration.getUnadvertisedMinPort();
+        this.unadvertisedMaxPort = polarisConfiguration.getUnadvertisedMaxPort();
+
+        refreshHostInfo();
     }
 
     private void registerRunner(final Runner<?> runner) {
@@ -65,6 +91,11 @@ public class EmbeddedHost implements Host {
     @Override
     public String getID() {
         return "embedded";
+    }
+
+    @Override
+    public HostInfo getHostInfo() {
+        return hostInfo;
     }
 
     @Override
@@ -98,26 +129,41 @@ public class EmbeddedHost implements Host {
         return instances.get(id);
     }
 
-    @Override
-    public Map<PortMapping, PortBinding> createPortBindings(final List<PortMapping> portMappings) {
-        final Map<PortMapping, PortBinding> portBindings = new HashMap<>();
-        int externalPort = generatePort();
-        for (final PortMapping portMapping : portMappings) {
-            final InternetProtocol protocol = "udp".equalsIgnoreCase(portMapping.getProtocol()) ? InternetProtocol.UDP : InternetProtocol.TCP;
-            portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", externalPort + "/" + protocol.toString()),
-                    new ExposedPort(portMapping.getPort(), protocol)));
-            if (!ports.contains(externalPort + 1) && externalPort + 1 < 65536) {
-                externalPort++;
-            } else {
-                externalPort = generatePort();
-            }
-        }
-        return portBindings;
+    private int generatePort(final int min, final int max) {
+        int port;
+        do {
+            port = ThreadLocalRandom.current().nextInt(min, max);
+        } while (ports.contains(port));
+        return port;
     }
 
     @Override
-    public String getPublicIp() {
-        return "127.0.0.1";
+    public Map<PortMapping, PortBinding> createPortBindings(final List<PortMapping> portMappings) {
+        final Map<PortMapping, PortBinding> portBindings = new HashMap<>();
+        int lastAdvertisedPort = generatePort(advertisedMinPort, advertisedMaxPort);
+        int lastUnadvertisedPort = generatePort(unadvertisedMinPort, unadvertisedMaxPort);
+        for (final PortMapping portMapping : portMappings) {
+            int externalPort = portMapping.isAdvertise() ? lastAdvertisedPort : lastUnadvertisedPort;
+            final InternetProtocol protocol = "udp".equalsIgnoreCase(portMapping.getProtocol()) ? InternetProtocol.UDP : InternetProtocol.TCP;
+            portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", externalPort + "/" + protocol.toString()),
+                    new ExposedPort(portMapping.getPort(), protocol)));
+
+            if (!ports.contains(externalPort + 1)) {
+                if (portMapping.isAdvertise()) {
+                    lastAdvertisedPort++;
+                } else {
+                    lastUnadvertisedPort++;
+                }
+            } else {
+                if (portMapping.isAdvertise()) {
+                    lastAdvertisedPort = generatePort(advertisedMinPort, advertisedMaxPort);
+                } else {
+                    lastUnadvertisedPort = generatePort(unadvertisedMinPort, unadvertisedMaxPort);
+                }
+            }
+            ports.add(externalPort);
+        }
+        return portBindings;
     }
 
     private void garbageCollectContainers() {
@@ -166,12 +212,36 @@ public class EmbeddedHost implements Host {
         }
     }
 
-    private int generatePort() {
-        int port;
-        do {
-            port = ThreadLocalRandom.current().nextInt(10000, 65535);
-        } while (ports.contains(port));
-        return port;
+    private String runCommand(final String command) {
+        try {
+            final Process process = Runtime.getRuntime().exec(command);
+            return CharStreams.toString(new InputStreamReader(process.getInputStream()));
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to run command", e);
+        }
+    }
+
+    private void refreshHostInfo() {
+        try {
+            final OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+            this.hostInfo = new HostInfo(
+                    getID(),
+                    IPChecker.getExternalIP(),
+                    InetAddress.getLocalHost().getHostName(),
+                    runCommand("uname -a").trim(),
+                    operatingSystemMXBean.getArch(),
+                    operatingSystemMXBean.getName(),
+                    operatingSystemMXBean.getVersion(),
+                    operatingSystemMXBean.getAvailableProcessors(),
+                    operatingSystemMXBean.getSystemLoadAverage(),
+                    operatingSystemMXBean.getTotalPhysicalMemorySize(),
+                    operatingSystemMXBean.getFreePhysicalMemorySize(),
+                    operatingSystemMXBean.getTotalSwapSpaceSize(),
+                    operatingSystemMXBean.getFreeSwapSpaceSize(),
+                    new HashMap<>());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 
 }

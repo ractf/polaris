@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
  * Represents a part of a tcp payload healthcheck sequence
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Contract;
         @JsonSubTypes.Type(value = ReceiveRegexTcpPayload.class, name = "receiveregex")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TcpPayload {
+public class TcpPayload extends JsonRepresentable {
 
     private final String type;
 

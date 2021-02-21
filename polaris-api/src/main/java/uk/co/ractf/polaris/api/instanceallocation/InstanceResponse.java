@@ -2,6 +2,7 @@ package uk.co.ractf.polaris.api.instanceallocation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.instance.Instance;
 
 /**
@@ -19,7 +20,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
  *     }
  * </pre>
  */
-public class InstanceResponse {
+public class InstanceResponse extends JsonRepresentable {
 
     private final String ip;
     private final Instance instance;

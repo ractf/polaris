@@ -33,9 +33,9 @@ public class EphemeralController implements Controller {
     private final Scheduler scheduler = new RoundRobinScheduler();
     private final InstanceAllocator instanceAllocator = new EphemeralInstanceAllocator(this);
 
-    public EphemeralController(final ScheduledExecutorService scheduledExecutorService,
-                               final ExecutorService executorService,
-                               final PolarisConfiguration config) {
+    public EphemeralController(final PolarisConfiguration config,
+                               final ScheduledExecutorService scheduledExecutorService,
+                               final ExecutorService executorService) {
         this.scheduledExecutorService = scheduledExecutorService;
         this.executorService = executorService;
         this.scheduledExecutorService.scheduleAtFixedRate(this::reconciliationTick,
@@ -141,9 +141,30 @@ public class EphemeralController implements Controller {
         return instances.get(id);
     }
 
+    @Override
+    public void registerInstance(final Deployment deployment, final Instance instance) {
+        instances.put(instance.getID(), instance);
+        deploymentInstances.get(deployment.getID()).getInstances().add(instance);
+    }
+
+    @Override
+    public void unregisterInstance(final Deployment deployment, final Instance instance) {
+        instances.remove(instance.getID());
+    }
+
+    @Override
+    public boolean lockDeployment(final Deployment deployment) {
+        return false;
+    }
+
+    @Override
+    public boolean unlockDeployment(final Deployment deployment) {
+        return false;
+    }
+
     private void reconciliationTick() {
-        log.debug("Running reconciliation tick");
-        for (final String deploymentID : deployments.keySet()) {
+        log.debug("Running controller reconciliation tick");
+        /*for (final String deploymentID : deployments.keySet()) {
             executorService.submit(() -> {
                 final Deployment deployment = deployments.get(deploymentID);
                 final Challenge challenge = challenges.get(deployment.getChallenge());
@@ -164,7 +185,7 @@ public class EphemeralController implements Controller {
                 }
                 semaphoreInstanceList.free();
             });
-        }
+        }*/
 
         for (final String deploymentID : deploymentInstances.keySet()) {
             if (!deployments.containsKey(deploymentID)) {

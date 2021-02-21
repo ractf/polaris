@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.api.deployment;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
  * Represents the constraints within which {@link uk.co.ractf.polaris.api.instance.Instance}s should be allocated to users
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Contract;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Allocation {
+public class Allocation extends JsonRepresentable {
 
     private final String sticky;
     private final Integer userLimit;

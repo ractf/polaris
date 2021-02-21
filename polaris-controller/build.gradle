@@ -21,7 +21,7 @@ apply plugin: 'com.palantir.git-version'
 
 mainClassName = 'uk.co.ractf.polaris.PolarisApplication'
 group = 'uk.co.ractf'
-version = '1.0-SNAPSHOT'
+version = '0.0.1'
 
 repositories {
     mavenCentral()

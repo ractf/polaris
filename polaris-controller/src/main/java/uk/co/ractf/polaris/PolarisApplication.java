@@ -1,5 +1,7 @@
 package uk.co.ractf.polaris;
 
+import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
+import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientConfig;
@@ -7,9 +9,15 @@ import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.orbitz.consul.Consul;
+import com.smoketurner.dropwizard.consul.ConsulBundle;
+import com.smoketurner.dropwizard.consul.ConsulFactory;
+import com.smoketurner.dropwizard.consul.ribbon.RibbonJerseyClient;
+import com.smoketurner.dropwizard.consul.ribbon.RibbonJerseyClientBuilder;
 import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -19,14 +27,12 @@ import io.swagger.v3.oas.models.info.Info;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.ractf.polaris.controller.ConsulController;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.controller.EphemeralController;
 import uk.co.ractf.polaris.healthchecks.DockerPingHealthCheck;
 import uk.co.ractf.polaris.host.EmbeddedHost;
-import uk.co.ractf.polaris.resources.ChallengeResource;
-import uk.co.ractf.polaris.resources.DeploymentResource;
-import uk.co.ractf.polaris.resources.InstanceAllocationResource;
-import uk.co.ractf.polaris.resources.InstanceResource;
+import uk.co.ractf.polaris.resources.*;
 import uk.co.ractf.polaris.security.PolarisAuthenticator;
 import uk.co.ractf.polaris.security.PolarisAuthorizer;
 import uk.co.ractf.polaris.security.PolarisUser;
@@ -60,7 +66,22 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
     }
 
     @Override
+    public void initialize(final Bootstrap<PolarisConfiguration> bootstrap) {
+        bootstrap.addBundle(new ConsulBundle<>(getName()) {
+            @Override
+            public ConsulFactory getConsulFactory(final PolarisConfiguration configuration) {
+                return configuration.getConsulFactory();
+            }
+        });
+    }
+
+    @Override
     public void run(final PolarisConfiguration configuration, final Environment environment) throws Exception {
+        final Consul consul = configuration.getConsulFactory().build();
+        final RibbonJerseyClient loadBalancingClient =
+                new RibbonJerseyClientBuilder(environment, consul, configuration.getClient())
+                        .build("polaris");
+
         this.scheduledExecutorService = MoreExecutors.getExitingScheduledExecutorService(
                 (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(configuration.getThreadpoolSize()),
                 configuration.getThreadpoolTimeoutSeconds(), TimeUnit.SECONDS);
@@ -69,21 +90,28 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
                 configuration.getThreadpoolTimeoutSeconds(), TimeUnit.SECONDS);
 
         if (configuration.getControllerType().equals("ephemeral")) {
-            this.controller = new EphemeralController(scheduledExecutorService, executorService, configuration);
+            this.controller = new EphemeralController(configuration, scheduledExecutorService, executorService);
+        } else if (configuration.getControllerType().equals("consul")) {
+            this.controller = new ConsulController(configuration, consul, scheduledExecutorService, executorService);
         }
 
         for (final String hostname : configuration.getHosts()) {
             if ("embedded".equals(hostname)) {
-                controller.addHost(new EmbeddedHost(controller, dockerClient, scheduledExecutorService, executorService));
+                controller.addHost(new EmbeddedHost(controller, dockerClient, scheduledExecutorService, executorService, configuration));
             }
         }
 
         environment.healthChecks().register("dockerping", new DockerPingHealthCheck(dockerClient));
 
+        environment.metrics().registerAll(new GarbageCollectorMetricSet());
+        environment.metrics().registerAll(new MemoryUsageGaugeSet());
+
         environment.jersey().register(new ChallengeResource(controller));
         environment.jersey().register(new DeploymentResource(controller));
         environment.jersey().register(new InstanceResource(controller));
         environment.jersey().register(new InstanceAllocationResource(controller));
+        environment.jersey().register(new HostResource(controller));
+
         environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<PolarisUser>()
                 .setAuthenticator(new PolarisAuthenticator(configuration))
                 .setAuthorizer(new PolarisAuthorizer(configuration))

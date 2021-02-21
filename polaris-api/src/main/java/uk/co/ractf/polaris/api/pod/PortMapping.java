@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.api.pod;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
  * Represents the mapping between a port on a {@link Pod} and an external port
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Contract;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PortMapping {
+public class PortMapping extends JsonRepresentable {
 
     private final Integer port;
     private final String protocol;

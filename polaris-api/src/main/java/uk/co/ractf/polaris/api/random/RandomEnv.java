@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
  * Base class for a randomly generated environment variables
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Contract;
         @JsonSubTypes.Type(value = RandomEnvInteger.class, name = "int")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class RandomEnv {
+public abstract class RandomEnv extends JsonRepresentable {
 
     private final String type;
 

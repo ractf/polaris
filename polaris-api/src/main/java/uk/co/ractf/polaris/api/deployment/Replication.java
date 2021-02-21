@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
  * Represents the strategy that a {@link Deployment} should be replicated with.
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Contract;
         @JsonSubTypes.Type(value = StaticReplication.class, name = "static")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class Replication {
+public abstract class Replication extends JsonRepresentable {
 
     private final String type;
 

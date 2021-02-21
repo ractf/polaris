@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.api.instanceallocation;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.instance.Instance;
 
 /**
@@ -17,7 +18,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class InstanceRequest {
+public class InstanceRequest extends JsonRepresentable {
 
     private final String challengeID;
     private final String userID;

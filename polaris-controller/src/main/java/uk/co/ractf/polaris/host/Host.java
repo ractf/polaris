@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.host;
 import com.github.dockerjava.api.model.PortBinding;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
+import uk.co.ractf.polaris.api.host.HostInfo;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 
@@ -20,6 +21,13 @@ public interface Host {
      * @return the host's id
      */
     String getID();
+
+    /**
+     * Gets a {@link HostInfo} object with the host's current state
+     *
+     * @return host info
+     */
+    HostInfo getHostInfo();
 
     /**
      * Creates an instance of a {@link Challenge} on this host with a certain {@link Deployment} group
@@ -67,12 +75,5 @@ public interface Host {
      * @return the map of portmapping to portbinding
      */
     Map<PortMapping, PortBinding> createPortBindings(List<PortMapping> portMappings);
-
-    /**
-     * Get the host's public ip
-     *
-     * @return public ip
-     */
-    String getPublicIp();
 
 }

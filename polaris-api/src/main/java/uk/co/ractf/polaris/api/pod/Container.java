@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.api.pod;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.healthcheck.HealthCheck;
@@ -239,7 +240,7 @@ public class Container extends Pod {
         return metadata;
     }
 
-    @JsonIgnoreProperties
+    @JsonIgnore
     public List<String> getFullEnv() {
         final List<String> list = new ArrayList<>();
         for (final Map.Entry<String, String> entry : env.entrySet()) {
@@ -253,7 +254,7 @@ public class Container extends Pod {
         return list;
     }
 
-    @JsonIgnoreProperties
+    @JsonIgnore
     public Map<String, String> getGeneratedRandomEnv() {
         return generatedRandomEnv;
     }
