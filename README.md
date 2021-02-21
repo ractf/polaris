@@ -45,8 +45,14 @@
   the <a href="https://twitter.com/RACTF_UK">RACTF</a> team and 
   <a href="https://github.com/ractf/core/graphs/contributors">
     contributors
-  </a>
+  </a></sub>
 </div>
+
+[![Create Release](https://github.com/ractf/polaris/actions/workflows/create-release.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/create-release.yml)
+[![Build Polaris Controller Rpm](https://github.com/ractf/polaris/actions/workflows/build-controller-rpm.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/build-controller-rpm.yml) 
+[![Build Polaris Controller Jar](https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml) 
+[![Build Polaris Controller Javadoc](https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml) 
+[![Build Polaris API Javadoc](https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml/badge.svg)](https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml)
 
 ## Table of Contents
 - [Installation](#installation)
