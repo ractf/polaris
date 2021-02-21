@@ -21,7 +21,7 @@ apply plugin: 'com.palantir.git-version'
 
 mainClassName = 'uk.co.ractf.polaris.PolarisApplication'
 group = 'uk.co.ractf'
-version = '0.0.2'
+version = '0.0.3'
 
 repositories {
     mavenCentral()
@@ -65,8 +65,8 @@ shadowJar {
 buildRpm {
     packageName = 'polaris'
     def details = versionDetails(prefix: 'rc@')
-    version = details.lastTag
-    release = rootProject.version
+    release = details.lastTag
+    version = rootProject.version
     arch = 'X86_64'
     os = 'LINUX'
     license = 'AGPL'

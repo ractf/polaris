@@ -70,8 +70,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./polaris-controller/build/distributions/polaris-${{ steps.hash.outputs.sha_short}}-${{ steps.semver.outputs.semver }}.x86_64.rpm
-          asset_name: polaris-${{ steps.hash.outputs.sha_short }}-${{ steps.semver.outputs.semver }}.x86_64.rpm
+          asset_path: ./polaris-controller/build/distributions/polaris-${{ steps.semver.outputs.semver }}-${{ steps.hash.outputs.sha_short }}.x86_64.rpm
+          asset_name: polaris-${{ steps.semver.outputs.semver }}-${{ steps.hash.outputs.sha_short }}.x86_64.rpm
           asset_content_type: application/octet-stream
 
       - name: Upload Release Asset - JAR
