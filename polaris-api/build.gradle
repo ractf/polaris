@@ -1,16 +1,9 @@
-plugins {
-    id 'java'
-}
-
-group 'uk.co.ractf'
-version '0.0.4'
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation group: 'io.dropwizard', name: 'dropwizard-jackson', version: '2.0.19'
+    implementation 'io.dropwizard:dropwizard-jackson:2.0.19'
     implementation 'org.jetbrains:annotations:20.1.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
