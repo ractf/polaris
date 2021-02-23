@@ -28,5 +28,5 @@ client:
   refreshInterval: 10 seconds
 consul:
   endpoint: ${CONSUL-URL:-localhost:8500}
-  serviceId: test123
+  serviceId: polaris-controller
   retryInterval: 5 seconds
