@@ -167,10 +167,27 @@ public interface Controller {
      */
     void registerInstance(final Deployment deployment, final Instance instance);
 
+    /**
+     * Unregisters an {@link Instance} from a given {@link Deployment}, probably because its been descheduled
+     *
+     * @param deployment the deployment of the instance
+     * @param instance the instance
+     */
     void unregisterInstance(final Deployment deployment, final Instance instance);
 
+    /**
+     * Locks a deployment's set of instances so modifications can be made to it
+     *
+     * @param deployment the deployment
+     * @return if the lock was successfully acquired
+     */
     boolean lockDeployment(final Deployment deployment);
 
-    boolean unlockDeployment(final Deployment deployment);
+    /**
+     * Frees the lock on a deployment's set of instances
+     *
+     * @param deployment the deployment
+     */
+    void unlockDeployment(final Deployment deployment);
 
 }

@@ -55,7 +55,7 @@ public class ChallengeResource {
 
         final Pattern pattern = Pattern.compile(filter);
         final Map<String, Challenge> filtered = new HashMap<>();
-        for (Map.Entry<String, Challenge> challengeEntry : challengeMap.entrySet()) {
+        for (final Map.Entry<String, Challenge> challengeEntry : challengeMap.entrySet()) {
             if (pattern.matcher(challengeEntry.getKey()).find()) {
                 filtered.put(challengeEntry.getKey(), challengeEntry.getValue());
             }

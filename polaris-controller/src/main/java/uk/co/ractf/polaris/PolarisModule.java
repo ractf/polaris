@@ -1,14 +1,11 @@
 package uk.co.ractf.polaris;
 
-import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientConfig;
 import com.github.dockerjava.core.DockerClientImpl;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
 import com.github.dockerjava.transport.DockerHttpClient;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.google.inject.Scope;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.orbitz.consul.Consul;
@@ -26,7 +23,7 @@ import uk.co.ractf.polaris.runner.Runner;
 import uk.co.ractf.polaris.scheduler.RoundRobinScheduler;
 import uk.co.ractf.polaris.scheduler.Scheduler;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class PolarisModule extends DropwizardAwareModule<PolarisConfiguration> {
 
@@ -46,7 +43,7 @@ public class PolarisModule extends DropwizardAwareModule<PolarisConfiguration> {
                 .build();
         bind(DockerClient.class).toInstance(DockerClientImpl.getInstance(config, httpClient));
 
-        Multibinder<Runner> runnerBinder = Multibinder.newSetBinder(binder(), Runner.class);
+        final Multibinder<Runner> runnerBinder = Multibinder.newSetBinder(binder(), Runner.class);
         runnerBinder.addBinding().to(DockerRunner.class);
 
         bind(Host.class).to(EmbeddedHost.class).in(Singleton.class);

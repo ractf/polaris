@@ -15,7 +15,6 @@ import io.swagger.v3.oas.models.info.Info;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
-import ru.vyarus.dropwizard.guice.module.context.Disables;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

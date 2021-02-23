@@ -20,7 +20,7 @@ public class PolarisAuthenticator implements Authenticator<BasicCredentials, Pol
     }
 
     @Override
-    public Optional<PolarisUser> authenticate(final BasicCredentials credentials) throws AuthenticationException {
+    public Optional<PolarisUser> authenticate(final BasicCredentials credentials) {
         if (polarisConfiguration.getSingleUserUsername().equals(credentials.getUsername()) &&
                 polarisConfiguration.getSingleUserPassword().equals(credentials.getPassword())) {
             return Optional.of(new PolarisUser(credentials.getUsername()));

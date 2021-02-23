@@ -18,11 +18,11 @@ public class DockerPingHealthCheck extends HealthCheck {
     }
 
     @Override
-    protected Result check() throws Exception {
+    protected Result check() {
         try {
             SimpleTimeLimiter.create(Executors.newCachedThreadPool())
                     .callWithTimeout(dockerClient.pingCmd()::exec, 5, TimeUnit.SECONDS);
-        } catch (Exception e) {
+        } catch (final Exception exception) {
             return Result.unhealthy("Docker ping failed or timed out");
         }
         return Result.healthy();

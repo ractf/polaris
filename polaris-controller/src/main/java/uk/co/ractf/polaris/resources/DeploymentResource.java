@@ -59,7 +59,7 @@ public class DeploymentResource {
         final Pattern pattern = Pattern.compile(deploymentFilter);
         final Pattern challengePattern = Pattern.compile(challengeFilter);
         final Map<String, Deployment> filtered = new HashMap<>();
-        for (Map.Entry<String, Deployment> entry : deploymentMap.entrySet()) {
+        for (final Map.Entry<String, Deployment> entry : deploymentMap.entrySet()) {
             if (pattern.matcher(entry.getKey()).find() && challengePattern.matcher(entry.getValue().getChallenge()).find()) {
                 filtered.put(entry.getKey(), entry.getValue());
             }

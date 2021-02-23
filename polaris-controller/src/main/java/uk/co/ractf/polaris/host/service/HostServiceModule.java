@@ -8,7 +8,7 @@ public class HostServiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class, HostServices.class);
+        final Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class, HostServices.class);
         serviceBinder.addBinding().to(GarbageCollectionService.class);
         serviceBinder.addBinding().to(HostInfoSyncService.class);
         serviceBinder.addBinding().to(InstanceReconciliationService.class);

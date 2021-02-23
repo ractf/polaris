@@ -9,7 +9,7 @@ import uk.co.ractf.polaris.PolarisConfiguration;
 import javax.ws.rs.container.ContainerRequestContext;
 
 @Singleton
-public class PolarisAuthorizer implements Authorizer <PolarisUser> {
+public class PolarisAuthorizer implements Authorizer<PolarisUser> {
 
     private final PolarisConfiguration polarisConfiguration;
 

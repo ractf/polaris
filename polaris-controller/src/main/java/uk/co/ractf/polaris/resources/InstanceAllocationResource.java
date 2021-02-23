@@ -12,6 +12,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceResponse;
 import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.host.Host;
 import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;
 
 import javax.annotation.security.RolesAllowed;
@@ -59,7 +60,11 @@ public class InstanceAllocationResource {
         if (instance == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        return new InstanceResponse(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(), instance);
+        final Host host = controller.getHost(instance.getHostID());
+        if (host == null) {
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+        }
+        return new InstanceResponse(host.getHostInfo().getPublicIP(), instance);
     }
 
     /**
@@ -83,7 +88,11 @@ public class InstanceAllocationResource {
         if (instance == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        return new InstanceResponse(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(), instance);
+        final Host host = controller.getHost(instance.getHostID());
+        if (host == null) {
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+        }
+        return new InstanceResponse(host.getHostInfo().getPublicIP(), instance);
     }
 
 }

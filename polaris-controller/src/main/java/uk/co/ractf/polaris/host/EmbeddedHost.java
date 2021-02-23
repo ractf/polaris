@@ -4,17 +4,10 @@ import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.InternetProtocol;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.Ports;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.AbstractIdleService;
-import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.sun.management.OperatingSystemMXBean;
 import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.util.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.PolarisConfiguration;
@@ -27,8 +20,12 @@ import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.host.service.HostServices;
 import uk.co.ractf.polaris.runner.Runner;
+
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Singleton
 public class EmbeddedHost implements Host, Managed {
@@ -147,7 +144,7 @@ public class EmbeddedHost implements Host, Managed {
         int lastAdvertisedPort = generatePort(advertisedMinPort, advertisedMaxPort);
         int lastUnadvertisedPort = generatePort(unadvertisedMinPort, unadvertisedMaxPort);
         for (final PortMapping portMapping : portMappings) {
-            int externalPort = portMapping.isAdvertise() ? lastAdvertisedPort : lastUnadvertisedPort;
+            final int externalPort = portMapping.isAdvertise() ? lastAdvertisedPort : lastUnadvertisedPort;
             final InternetProtocol protocol = "udp".equalsIgnoreCase(portMapping.getProtocol()) ? InternetProtocol.UDP : InternetProtocol.TCP;
             portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", externalPort + "/" + protocol.toString()),
                     new ExposedPort(portMapping.getPort(), protocol)));
