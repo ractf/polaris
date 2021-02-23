@@ -1,6 +1,5 @@
 package uk.co.ractf.polaris.host;
 
-import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.InternetProtocol;
 import com.github.dockerjava.api.model.PortBinding;
@@ -8,7 +7,13 @@ import com.github.dockerjava.api.model.Ports;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.AbstractIdleService;
+import com.google.common.util.concurrent.AbstractScheduledService;
+import com.google.common.util.concurrent.Service;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.sun.management.OperatingSystemMXBean;
+import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.util.CharStreams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,36 +25,23 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.runner.DockerRunner;
+import uk.co.ractf.polaris.host.service.HostServices;
 import uk.co.ractf.polaris.runner.Runner;
-import uk.co.ractf.polaris.util.IPChecker;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class EmbeddedHost implements Host {
+@Singleton
+public class EmbeddedHost implements Host, Managed {
 
     private static final Logger log = LoggerFactory.getLogger(EmbeddedHost.class);
 
     private final Controller controller;
-    private final ScheduledExecutorService scheduledExecutorService;
-    private final ExecutorService executorService;
     private final Map<Class<? extends Pod>, Runner<? extends Pod>> runners = new HashMap<>();
 
     private final Map<String, Instance> instances = new ConcurrentHashMap<>();
     private final Set<Integer> ports = new ConcurrentSkipListSet<>();
-    private final LoadingCache<String, String> recentlyStartedInstances = CacheBuilder.newBuilder()
-            .build(new CacheLoader<>() {
-                @Override
-                public String load(final String s) {
-                    return s;
-                }
-            });
+    private final Set<Runner> runnerSet;
+    private final Set<Service> services;
 
     private final int advertisedMinPort;
     private final int advertisedMaxPort;
@@ -58,34 +50,38 @@ public class EmbeddedHost implements Host {
 
     private HostInfo hostInfo;
 
-    public EmbeddedHost(final Controller controller, final DockerClient dockerClient,
-                        final ScheduledExecutorService scheduledExecutorService, final ExecutorService executorService,
-                        final PolarisConfiguration polarisConfiguration) {
+    @Inject
+    public EmbeddedHost(final Controller controller,
+                        final PolarisConfiguration polarisConfiguration,
+                        final Set<Runner> runnerSet,
+                        @HostServices final Set<Service> services) {
         this.controller = controller;
-        this.scheduledExecutorService = scheduledExecutorService;
-        this.executorService = executorService;
-
-        this.scheduledExecutorService.scheduleAtFixedRate(this::garbageCollectContainers, 60, 60, TimeUnit.MINUTES);
-        this.scheduledExecutorService.scheduleAtFixedRate(this::reconciliationTick, 2, 5, TimeUnit.SECONDS);
-        this.scheduledExecutorService.scheduleAtFixedRate(this::refreshHostInfo, 60, 5, TimeUnit.SECONDS);
-
-        registerRunner(new DockerRunner(executorService, dockerClient, controller, this));
+        this.runnerSet = runnerSet;
+        this.services = services;
 
         this.advertisedMinPort = polarisConfiguration.getAdvertisedMinPort();
         this.advertisedMaxPort = polarisConfiguration.getAdvertisedMaxPort();
         this.unadvertisedMinPort = polarisConfiguration.getUnadvertisedMinPort();
         this.unadvertisedMaxPort = polarisConfiguration.getUnadvertisedMaxPort();
 
-        refreshHostInfo();
+        controller.addHost(this);
     }
 
-    private void registerRunner(final Runner<?> runner) {
-        runners.put(runner.getType(), runner);
+    @Override
+    public void start() {
+        for (final Runner<?> runner : runnerSet) {
+            this.runners.put(runner.getType(), runner);
+        }
+        for (final Service service : services) {
+            service.startAsync();
+        }
     }
 
-    @SuppressWarnings("unchecked")
-    private <T extends Pod> Runner<Pod> getRunner(final T pod) {
-        return (Runner<Pod>) runners.get(pod.getClass());
+    @Override
+    public void stop() {
+        for (final Service service : services) {
+            service.stopAsync();
+        }
     }
 
     @Override
@@ -99,8 +95,13 @@ public class EmbeddedHost implements Host {
     }
 
     @Override
+    public void setHostInfo(final HostInfo hostInfo) {
+        this.hostInfo = hostInfo;
+    }
+
+    @Override
     public Instance createInstance(final Challenge challenge, final Deployment deployment) {
-        log.info("Instance for {} created", challenge.getID());
+        log.debug("Instance for {} created", challenge.getID());
         final Instance instance = new Instance(UUID.randomUUID().toString(), deployment.getID(), challenge.getID(), getID());
         instances.put(instance.getID(), instance);
         return instance;
@@ -119,8 +120,11 @@ public class EmbeddedHost implements Host {
     @Override
     public void restartInstance(final Instance instance) {
         final Challenge challenge = controller.getChallenge(instance.getChallengeID());
+        if (challenge == null) {
+            return;
+        }
         for (final Pod pod : challenge.getPods()) {
-            executorService.submit(() -> getRunner(pod).restartPod(pod, instance));
+            CompletableFuture.runAsync(() -> getRunner(pod).restartPod(pod, instance));
         }
     }
 
@@ -166,82 +170,9 @@ public class EmbeddedHost implements Host {
         return portBindings;
     }
 
-    private void garbageCollectContainers() {
-        for (final Runner<? extends Pod> runner : runners.values()) {
-            runner.garbageCollect();
-        }
-    }
-
-    private void reconciliationTick() {
-        try {
-            log.debug("Running host reconciliation tick");
-            for (final Map.Entry<String, Instance> entry : instances.entrySet()) {
-                final Instance instance = entry.getValue();
-                final Challenge challenge = controller.getChallengeFromDeployment(instance.getDeploymentID());
-                for (final Pod pod : challenge.getPods()) {
-                    if (recentlyStartedInstances.getIfPresent(pod.getID() + instance.getID()) != null) {
-                        continue;
-                    }
-                    if (getRunner(pod).canStartPod(pod)) {
-                        recentlyStartedInstances.put(pod.getID() + instance.getID(), "");
-                        executorService.submit(() -> {
-                            try {
-                                ensurePodStarted(pod, instance);
-                            } catch (InterruptedException e) {
-                                log.error("Error when starting pod", e);
-                            }
-                        });
-                    } else {
-                        getRunner(pod).preparePod(pod);
-                    }
-                }
-            }
-
-
-            for (final Runner<? extends Pod> runner : runners.values()) {
-                runner.killOrphans();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void ensurePodStarted(final Pod pod, final Instance instance) throws InterruptedException {
-        if (!getRunner(pod).isPodStarted(pod, instance)) {
-            getRunner(pod).startPod(pod, instance);
-        }
-    }
-
-    private String runCommand(final String command) {
-        try {
-            final Process process = Runtime.getRuntime().exec(command);
-            return CharStreams.toString(new InputStreamReader(process.getInputStream()));
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to run command", e);
-        }
-    }
-
-    private void refreshHostInfo() {
-        try {
-            final OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            this.hostInfo = new HostInfo(
-                    getID(),
-                    IPChecker.getExternalIP(),
-                    InetAddress.getLocalHost().getHostName(),
-                    runCommand("uname -a").trim(),
-                    operatingSystemMXBean.getArch(),
-                    operatingSystemMXBean.getName(),
-                    operatingSystemMXBean.getVersion(),
-                    operatingSystemMXBean.getAvailableProcessors(),
-                    operatingSystemMXBean.getSystemLoadAverage(),
-                    operatingSystemMXBean.getTotalPhysicalMemorySize(),
-                    operatingSystemMXBean.getFreePhysicalMemorySize(),
-                    operatingSystemMXBean.getTotalSwapSpaceSize(),
-                    operatingSystemMXBean.getFreeSwapSpaceSize(),
-                    new HashMap<>());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+    @SuppressWarnings("unchecked")
+    private <T extends Pod> Runner<Pod> getRunner(final T pod) {
+        return (Runner<Pod>) runners.get(pod.getClass());
     }
 
 }

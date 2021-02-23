@@ -6,6 +6,8 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.host.Host;
 import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -35,6 +37,7 @@ public interface Controller {
      * @param id the challenge id
      * @return the challenge
      */
+    @Nullable
     Challenge getChallenge(final String id);
 
     /**
@@ -64,6 +67,7 @@ public interface Controller {
      * @param id the id of the deployment
      * @return the deployment
      */
+    @Nullable
     Deployment getDeployment(final String id);
 
     /**
@@ -94,6 +98,7 @@ public interface Controller {
      * @param deployment the deployment id
      * @return the challenge that deployment deploys
      */
+    @Nullable
     Challenge getChallengeFromDeployment(final String deployment);
 
     /**
@@ -102,6 +107,7 @@ public interface Controller {
      * @param deployment the deployment
      * @return that deployment's challenge
      */
+    @Nullable
     Challenge getChallengeFromDeployment(final Deployment deployment);
 
     /**
@@ -117,6 +123,7 @@ public interface Controller {
      * @param id host id
      * @return the host
      */
+    @Nullable
     Host getHost(final String id);
 
     /**
@@ -125,6 +132,7 @@ public interface Controller {
      * @param challenge challenge id
      * @return all deployments of that challenge
      */
+    @Nonnull
     List<Deployment> getDeploymentsOfChallenge(final String challenge);
 
     /**
@@ -133,6 +141,7 @@ public interface Controller {
      * @param deployment the deployment id
      * @return the instance list
      */
+    @Nonnull
     List<Instance> getInstancesForDeployment(final String deployment);
 
     /**

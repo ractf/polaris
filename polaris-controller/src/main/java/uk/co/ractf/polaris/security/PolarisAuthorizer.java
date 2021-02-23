@@ -1,15 +1,19 @@
 package uk.co.ractf.polaris.security;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import io.dropwizard.auth.Authorizer;
 import org.jetbrains.annotations.Nullable;
 import uk.co.ractf.polaris.PolarisConfiguration;
 
 import javax.ws.rs.container.ContainerRequestContext;
 
+@Singleton
 public class PolarisAuthorizer implements Authorizer <PolarisUser> {
 
     private final PolarisConfiguration polarisConfiguration;
 
+    @Inject
     public PolarisAuthorizer(final PolarisConfiguration polarisConfiguration) {
         this.polarisConfiguration = polarisConfiguration;
     }

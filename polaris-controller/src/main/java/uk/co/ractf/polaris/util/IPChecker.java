@@ -1,12 +1,16 @@
 package uk.co.ractf.polaris.util;
 
+import com.google.common.base.Charsets;
 import com.google.common.net.InetAddresses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 public class IPChecker {
 
@@ -28,13 +32,16 @@ public class IPChecker {
         for (final String ipServer : IP_SERVERS) {
             try {
                 final URL url = new URL(ipServer);
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-                final String line = bufferedReader.readLine();
-                if (InetAddresses.isInetAddress(line)) {
-                    return line;
+                try (final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), Charsets.UTF_8))) {
+                    final String line = bufferedReader.readLine();
+                    if (InetAddresses.isInetAddress(line)) {
+                        return line;
+                    }
+                } catch (final IOException e) {
+                    LOGGER.error("Error getting ip", e);
                 }
-            } catch (final Exception e) {
-                LOGGER.error("Error pulling ip from " + ipServer, e);
+            } catch (MalformedURLException e) {
+                LOGGER.error("Error getting ip", e);
             }
         }
         throw new IllegalStateException("Could not find ip address");

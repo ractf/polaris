@@ -2,6 +2,7 @@ package uk.co.ractf.polaris.resources;
 
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
+import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,7 @@ public class ChallengeResource {
 
     private final Controller controller;
 
+    @Inject
     public ChallengeResource(final Controller controller) {
         this.controller = controller;
     }

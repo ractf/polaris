@@ -28,6 +28,7 @@ public class PolarisConfiguration extends Configuration {
     private int advertisedMaxPort;
     private int unadvertisedMinPort;
     private int unadvertisedMaxPort;
+    private int hostInfoSyncFrequency;
 
     @NotNull
     @Valid
@@ -163,5 +164,13 @@ public class PolarisConfiguration extends Configuration {
 
     public void setUnadvertisedMaxPort(final int unadvertisedMaxPort) {
         this.unadvertisedMaxPort = unadvertisedMaxPort;
+    }
+
+    public int getHostInfoSyncFrequency() {
+        return hostInfoSyncFrequency;
+    }
+
+    public void setHostInfoSyncFrequency(final int hostInfoSyncFrequency) {
+        this.hostInfoSyncFrequency = hostInfoSyncFrequency;
     }
 }
