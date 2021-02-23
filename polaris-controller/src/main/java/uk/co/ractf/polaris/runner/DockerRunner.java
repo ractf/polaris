@@ -9,6 +9,8 @@ import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.HostConfig;
 import com.github.dockerjava.api.model.PortBinding;
 import com.github.dockerjava.api.model.RestartPolicy;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.challenge.Challenge;
@@ -20,17 +22,18 @@ import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.host.Host;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 
 /**
  * An implementation of {@link Runner} that is capable of running docker {@link Container}s through the docker-java {@link DockerClient}
  */
+@Singleton
 public class DockerRunner implements Runner<Container> {
 
     private static final Logger log = LoggerFactory.getLogger(DockerRunner.class);
 
-    private final ExecutorService executorService;
     private final DockerClient dockerClient;
     private final Controller controller;
     private final Host host;
@@ -40,9 +43,8 @@ public class DockerRunner implements Runner<Container> {
     private final Set<String> dyingContainers = new ConcurrentSkipListSet<>();
     private final Set<String> startingContainers = new ConcurrentSkipListSet<>();
 
-    public DockerRunner(final ExecutorService executorService, final DockerClient dockerClient,
-                        final Controller controller, final Host host) {
-        this.executorService = executorService;
+    @Inject
+    public DockerRunner(final DockerClient dockerClient, final Controller controller, final Host host) {
         this.dockerClient = dockerClient;
         this.controller = controller;
         this.host = host;
@@ -61,44 +63,50 @@ public class DockerRunner implements Runner<Container> {
         if (startingContainers.contains(container.getID() + instance.getID())) {
             return;
         }
-        startingContainers.add(container.getID() + instance.getID());
-        final Map<String, String> labels = container.getLabels();
-        labels.put("polaris", container.getID());
-        labels.put("polaris-instance", instance.getID());
-        labels.put("polaris-deployment", instance.getDeploymentID());
-        labels.put("polaris-challenge", controller.getChallengeFromDeployment(instance.getDeploymentID()).getID());
-        labels.put("polaris-pod", container.getID());
+        try {
+            log.info("starting {}", instance.getID());
+            startingContainers.add(container.getID() + instance.getID());
+            final Map<String, String> labels = container.getLabels();
+            labels.put("polaris", container.getID());
+            labels.put("polaris-instance", instance.getID());
+            labels.put("polaris-deployment", instance.getDeploymentID());
+            labels.put("polaris-challenge", controller.getChallengeFromDeployment(instance.getDeploymentID()).getID());
+            labels.put("polaris-pod", container.getID());
 
-        final Map<PortMapping, PortBinding> portBindings = host.createPortBindings(container.getPortMappings());
+            final Map<PortMapping, PortBinding> portBindings = host.createPortBindings(container.getPortMappings());
 
-        CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(container.getImage());
-        createContainerCmd = createContainerCmd
-                .withHostName(container.getID() + "-" + instance.getDeploymentID() + "-" + instance.getID().split("-")[0])
-                .withEnv(container.getFullEnv())
-                .withLabels(labels)
-                .withPortSpecs()
-                .withHostConfig(
-                        HostConfig.newHostConfig()
-                                .withPortBindings(new ArrayList<>(portBindings.values()))
-                                .withCapAdd(createCapabilityArray(container.getCapAdd()))
-                                .withCapDrop(createCapabilityArray(container.getCapDrop()))
-                                .withNanoCPUs(container.getResourceQuota().getNanoCPUs())
-                                .withMemory(container.getResourceQuota().getMemory())
-                                .withRestartPolicy(RestartPolicy.parse(container.getRestartPolicy()))
-                                .withMemorySwap(container.getResourceQuota().getSwap()));
-        if (container.getEntrypoint().size() > 0) {
-            createContainerCmd = createContainerCmd.withCmd(container.getEntrypoint());
-        }
+            CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(container.getImage());
+            createContainerCmd = createContainerCmd
+                    .withHostName(container.getID() + "-" + instance.getDeploymentID() + "-" + instance.getID().split("-")[0])
+                    .withEnv(container.getFullEnv())
+                    .withLabels(labels)
+                    .withPortSpecs()
+                    .withHostConfig(
+                            HostConfig.newHostConfig()
+                                    .withPortBindings(new ArrayList<>(portBindings.values()))
+                                    .withCapAdd(createCapabilityArray(container.getCapAdd()))
+                                    .withCapDrop(createCapabilityArray(container.getCapDrop()))
+                                    .withNanoCPUs(container.getResourceQuota().getNanoCPUs())
+                                    .withMemory(container.getResourceQuota().getMemory())
+                                    .withRestartPolicy(RestartPolicy.parse(container.getRestartPolicy()))
+                                    .withMemorySwap(container.getResourceQuota().getSwap()));
 
-        final CreateContainerResponse createContainerResponse = createContainerCmd.exec();
-        final StartContainerCmd startContainerCmd = dockerClient.startContainerCmd(createContainerResponse.getId());
-        startContainerCmd.exec();
-        startingContainers.remove(container.getID() + instance.getID());
+            if (container.getEntrypoint().size() > 0) {
+                createContainerCmd = createContainerCmd.withCmd(container.getEntrypoint());
+            }
 
-        instance.getRandomEnv().putAll(container.getGeneratedRandomEnv());
-        for (final Map.Entry<PortMapping, PortBinding> entry : portBindings.entrySet()) {
-            instance.addPortBinding(new InstancePortBinding(entry.getValue().getBinding().getHostPortSpec(),
-                    host.getHostInfo().getPublicIP(), entry.getKey().isAdvertise()));
+            final CreateContainerResponse createContainerResponse = createContainerCmd.exec();
+            final StartContainerCmd startContainerCmd = dockerClient.startContainerCmd(createContainerResponse.getId());
+            startContainerCmd.exec();
+            startingContainers.remove(container.getID() + instance.getID());
+
+            instance.getRandomEnv().putAll(container.getGeneratedRandomEnv());
+            for (final Map.Entry<PortMapping, PortBinding> entry : portBindings.entrySet()) {
+                instance.addPortBinding(new InstancePortBinding(entry.getValue().getBinding().getHostPortSpec(),
+                        host.getHostInfo().getPublicIP(), entry.getKey().isAdvertise()));
+            }
+        } catch (final Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -183,7 +191,7 @@ public class DockerRunner implements Runner<Container> {
                 }
 
                 dyingContainers.add(container.getId());
-                executorService.submit(() -> {
+                CompletableFuture.runAsync(() -> {
                     if (challenge != null) {
                         final int terminationTimeout = ((Container) challenge.getPod(podID)).getTerminationTimeout();
                         dockerClient.stopContainerCmd(container.getId()).withTimeout(terminationTimeout).exec();
@@ -192,7 +200,6 @@ public class DockerRunner implements Runner<Container> {
                     }
                     dyingContainers.remove(container.getId());
                 });
-
             }
         }
     }

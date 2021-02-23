@@ -30,6 +30,13 @@ public interface Host {
     HostInfo getHostInfo();
 
     /**
+     * Sets the host's current state
+     *
+     * @param hostInfo {@link HostInfo}
+     */
+    void setHostInfo(final HostInfo hostInfo);
+
+    /**
      * Creates an instance of a {@link Challenge} on this host with a certain {@link Deployment} group
      *
      * @param challenge the challenge

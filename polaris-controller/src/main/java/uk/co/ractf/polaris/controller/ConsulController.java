@@ -1,9 +1,13 @@
 package uk.co.ractf.polaris.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.util.concurrent.Service;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.kv.Operation;
 import com.orbitz.consul.model.kv.Verb;
+import io.dropwizard.lifecycle.Managed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.PolarisConfiguration;
@@ -11,35 +15,47 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.consul.ConsulPath;
+import uk.co.ractf.polaris.controller.task.ControllerServices;
 import uk.co.ractf.polaris.host.Host;
 import uk.co.ractf.polaris.instanceallocation.EphemeralInstanceAllocator;
 import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledExecutorService;
 
-public class ConsulController implements Controller {
+@Singleton
+public class ConsulController implements Controller, Managed {
 
     private static final Logger log = LoggerFactory.getLogger(ConsulController.class);
 
     private final PolarisConfiguration config;
     private final Consul consul;
-    private final ScheduledExecutorService scheduledExecutorService;
-    private final ExecutorService executorService;
     private final Map<String, Host> hosts = new ConcurrentHashMap<>();
     private final InstanceAllocator instanceAllocator;
+    private final Set<Service> services;
 
+    @Inject
     public ConsulController(final PolarisConfiguration config,
                             final Consul consul,
-                            final ScheduledExecutorService scheduledExecutorService,
-                            final ExecutorService executorService) {
+                            @ControllerServices final Set<Service> services) {
         this.config = config;
         this.consul = consul;
-        this.scheduledExecutorService = scheduledExecutorService;
-        this.executorService = executorService;
         this.instanceAllocator = new EphemeralInstanceAllocator(this);
+        this.services = services;
+    }
+
+    @Override
+    public void start() {
+        for (final Service service : services) {
+            service.startAsync();
+        }
+    }
+
+    @Override
+    public void stop() {
+        for (final Service service : services) {
+            service.stopAsync();
+        }
     }
 
     @Override

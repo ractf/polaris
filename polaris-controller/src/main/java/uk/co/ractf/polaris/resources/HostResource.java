@@ -2,6 +2,7 @@ package uk.co.ractf.polaris.resources;
 
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
+import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import uk.co.ractf.polaris.api.host.HostInfo;
 import uk.co.ractf.polaris.controller.Controller;
@@ -24,6 +25,7 @@ public class HostResource {
 
     private final Controller controller;
 
+    @Inject
     public HostResource(final Controller controller) {
         this.controller = controller;
     }
