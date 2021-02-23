@@ -9,15 +9,17 @@ import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.host.Host;
 
 import javax.annotation.security.RolesAllowed;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
+ * Resource providing API endpoints for {@link HostInfo} and {@link Host} objects.
  *
+ * Roles defined: HOST_GET
  */
 @Path("/hosts")
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,18 +32,50 @@ public class HostResource {
         this.controller = controller;
     }
 
+    /**
+     * Return a {@link Map} of host to {@link HostInfo} for all hosts matching the host id regex. Results are only
+     * filtered if a filter is not omitted.
+     *
+     * @param filter The regex to filter host ids by
+     * @return the matching hosts
+     */
     @GET
     @Timed
     @ExceptionMetered
     @RolesAllowed("HOST_GET")
-    @Operation(summary = "Get Deployments", tags = {"Deployment"},
-            description = "Gets a map of deployment id to deployment that matches a given regex on id and challenge id.")
-    public List<HostInfo> getHostInfo() {
-        final List<HostInfo> hostInfoList = new ArrayList<>();
+    @Operation(summary = "Get Hosts", tags = {"Host"},
+            description = "Gets a list of hosts currently registered and info about them")
+    public Map<String, HostInfo> listHostInfo(@QueryParam("filter") @DefaultValue("") final String filter) {
+        final Map<String, HostInfo> hostInfoList = new HashMap<>();
+        final Pattern pattern = Pattern.compile(filter);
+
         for (final Host host : controller.getHosts().values()) {
-            hostInfoList.add(host.getHostInfo());
+            if (pattern.matcher(filter).find()) {
+                hostInfoList.put(host.getID(), host.getHostInfo());
+            }
         }
         return hostInfoList;
+    }
+
+    /**
+     * Gets {@link HostInfo} from the host's id.
+     *
+     * @param id host id
+     * @return host info
+     */
+    @GET
+    @Timed
+    @Path("/{id}")
+    @ExceptionMetered
+    @RolesAllowed("HOST_GET")
+    @Operation(summary = "Get Host", tags = {"Host"},
+            description = "Gets a host by id")
+    public HostInfo getHostInfo(@PathParam("id") final String id) {
+        final Host host = controller.getHost(id);
+        if (host == null) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+        return host.getHostInfo();
     }
 
 }
