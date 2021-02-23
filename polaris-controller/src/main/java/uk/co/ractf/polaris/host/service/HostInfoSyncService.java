@@ -35,13 +35,13 @@ public class HostInfoSyncService extends AbstractScheduledService {
         try {
             final Process process = Runtime.getRuntime().exec(command);
             return CharStreams.toString(new InputStreamReader(process.getInputStream(), Charsets.UTF_8));
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to run command", e);
+        } catch (final IOException exception) {
+            throw new IllegalStateException("Failed to run command", exception);
         }
     }
 
     @Override
-    protected void runOneIteration() throws Exception {
+    protected void runOneIteration() {
         try {
             final OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
             final HostInfo hostInfo = new HostInfo(

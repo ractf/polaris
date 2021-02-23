@@ -56,9 +56,9 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
                         teamAvoids.get(request.getTeamID()).contains(instance.getID())) {
                     continue;
                 }
-                double userScore = (double) instanceUsers.get(instance.getID()).size() / allocation.getUserLimit();
-                double teamScore = (double) instanceTeams.get(instance.getID()).size() / allocation.getTeamLimit();
-                double instanceScore = userScore * teamScore;
+                final double userScore = (double) instanceUsers.get(instance.getID()).size() / allocation.getUserLimit();
+                final double teamScore = (double) instanceTeams.get(instance.getID()).size() / allocation.getTeamLimit();
+                final double instanceScore = userScore * teamScore;
                 if (instanceScore > bestInstanceScore) {
                     bestInstanceScore = instanceScore;
                     bestInstance = instance;
@@ -85,7 +85,7 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
             }
             //TODO: notify admins
             Collections.shuffle(deployments);
-            List<Instance> instances = controller.getInstancesForDeployment(deployments.get(0).getID());
+            final List<Instance> instances = controller.getInstancesForDeployment(deployments.get(0).getID());
             Collections.shuffle(instances);
             return instances.get(0);
         }

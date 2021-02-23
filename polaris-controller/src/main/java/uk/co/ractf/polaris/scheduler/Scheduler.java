@@ -20,6 +20,14 @@ public interface Scheduler {
      */
     Host scheduleChallenge(final Challenge challenge, final Collection<Host> hosts);
 
+    /**
+     * Returns the best {@link Instance} to be descheduled out of the current set
+     *
+     * @param challenge the {@link Challenge}
+     * @param hosts the clusters {@link Host}s
+     * @param instances the instance
+     * @return the instance to deschedule
+     */
     Instance descheduleInstance(final Challenge challenge, final Collection<Host> hosts, final Collection<Instance> instances);
 
 }

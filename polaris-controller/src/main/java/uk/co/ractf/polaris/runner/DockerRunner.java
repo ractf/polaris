@@ -159,8 +159,8 @@ public class DockerRunner implements Runner<Container> {
             downloadingImages.add(pod.getImage());
             dockerClient.pullImageCmd(pod.getImage()).exec(new PullImageResultCallback()).awaitCompletion();
             images.add(pod.getImage());
-        } catch (InterruptedException e) {
-            log.error("Error pulling image", e);
+        } catch (final InterruptedException exception) {
+            log.error("Error pulling image", exception);
         }
         downloadingImages.remove(pod.getImage());
     }
@@ -179,7 +179,7 @@ public class DockerRunner implements Runner<Container> {
     @Override
     public void killOrphans() {
         for (final com.github.dockerjava.api.model.Container container :
-                dockerClient.listContainersCmd().withLabelFilter(Arrays.asList("polaris")).exec()) {
+                dockerClient.listContainersCmd().withLabelFilter(Collections.singletonList("polaris")).exec()) {
             final String podID = container.getLabels().get("polaris");
             final String instanceID = container.getLabels().get("polaris-instance");
             final String challengeID = container.getLabels().get("polaris-challenge");

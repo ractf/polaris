@@ -8,6 +8,7 @@ import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.kv.Operation;
 import com.orbitz.consul.model.kv.Verb;
 import io.dropwizard.lifecycle.Managed;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.PolarisConfiguration;
@@ -74,8 +75,8 @@ public class ConsulController implements Controller, Managed {
                 try {
                     final Challenge challenge = Challenge.parse(challengeData.get(), Challenge.class);
                     challengeMap.put(challenge.getID(), challenge);
-                } catch (JsonProcessingException e) {
-                    log.error("Error deserializing challenge " + challengePath, e);
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing challenge " + challengePath, exception);
                 }
             }
         }
@@ -89,8 +90,8 @@ public class ConsulController implements Controller, Managed {
         if (challengeData.isPresent()) {
             try {
                 return Challenge.parse(challengeData.get(), Challenge.class);
-            } catch (JsonProcessingException e) {
-                log.error("Error deserializing challenge " + id, e);
+            } catch (final JsonProcessingException exception) {
+                log.error("Error deserializing challenge " + id, exception);
             }
         }
         return null;
@@ -124,8 +125,8 @@ public class ConsulController implements Controller, Managed {
                 try {
                     final Deployment deployment = Deployment.parse(deploymentData.get(), Deployment.class);
                     deploymentMap.put(deployment.getID(), deployment);
-                } catch (JsonProcessingException e) {
-                    log.error("Error deserializing deployment " + deploymentPath, e);
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing deployment " + deploymentPath, exception);
                 }
             }
         }
@@ -139,8 +140,8 @@ public class ConsulController implements Controller, Managed {
         if (deploymentData.isPresent()) {
             try {
                 return Deployment.parse(deploymentData.get(), Deployment.class);
-            } catch (JsonProcessingException e) {
-                log.error("Error deserializing deployment " + id, e);
+            } catch (final JsonProcessingException exception) {
+                log.error("Error deserializing deployment " + id, exception);
             }
         }
         return null;
@@ -173,8 +174,12 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public Challenge getChallengeFromDeployment(final String deployment) {
-        return getChallenge(getDeployment(deployment).getChallenge());
+    public Challenge getChallengeFromDeployment(final String deploymentID) {
+        final Deployment deployment = getDeployment(deploymentID);
+        if (deployment == null) {
+            return null;
+        }
+        return getChallenge(deployment.getChallenge());
     }
 
     @Override
@@ -193,7 +198,7 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public List<Deployment> getDeploymentsOfChallenge(final String challenge) {
+    public @NotNull List<Deployment> getDeploymentsOfChallenge(final String challenge) {
         final List<Deployment> deployments = new ArrayList<>();
         for (final Map.Entry<String, Deployment> entry : getDeployments().entrySet()) {
             final Deployment deployment = entry.getValue();
@@ -205,7 +210,7 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public List<Instance> getInstancesForDeployment(final String deployment) {
+    public @NotNull List<Instance> getInstancesForDeployment(final String deployment) {
         final List<Instance> instances = new ArrayList<>();
         final List<String> instancePaths = consul.keyValueClient().getKeys(ConsulPath.instances());
         for (final String instancePath : instancePaths) {
@@ -214,8 +219,8 @@ public class ConsulController implements Controller, Managed {
                 try {
                     final Instance instance = Instance.parse(instanceData.get(), Instance.class);
                     instances.add(instance);
-                } catch (JsonProcessingException e) {
-                    log.error("Error deserializing instance " + instancePath, e);
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing instance " + instancePath, exception);
                 }
             }
         }
@@ -233,8 +238,8 @@ public class ConsulController implements Controller, Managed {
         if (instanceData.isPresent()) {
             try {
                 return Instance.parse(instanceData.get(), Instance.class);
-            } catch (JsonProcessingException e) {
-                log.error("Error deserializing instance " + id, e);
+            } catch (final JsonProcessingException exception) {
+                log.error("Error deserializing instance " + id, exception);
             }
         }
         return null;
@@ -263,8 +268,8 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public boolean unlockDeployment(final Deployment deployment) {
-        return consul.keyValueClient().releaseLock(ConsulPath.deployment(deployment.getID()), "polaris");
+    public void unlockDeployment(final Deployment deployment) {
+        consul.keyValueClient().releaseLock(ConsulPath.deployment(deployment.getID()), "polaris");
     }
 
 }

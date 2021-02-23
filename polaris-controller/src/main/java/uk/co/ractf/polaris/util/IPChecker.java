@@ -37,11 +37,11 @@ public class IPChecker {
                     if (InetAddresses.isInetAddress(line)) {
                         return line;
                     }
-                } catch (final IOException e) {
-                    LOGGER.error("Error getting ip", e);
+                } catch (final IOException exception) {
+                    LOGGER.error("Error getting ip", exception);
                 }
-            } catch (MalformedURLException e) {
-                LOGGER.error("Error getting ip", e);
+            } catch (final MalformedURLException exception) {
+                LOGGER.error("Error getting ip", exception);
             }
         }
         throw new IllegalStateException("Could not find ip address");

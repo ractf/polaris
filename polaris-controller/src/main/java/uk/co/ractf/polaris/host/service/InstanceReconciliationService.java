@@ -54,7 +54,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
 
     @Override
     protected void startUp() throws Exception {
-        for (Runner<?> runner : runnerSet) {
+        for (final Runner<?> runner : runnerSet) {
             this.runners.put(runner.getType(), runner);
         }
         super.startUp();
@@ -92,8 +92,8 @@ public class InstanceReconciliationService extends AbstractScheduledService {
                     }
                 }
             }
-        } catch (Exception e) {
-            log.error("error", e);
+        } catch (final Exception exception) {
+            log.error("error", exception);
         }
     }
 

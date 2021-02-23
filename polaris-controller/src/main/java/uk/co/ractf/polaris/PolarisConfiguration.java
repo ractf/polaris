@@ -66,7 +66,7 @@ public class PolarisConfiguration extends Configuration {
         return hosts;
     }
 
-    public void setHosts(String[] hosts) {
+    public void setHosts(final String[] hosts) {
         this.hosts = hosts;
     }
 
@@ -74,7 +74,7 @@ public class PolarisConfiguration extends Configuration {
         return apiKey;
     }
 
-    public void setApiKey(String apiKey) {
+    public void setApiKey(final String apiKey) {
         this.apiKey = apiKey;
     }
 
@@ -82,7 +82,7 @@ public class PolarisConfiguration extends Configuration {
         return reconciliationTickFrequency;
     }
 
-    public void setReconciliationTickFrequency(long reconciliationTickFrequency) {
+    public void setReconciliationTickFrequency(final long reconciliationTickFrequency) {
         this.reconciliationTickFrequency = reconciliationTickFrequency;
     }
 
@@ -90,7 +90,7 @@ public class PolarisConfiguration extends Configuration {
         return schedulingAlgorithm;
     }
 
-    public void setSchedulingAlgorithm(String schedulingAlgorithm) {
+    public void setSchedulingAlgorithm(final String schedulingAlgorithm) {
         this.schedulingAlgorithm = schedulingAlgorithm;
     }
 

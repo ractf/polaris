@@ -20,7 +20,6 @@ import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Singleton
 public class EphemeralController implements Controller, Managed {
@@ -184,37 +183,8 @@ public class EphemeralController implements Controller, Managed {
     }
 
     @Override
-    public boolean unlockDeployment(final Deployment deployment) {
+    public void unlockDeployment(final Deployment deployment) {
         deploymentLocks.computeIfAbsent(deployment.getID(), x -> new Semaphore(1)).release();
-        return true;
     }
-
-    /*private void reconciliationTick() {
-        log.trace("Running controller reconciliation tick");
-        for (final String deploymentID : deployments.keySet()) {
-            CompletableFuture.runAsync(() -> {
-                final Deployment deployment = deployments.get(deploymentID);
-                final Challenge challenge = challenges.get(deployment.getChallenge());
-                final SemaphoreInstanceList semaphoreInstanceList = deploymentInstances.computeIfAbsent(deploymentID, x -> new SemaphoreInstanceList());
-                if (semaphoreInstanceList.isBusy()) {
-                    return;
-                }
-                final List<Instance> deploymentInstances = semaphoreInstanceList.getInstances();
-                final int scaleAmount = ReplicationController.create(deployment.getReplication()).getScaleAmount(deploymentInstances, this);
-                if (scaleAmount > 0) {
-                    for (int i = 0; i < scaleAmount; i++) {
-                        CompletableFuture.runAsync(() -> {
-                            final Host host = scheduler.scheduleChallenge(challenge, hosts.values());
-                            final Instance instance = host.createInstance(challenge, deployment);
-                            deploymentInstances.add(instance);
-                            instances.put(instance.getID(), instance);
-                            log.info("Scheduled instance {}(challenge: {}, deployment: {}) onto {}", instance.getID(), challenge.getID(), deployment.getID(), host.getID());
-                        });
-                    }
-                }
-                semaphoreInstanceList.free();
-            });
-        }
-    }*/
 
 }
