@@ -20,7 +20,7 @@ public class PolarisAuthorizer implements Authorizer<PolarisUser> {
 
     @Override
     public boolean authorize(final PolarisUser principal, final String role) {
-        return polarisConfiguration.getSingleUserRoles().contains(role);
+        return authorize(principal, role, null);
     }
 
     @Override
