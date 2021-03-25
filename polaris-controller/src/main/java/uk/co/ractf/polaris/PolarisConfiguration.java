@@ -17,7 +17,6 @@ public class PolarisConfiguration extends Configuration {
     private int taskThreadpoolSize;
     private String controllerType;
     private String[] hosts;
-    private String apiKey;
     private long reconciliationTickFrequency;
     private String schedulingAlgorithm;
     private int threadpoolTimeoutSeconds;
@@ -68,14 +67,6 @@ public class PolarisConfiguration extends Configuration {
 
     public void setHosts(final String[] hosts) {
         this.hosts = hosts;
-    }
-
-    public String getApiKey() {
-        return apiKey;
-    }
-
-    public void setApiKey(final String apiKey) {
-        this.apiKey = apiKey;
     }
 
     public long getReconciliationTickFrequency() {

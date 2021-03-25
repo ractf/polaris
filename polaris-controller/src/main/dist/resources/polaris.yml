@@ -1,7 +1,6 @@
 threadpoolSize: 5
 taskThreadpoolSize: 5
 controllerType: ephemeral
-apiKey: 123
 hosts: [embedded]
 reconciliationTickFrequency: 200
 schedulingAlgorithm: roundRobin
