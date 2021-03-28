@@ -4,11 +4,11 @@ import java.util.StringJoiner;
 
 public class ConsulPath {
 
-    private static final String CHALLENGES = "challenges";
-    private static final String DEPLOYMENTS = "deployments";
-    private static final String HOSTS = "hosts";
-    private static final String INSTANCES = "instances";
-    private static final String INSTANCE_ALLOCATION = "instanceallocation";
+    private static final String CHALLENGES = "polaris/challenges";
+    private static final String DEPLOYMENTS = "polaris/deployments";
+    private static final String HOSTS = "polaris/hosts";
+    private static final String INSTANCES = "polaris/instances";
+    private static final String INSTANCE_ALLOCATION = "polaris/instanceallocation";
 
     public static String path(final String... parts) {
         final StringJoiner stringJoiner = new StringJoiner("/");
