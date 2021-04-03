@@ -29,7 +29,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew polaris-controller:build
 
-      - uses: actions/upload-artifact@v2
-        with:
-          name: polaris.jar
-          path: polaris-controller/build/libs/polaris.jar
+#      - uses: actions/upload-artifact@v2
+#        with:
+#          name: polaris.jar
+#          path: polaris-controller/build/libs/polaris.jar
