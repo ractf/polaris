@@ -24,6 +24,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,7 +47,7 @@ public class AndromedaEmulationResource {
     @RolesAllowed("ANDROMEDA_CHALLENGE_SUBMIT")
     @Operation(summary = "Submit Andromeda Challenge", tags = {"Andromeda"},
             description = "Submits a challenges in a format compatible with Andromeda, to be converted to a Polaris challenge and deployment")
-    public void submitChallenge(final AndromedaChallenge challenge) {
+    public Response submitChallenge(final AndromedaChallenge challenge) {
         final ResourceQuota resourceQuota = new ResourceQuota(
                 (long) challenge.getResources().getMemory(),
                 0L,
@@ -62,6 +63,7 @@ public class AndromedaEmulationResource {
                 new StaticReplication("static", challenge.getReplicas()),
                 new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE));
         controller.createDeployment(deployment);
+        return Response.status(200).build();
     }
 
     @POST
