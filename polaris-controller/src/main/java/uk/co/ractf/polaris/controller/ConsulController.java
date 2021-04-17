@@ -224,7 +224,9 @@ public class ConsulController implements Controller, Managed {
             if (instanceData.isPresent()) {
                 try {
                     final Instance instance = Instance.parse(instanceData.get(), Instance.class);
-                    instances.add(instance);
+                    if (instance.getDeploymentID().equals(deployment)) {
+                        instances.add(instance);
+                    }
                 } catch (final JsonProcessingException exception) {
                     log.error("Error deserializing instance " + instancePath, exception);
                 }
@@ -270,12 +272,12 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public boolean lockDeployment(final Deployment deployment) {
-        return consul.keyValueClient().acquireLock(ConsulPath.deployment(deployment.getID()), sessionId);
+        return consul.keyValueClient().acquireLock(ConsulPath.deploymentLock(deployment.getID()), sessionId);
     }
 
     @Override
-    public void unlockDeployment(final Deployment deployment) {
-        consul.keyValueClient().releaseLock(ConsulPath.deployment(deployment.getID()), sessionId);
+    public boolean unlockDeployment(final Deployment deployment) {
+        return consul.keyValueClient().releaseLock(ConsulPath.deploymentLock(deployment.getID()), sessionId);
     }
 
 }

@@ -183,8 +183,9 @@ public class EphemeralController implements Controller, Managed {
     }
 
     @Override
-    public void unlockDeployment(final Deployment deployment) {
+    public boolean unlockDeployment(final Deployment deployment) {
         deploymentLocks.computeIfAbsent(deployment.getID(), x -> new Semaphore(1)).release();
+        return true;
     }
 
 }
