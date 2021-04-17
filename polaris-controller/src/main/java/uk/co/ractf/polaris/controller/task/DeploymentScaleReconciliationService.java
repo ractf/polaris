@@ -50,6 +50,7 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
                     for (int i = 0; i < scaleAmount; i++) {
                         final Host host = scheduler.scheduleChallenge(challenge, controller.getHosts().values());
                         final Instance instance = host.createInstance(challenge, deployment);
+                        log.debug("Scheduled instance of {} onto {}", instance.getID(), host.getID());
                         controller.registerInstance(deployment, instance);
                     }
                 } else {
