@@ -98,7 +98,8 @@ public class EmbeddedHost implements Host, Managed {
     @Override
     public Instance createInstance(final Challenge challenge, final Deployment deployment) {
         log.debug("Instance for {} created", challenge.getID());
-        final Instance instance = new Instance(UUID.randomUUID().toString(), deployment.getID(), challenge.getID(), getID());
+        final Instance instance = new Instance(UUID.randomUUID().toString(), deployment.getID(), challenge.getID(),
+                getID(), new ArrayList<>(), new HashMap<>());
         instances.put(instance.getID(), instance);
         return instance;
     }

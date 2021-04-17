@@ -76,6 +76,7 @@ public class AndromedaEmulationResource {
     public AndromedaInstance getInstance(final AndromedaInstanceRequest request) {
         final Instance instance = controller.getInstanceAllocator().allocate(
                 new InstanceRequest(request.getJob(), request.getUser(), ""));
+        System.out.println(instance.getPortBindings().size());
         return new AndromedaInstance(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(),
                 Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]));
     }
