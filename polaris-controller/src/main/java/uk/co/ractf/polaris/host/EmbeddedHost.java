@@ -1,9 +1,6 @@
 package uk.co.ractf.polaris.host;
 
-import com.github.dockerjava.api.model.ExposedPort;
-import com.github.dockerjava.api.model.InternetProtocol;
-import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.Ports;
+import com.github.dockerjava.api.model.*;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -33,6 +30,7 @@ public class EmbeddedHost implements Host, Managed {
     private static final Logger log = LoggerFactory.getLogger(EmbeddedHost.class);
 
     private final Controller controller;
+    private final PolarisConfiguration configuration;
     private final Map<Class<? extends Pod>, Runner<? extends Pod>> runners = new HashMap<>();
 
     private final Map<String, Instance> instances = new ConcurrentHashMap<>();
@@ -53,6 +51,7 @@ public class EmbeddedHost implements Host, Managed {
                         final Set<Runner> runnerSet,
                         @HostServices final Set<Service> services) {
         this.controller = controller;
+        this.configuration = polarisConfiguration;
         this.runnerSet = runnerSet;
         this.services = services;
 
@@ -165,6 +164,13 @@ public class EmbeddedHost implements Host, Managed {
             ports.add(externalPort);
         }
         return portBindings;
+    }
+
+    @Override
+    public AuthConfig getAuthConfig() {
+        return new AuthConfig()
+                .withUsername(configuration.getRegistryUsername())
+                .withPassword(configuration.getRegistryPassword());
     }
 
     @SuppressWarnings("unchecked")

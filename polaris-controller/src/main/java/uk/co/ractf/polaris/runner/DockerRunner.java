@@ -5,10 +5,7 @@ import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.command.StartContainerCmd;
-import com.github.dockerjava.api.model.Capability;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.RestartPolicy;
+import com.github.dockerjava.api.model.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
@@ -157,7 +154,7 @@ public class DockerRunner implements Runner<Container> {
         }
         try {
             downloadingImages.add(pod.getImage());
-            dockerClient.pullImageCmd(pod.getImage()).exec(new PullImageResultCallback()).awaitCompletion();
+            dockerClient.pullImageCmd(pod.getImage()).withAuthConfig(host.getAuthConfig()).exec(new PullImageResultCallback()).awaitCompletion();
             images.add(pod.getImage());
         } catch (final InterruptedException exception) {
             log.error("Error pulling image", exception);

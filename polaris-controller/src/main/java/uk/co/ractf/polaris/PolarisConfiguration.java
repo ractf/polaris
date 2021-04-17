@@ -28,6 +28,8 @@ public class PolarisConfiguration extends Configuration {
     private int unadvertisedMinPort;
     private int unadvertisedMaxPort;
     private int hostInfoSyncFrequency;
+    private String registryUsername;
+    private String registryPassword;
 
     @NotNull
     @Valid
@@ -163,5 +165,21 @@ public class PolarisConfiguration extends Configuration {
 
     public void setHostInfoSyncFrequency(final int hostInfoSyncFrequency) {
         this.hostInfoSyncFrequency = hostInfoSyncFrequency;
+    }
+
+    public String getRegistryUsername() {
+        return registryUsername;
+    }
+
+    public void setRegistryUsername(final String registryUsername) {
+        this.registryUsername = registryUsername;
+    }
+
+    public String getRegistryPassword() {
+        return registryPassword;
+    }
+
+    public void setRegistryPassword(final String registryPassword) {
+        this.registryPassword = registryPassword;
     }
 }
