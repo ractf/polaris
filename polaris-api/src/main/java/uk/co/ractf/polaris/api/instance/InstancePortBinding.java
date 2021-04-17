@@ -27,7 +27,10 @@ public class InstancePortBinding extends JsonRepresentable {
      * @param advertise should regular users be shown this port?
      */
     @Contract(pure = true)
-    public InstancePortBinding(final String port, final String ip, final boolean advertise) {
+    public InstancePortBinding(
+            @JsonProperty("port") final String port,
+            @JsonProperty("ip") final String ip,
+            @JsonProperty("advertise") final boolean advertise) {
         this.port = port;
         this.ip = ip;
         this.advertise = advertise;

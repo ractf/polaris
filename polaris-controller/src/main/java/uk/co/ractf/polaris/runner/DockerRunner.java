@@ -8,6 +8,9 @@ import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.model.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.orbitz.consul.Consul;
+import com.orbitz.consul.model.kv.Operation;
+import com.orbitz.consul.model.kv.Verb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.challenge.Challenge;
@@ -15,6 +18,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instance.InstancePortBinding;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.PortMapping;
+import uk.co.ractf.polaris.consul.ConsulPath;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.host.Host;
 
@@ -34,6 +38,7 @@ public class DockerRunner implements Runner<Container> {
     private final DockerClient dockerClient;
     private final Controller controller;
     private final Host host;
+    private final Consul consul;
 
     private final Set<String> images = new ConcurrentSkipListSet<>();
     private final Set<String> downloadingImages = new ConcurrentSkipListSet<>();
@@ -41,10 +46,12 @@ public class DockerRunner implements Runner<Container> {
     private final Set<String> startingContainers = new ConcurrentSkipListSet<>();
 
     @Inject
-    public DockerRunner(final DockerClient dockerClient, final Controller controller, final Host host) {
+    public DockerRunner(final DockerClient dockerClient, final Controller controller, final Host host,
+                        final Consul consul) {
         this.dockerClient = dockerClient;
         this.controller = controller;
         this.host = host;
+        this.consul = consul;
     }
 
     private Capability[] createCapabilityArray(final List<String> capabilities) {
@@ -102,6 +109,12 @@ public class DockerRunner implements Runner<Container> {
                 instance.addPortBinding(new InstancePortBinding(entry.getValue().getBinding().getHostPortSpec(),
                         host.getHostInfo().getPublicIP(), entry.getKey().isAdvertise()));
             }
+            log.info("Updating instance {} {}", instance.getID(), instance.toJsonString());
+            consul.keyValueClient().performTransaction(
+                    Operation.builder(Verb.SET)
+                            .key(ConsulPath.instance(instance.getID()))
+                            .value(instance.toJsonString())
+                            .build());
         } catch (final Exception e) {
             e.printStackTrace();
         }

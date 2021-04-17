@@ -43,15 +43,18 @@ public class Instance extends JsonRepresentable {
      * @param hostID the id of the host its scheduled on
      */
     @Contract(pure = true)
-    public Instance(
-            @JsonProperty("id") final String id,
-            @JsonProperty("deployment") final String deploymentID,
-            @JsonProperty("challenge") final String challengeID,
-            @JsonProperty("host") final String hostID) {
+    public Instance(@JsonProperty("id") final String id,
+                    @JsonProperty("deployment") final String deploymentID,
+                    @JsonProperty("challenge") final String challengeID,
+                    @JsonProperty("host") final String hostID,
+                    @JsonProperty("ports") final List<InstancePortBinding> portBindings,
+                    @JsonProperty("randomEnv") final Map<String, String> randomEnv) {
         this.id = id;
         this.deploymentID = deploymentID;
         this.challengeID = challengeID;
         this.hostID = hostID;
+        this.portBindings = portBindings;
+        this.randomEnv = randomEnv;
     }
 
     @JsonProperty("id")
