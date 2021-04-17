@@ -92,7 +92,7 @@ public class ChallengeResource {
     @Operation(summary = "Submit Challenge", tags = {"Challenge"},
             description = "Submits a challenge object to the controller")
     public void submitChallenge(final Challenge challenge) {
-        controller.submitChallenge(challenge);
+        controller.createChallenge(challenge);
     }
 
     /**

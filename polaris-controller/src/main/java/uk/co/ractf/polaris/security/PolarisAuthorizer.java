@@ -9,6 +9,7 @@ import uk.co.ractf.polaris.PolarisConfiguration;
 import javax.ws.rs.container.ContainerRequestContext;
 
 @Singleton
+@SuppressWarnings("deprecation")
 public class PolarisAuthorizer implements Authorizer<PolarisUser> {
 
     private final PolarisConfiguration polarisConfiguration;

@@ -98,7 +98,7 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public void submitChallenge(final Challenge challenge) {
+    public void createChallenge(final Challenge challenge) {
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.challenge(challenge.getID()))

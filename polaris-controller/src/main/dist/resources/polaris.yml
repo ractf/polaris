@@ -23,6 +23,9 @@ singleUserRoles:
   - ALLOCATE_INSTANCE
   - INSTANCE_LIST
   - HOST_GET
+  - ANDROMEDA_CHALLENGE_SUBMIT
+  - ANDROMEDA_GET_INSTANCE
+  - ANDROMEDA_RESET_INSTANCE
 client:
   refreshInterval: 10 seconds
 consul:
