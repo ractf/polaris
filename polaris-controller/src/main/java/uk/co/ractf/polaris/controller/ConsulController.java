@@ -34,6 +34,7 @@ public class ConsulController implements Controller, Managed {
     private final Map<String, Host> hosts = new ConcurrentHashMap<>();
     private final InstanceAllocator instanceAllocator;
     private final Set<Service> services;
+    private final UUID uuid = UUID.randomUUID();
 
     @Inject
     public ConsulController(final PolarisConfiguration config,
@@ -264,12 +265,12 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public boolean lockDeployment(final Deployment deployment) {
-        return consul.keyValueClient().acquireLock(ConsulPath.deployment(deployment.getID()), "polaris");
+        return consul.keyValueClient().acquireLock(ConsulPath.deployment(deployment.getID()), uuid.toString());
     }
 
     @Override
     public void unlockDeployment(final Deployment deployment) {
-        consul.keyValueClient().releaseLock(ConsulPath.deployment(deployment.getID()), "polaris");
+        consul.keyValueClient().releaseLock(ConsulPath.deployment(deployment.getID()), uuid.toString());
     }
 
 }
