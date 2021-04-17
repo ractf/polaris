@@ -70,7 +70,7 @@ public class EphemeralController implements Controller, Managed {
     }
 
     @Override
-    public void submitChallenge(final Challenge challenge) {
+    public void createChallenge(final Challenge challenge) {
         challenges.put(challenge.getID(), challenge);
     }
 

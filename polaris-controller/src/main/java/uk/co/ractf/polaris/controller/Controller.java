@@ -45,7 +45,7 @@ public interface Controller {
      *
      * @param challenge the challenge object
      */
-    void submitChallenge(final Challenge challenge);
+    void createChallenge(final Challenge challenge);
 
     /**
      * Remove a {@link Challenge}
