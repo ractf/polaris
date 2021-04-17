@@ -7,6 +7,8 @@ import com.google.inject.Singleton;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.kv.Operation;
 import com.orbitz.consul.model.kv.Verb;
+import com.orbitz.consul.model.session.ImmutableSession;
+import com.orbitz.consul.model.session.Session;
 import io.dropwizard.lifecycle.Managed;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -34,7 +36,8 @@ public class ConsulController implements Controller, Managed {
     private final Map<String, Host> hosts = new ConcurrentHashMap<>();
     private final InstanceAllocator instanceAllocator;
     private final Set<Service> services;
-    private final UUID uuid = UUID.randomUUID();
+    private final Session session;
+    private final String sessionId;
 
     @Inject
     public ConsulController(final PolarisConfiguration config,
@@ -44,6 +47,8 @@ public class ConsulController implements Controller, Managed {
         this.consul = consul;
         this.instanceAllocator = new EphemeralInstanceAllocator(this);
         this.services = services;
+        this.session = ImmutableSession.builder().name("polaris-controller").build();
+        this.sessionId = consul.sessionClient().createSession(session).getId();
     }
 
     @Override
@@ -265,12 +270,12 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public boolean lockDeployment(final Deployment deployment) {
-        return consul.keyValueClient().acquireLock(ConsulPath.deployment(deployment.getID()), uuid.toString());
+        return consul.keyValueClient().acquireLock(ConsulPath.deployment(deployment.getID()), sessionId);
     }
 
     @Override
     public void unlockDeployment(final Deployment deployment) {
-        consul.keyValueClient().releaseLock(ConsulPath.deployment(deployment.getID()), uuid.toString());
+        consul.keyValueClient().releaseLock(ConsulPath.deployment(deployment.getID()), sessionId);
     }
 
 }
