@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.controller;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
@@ -187,7 +188,9 @@ public interface Controller {
      * Frees the lock on a deployment's set of instances
      *
      * @param deployment the deployment
+     * @return if the lock was successfully released
      */
-    void unlockDeployment(final Deployment deployment);
+    @CanIgnoreReturnValue
+    boolean unlockDeployment(final Deployment deployment);
 
 }

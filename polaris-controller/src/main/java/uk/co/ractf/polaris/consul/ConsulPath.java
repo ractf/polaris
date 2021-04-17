@@ -34,6 +34,10 @@ public class ConsulPath {
         return path(DEPLOYMENTS, id);
     }
 
+    public static String deploymentLock(final String id) {
+        return path(DEPLOYMENTS, id, "lock");
+    }
+
     public static String hosts() {
         return HOSTS;
     }

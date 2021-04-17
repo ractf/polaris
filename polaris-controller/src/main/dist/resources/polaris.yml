@@ -1,6 +1,6 @@
 threadpoolSize: 5
 taskThreadpoolSize: 5
-controllerType: ephemeral
+controllerType: consul
 hosts: [embedded]
 reconciliationTickFrequency: 200
 schedulingAlgorithm: roundRobin
@@ -32,3 +32,6 @@ consul:
   endpoint: ${CONSUL-URL:-localhost:8500}
   serviceId: polaris-controller
   retryInterval: 5 seconds
+logging:
+  loggers:
+    uk.co.ractf: TRACE

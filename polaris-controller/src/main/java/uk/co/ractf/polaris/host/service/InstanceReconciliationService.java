@@ -6,6 +6,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.PolarisConfiguration;
@@ -34,7 +35,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
     private final LoadingCache<String, String> recentlyStartedInstances = CacheBuilder.newBuilder()
             .build(new CacheLoader<>() {
                 @Override
-                public String load(final String s) {
+                public String load(final @NotNull String s) {
                     return s;
                 }
             });
