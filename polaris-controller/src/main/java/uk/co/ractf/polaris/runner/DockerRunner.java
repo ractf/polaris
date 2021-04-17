@@ -154,7 +154,11 @@ public class DockerRunner implements Runner<Container> {
         }
         try {
             downloadingImages.add(pod.getImage());
-            dockerClient.pullImageCmd(pod.getImage()).withAuthConfig(host.getAuthConfig()).exec(new PullImageResultCallback()).awaitCompletion();
+            String tag = "latest";
+            if (pod.getImage().replaceAll("http(s?):", "").contains(":")) {
+                tag = pod.getImage().split(":")[1];
+            }
+            dockerClient.pullImageCmd(pod.getImage()).withTag(tag).withAuthConfig(host.getAuthConfig()).exec(new PullImageResultCallback()).awaitCompletion();
             images.add(pod.getImage());
         } catch (final InterruptedException exception) {
             log.error("Error pulling image", exception);
