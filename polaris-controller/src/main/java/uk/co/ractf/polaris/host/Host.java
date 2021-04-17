@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.host;
 
+import com.github.dockerjava.api.model.AuthConfig;
 import com.github.dockerjava.api.model.PortBinding;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
@@ -82,5 +83,12 @@ public interface Host {
      * @return the map of portmapping to portbinding
      */
     Map<PortMapping, PortBinding> createPortBindings(List<PortMapping> portMappings);
+
+    /**
+     * Gets the docker registry auth config for the host.
+     *
+     * @return the auth config
+     */
+    AuthConfig getAuthConfig();
 
 }
