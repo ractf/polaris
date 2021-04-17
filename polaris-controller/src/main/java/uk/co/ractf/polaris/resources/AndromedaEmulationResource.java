@@ -5,6 +5,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallenge;
+import uk.co.ractf.polaris.api.andromeda.AndromedaChallengeSubmitResponse;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstanceRequest;
 import uk.co.ractf.polaris.api.challenge.Challenge;
@@ -63,7 +64,7 @@ public class AndromedaEmulationResource {
                 new StaticReplication("static", challenge.getReplicas()),
                 new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE));
         controller.createDeployment(deployment);
-        return Response.status(200).build();
+        return Response.status(200).entity(new AndromedaChallengeSubmitResponse(challenge.getName())).build();
     }
 
     @POST
