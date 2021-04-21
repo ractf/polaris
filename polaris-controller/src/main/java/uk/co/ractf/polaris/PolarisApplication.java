@@ -7,6 +7,8 @@ import com.smoketurner.dropwizard.consul.ConsulFactory;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.prometheus.client.CollectorRegistry;
+import io.prometheus.client.dropwizard.DropwizardExports;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -52,6 +54,8 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
                         "uk.co.ractf.polaris.security",
                         "uk.co.ractf.polaris.util")
                 .build());
+
+        CollectorRegistry.defaultRegistry.register(new DropwizardExports(bootstrap.getMetricRegistry()));
     }
 
     @Override
