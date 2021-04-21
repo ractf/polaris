@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
+import uk.co.ractf.polaris.PolarisConfiguration;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallenge;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallengeSubmitResponse;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
@@ -35,10 +36,12 @@ import java.util.HashMap;
 public class AndromedaEmulationResource {
 
     private final Controller controller;
+    private final PolarisConfiguration configuration;
 
     @Inject
-    public AndromedaEmulationResource(final Controller controller) {
+    public AndromedaEmulationResource(final Controller controller, final PolarisConfiguration configuration) {
         this.controller = controller;
+        this.configuration = configuration;
     }
 
     @POST
@@ -59,6 +62,8 @@ public class AndromedaEmulationResource {
                 new ArrayList<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>());
         final Challenge polarisChallenge = new Challenge(challenge.getName(), Collections.singletonList(pod));
+        configuration.setRegistryUsername(challenge.getRegistryAuth().getUsername());
+        configuration.setRegistryPassword(challenge.getRegistryAuth().getPassword());
         controller.createChallenge(polarisChallenge);
         final Deployment deployment = new Deployment(challenge.getName(), challenge.getName(),
                 new StaticReplication("static", challenge.getReplicas()),
