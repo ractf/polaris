@@ -25,18 +25,21 @@ public class AndromedaChallenge {
     private final Integer replicas;
     private final AndromedaResources resources;
     private final String image;
+    private final AndromedaAuthentication registryAuth;
 
     public AndromedaChallenge(
             @JsonProperty("name") final String name,
             @JsonProperty("port") final Integer port,
             @JsonProperty("replicas") final Integer replicas,
             @JsonProperty("resources") final AndromedaResources resources,
-            @JsonProperty("image") final String image) {
+            @JsonProperty("image") final String image,
+            @JsonProperty("registryAuth") final AndromedaAuthentication registryAuth) {
         this.name = name;
         this.port = port;
         this.replicas = replicas;
         this.resources = resources;
         this.image = image;
+        this.registryAuth = registryAuth;
     }
 
     public String getName() {
@@ -57,5 +60,9 @@ public class AndromedaChallenge {
 
     public String getImage() {
         return image;
+    }
+
+    public AndromedaAuthentication getRegistryAuth() {
+        return registryAuth;
     }
 }
