@@ -12,6 +12,7 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
  * }
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Deprecated
 public class AndromedaResources extends JsonRepresentable {
 
     private final Integer memory;

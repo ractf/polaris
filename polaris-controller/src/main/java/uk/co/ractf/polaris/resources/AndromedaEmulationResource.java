@@ -33,6 +33,7 @@ import java.util.HashMap;
 
 @Path("/andromeda")
 @Produces(MediaType.APPLICATION_JSON)
+@Deprecated
 public class AndromedaEmulationResource {
 
     private final Controller controller;
