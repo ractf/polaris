@@ -80,6 +80,9 @@ public class AndromedaEmulationResource {
     @Operation(summary = "Request Instance Allocation", tags = {"Andromeda"},
             description = "Requests an instance allocation from polaris in andromda's format")
     public AndromedaInstance getInstance(final AndromedaInstanceRequest request) {
+        if (controller.getChallenge(request.getJob()) == null) {
+            Response.status(404).build();
+        }
         final Instance instance = controller.getInstanceAllocator().allocate(
                 new InstanceRequest(request.getJob(), request.getUser(), ""));
         return new AndromedaInstance(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(),
@@ -94,6 +97,9 @@ public class AndromedaEmulationResource {
     @Operation(summary = "Request Instance Reset", tags = {"Andromeda"},
             description = "Reset an instance allocation from polaris in andromda's format")
     public AndromedaInstance resetInstance(final AndromedaInstanceRequest request) {
+        if (controller.getChallenge(request.getJob()) == null) {
+            Response.status(404).build();
+        }
         final Instance instance = controller.getInstanceAllocator().requestNewAllocation(
                 new InstanceRequest(request.getJob(), request.getUser(), ""));
         return new AndromedaInstance(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(),
