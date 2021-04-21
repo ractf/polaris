@@ -2,6 +2,7 @@ package uk.co.ractf.polaris;
 
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
+import com.codahale.metrics.servlets.MetricsServlet;
 import com.smoketurner.dropwizard.consul.ConsulBundle;
 import com.smoketurner.dropwizard.consul.ConsulFactory;
 import io.dropwizard.Application;
@@ -14,6 +15,9 @@ import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
@@ -56,6 +60,17 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
                 .build());
 
         CollectorRegistry.defaultRegistry.register(new DropwizardExports(bootstrap.getMetricRegistry()));
+
+        final Server server = new Server(8082);
+        final ServletContextHandler context = new ServletContextHandler();
+        context.setContextPath("/");
+        server.setHandler(context);
+        context.addServlet(new ServletHolder(new MetricsServlet()), "/metrics");
+        try {
+            server.start();
+        } catch (final Exception e) {
+            log.error("Could not start prometheus integration", e);
+        }
     }
 
     @Override
