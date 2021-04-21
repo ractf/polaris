@@ -92,7 +92,7 @@ public class DockerRunner implements Runner<Container> {
                                     .withCapDrop(createCapabilityArray(container.getCapDrop()))
                                     .withNanoCPUs(container.getResourceQuota().getNanoCPUs())
                                     .withMemory(container.getResourceQuota().getMemory())
-                                    .withRestartPolicy(RestartPolicy.parse(container.getRestartPolicy()))
+                                    .withRestartPolicy(RestartPolicy.alwaysRestart())
                                     .withMemorySwap(container.getResourceQuota().getSwap()));
 
             if (container.getEntrypoint().size() > 0) {

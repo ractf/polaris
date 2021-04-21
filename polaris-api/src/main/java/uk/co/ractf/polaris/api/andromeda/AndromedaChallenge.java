@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * }
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Deprecated
 public class AndromedaChallenge {
 
     private final String name;
