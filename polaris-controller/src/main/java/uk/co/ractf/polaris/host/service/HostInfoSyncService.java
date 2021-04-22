@@ -16,7 +16,10 @@ import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -43,6 +46,8 @@ public class HostInfoSyncService extends AbstractScheduledService {
     @Override
     protected void runOneIteration() {
         try {
+            final Map<String, String> labels = new HashMap<>();
+            labels.put("aslr", Files.readString(Path.of("/proc/sys/kernel/randomize_va_space")));
             final OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
             final HostInfo hostInfo = new HostInfo(
                     host.getID(),
@@ -58,10 +63,10 @@ public class HostInfoSyncService extends AbstractScheduledService {
                     operatingSystemMXBean.getFreePhysicalMemorySize(),
                     operatingSystemMXBean.getTotalSwapSpaceSize(),
                     operatingSystemMXBean.getFreeSwapSpaceSize(),
-                    new HashMap<>());
+                    labels);
 
             host.setHostInfo(hostInfo);
-        } catch (UnknownHostException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
     }
