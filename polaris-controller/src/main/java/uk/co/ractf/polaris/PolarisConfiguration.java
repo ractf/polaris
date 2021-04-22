@@ -30,6 +30,7 @@ public class PolarisConfiguration extends Configuration {
     private int hostInfoSyncFrequency;
     private String registryUsername;
     private String registryPassword;
+    private boolean killOrphans;
 
     @NotNull
     @Valid
@@ -181,5 +182,13 @@ public class PolarisConfiguration extends Configuration {
 
     public void setRegistryPassword(final String registryPassword) {
         this.registryPassword = registryPassword;
+    }
+
+    public boolean isKillOrphans() {
+        return killOrphans;
+    }
+
+    public void setKillOrphans(final boolean killOrphans) {
+        this.killOrphans = killOrphans;
     }
 }
