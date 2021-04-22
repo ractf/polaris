@@ -65,7 +65,7 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
         final ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
         server.setHandler(context);
-        context.addServlet(new ServletHolder(new MetricsServlet(bootstrap.getMetricRegistry())), "/metrics");
+        context.addServlet(new ServletHolder(new MetricsServlet(bootstrap.getMetricRegistry())), "/prometheus");
         try {
             server.start();
         } catch (final Exception e) {
