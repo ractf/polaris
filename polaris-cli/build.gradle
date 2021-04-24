@@ -111,8 +111,8 @@ buildRpm {
         addParentDirs = false
     }
 
-    from(shadowJar.outputs.files) {
-        into '/opt/polaris'
+    from(nativeImage.outputs.files) {
+        into '/usr/bin'
         createDirectoryEntry = true
     }
 }
