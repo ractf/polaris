@@ -67,4 +67,21 @@ public class DeploymentScaleReconciliationServiceTest {
         verify(controller, times(5)).unregisterInstance(any(), any());
     }
 
+    @Test
+    public void testFailedToObtainLock() {
+        when(controller.lockDeployment(any())).thenReturn(false);
+        when(controller.unlockDeployment(any())).thenReturn(false);
+        final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(controller, scheduler, config);
+        service.runOneIteration();
+        verifyNoInteractions(host);
+    }
+
+    @Test
+    public void testExceptionThrown() {
+        when(controller.lockDeployment(any())).thenThrow(new RuntimeException());
+        final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(controller, scheduler, config);
+        service.runOneIteration();
+        verifyNoInteractions(host);
+    }
+
 }
