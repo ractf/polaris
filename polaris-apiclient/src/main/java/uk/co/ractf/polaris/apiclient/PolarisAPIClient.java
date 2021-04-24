@@ -1,10 +1,7 @@
 package uk.co.ractf.polaris.apiclient;
 
 import uk.co.ractf.polaris.api.challenge.Challenge;
-import uk.co.ractf.polaris.apiclient.command.GetChallengeCommand;
-import uk.co.ractf.polaris.apiclient.command.ListChallengesCommand;
-import uk.co.ractf.polaris.apiclient.command.PingCommand;
-import uk.co.ractf.polaris.apiclient.command.SubmitChallengeCommand;
+import uk.co.ractf.polaris.apiclient.command.*;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 import uk.co.ractf.polaris.apiclient.transport.HttpClientTransport;
 
@@ -40,4 +37,10 @@ public class PolarisAPIClient implements APIClient {
     public SubmitChallengeCommand submitChallenge(final Challenge challenge) {
         return new SubmitChallengeCommand(transport, challenge);
     }
+
+    @Override
+    public DeleteChallengeCommand deleteChallenge(final String id) {
+        return new DeleteChallengeCommand(transport, id);
+    }
+
 }
