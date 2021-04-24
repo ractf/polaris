@@ -69,7 +69,7 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
                 controller.unlockDeployment(deployment);
             }
         } catch (final Exception e) {
-            e.printStackTrace();
+            log.error("Error reconciling deployments", e);
         }
     }
 
