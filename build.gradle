@@ -2,7 +2,7 @@ allprojects {
     apply plugin: 'java'
 
     group = 'uk.co.ractf'
-    version = '0.0.24'
+    version = '0.0.25'
 
 
     sourceCompatibility = JavaVersion.VERSION_11
