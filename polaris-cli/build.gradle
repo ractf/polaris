@@ -104,13 +104,6 @@ buildRpm {
     user = 'root'
     group = 'root'
 
-    requires('java-11-openjdk')
-
-    from('src/main/dist/bin') {
-        into '/etc/systemd/system'
-        addParentDirs = false
-    }
-
     from(nativeImage.outputs.files) {
         into '/usr/bin'
         createDirectoryEntry = true
