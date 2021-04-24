@@ -7,11 +7,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.challenge.ChallengeSubmitResponse;
 import uk.co.ractf.polaris.controller.Controller;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -91,8 +93,16 @@ public class ChallengeResource {
     @RolesAllowed("CHALLENGE_SUBMIT")
     @Operation(summary = "Submit Challenge", tags = {"Challenge"},
             description = "Submits a challenge object to the controller")
-    public void submitChallenge(final Challenge challenge) {
-        controller.createChallenge(challenge);
+    public Response submitChallenge(final Challenge challenge) {
+        if (controller.getChallenge(challenge.getID()) != null) {
+            controller.createChallenge(challenge);
+            Response.ok(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.OK, challenge.getID())).build();
+        }
+
+        return Response
+                .status(400)
+                .entity(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.DUPLICATE, challenge.getID()))
+                .build();
     }
 
     /**

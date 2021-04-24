@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.deployment.Allocation;
@@ -57,14 +58,7 @@ public class InstanceAllocationResource {
             description = "Allocating an instance to the user, if the user/team has already been allocated an instance, they may be given the same one based on allocation rules.")
     public InstanceResponse getInstance(final InstanceRequest instanceRequest) {
         final Instance instance = controller.getInstanceAllocator().allocate(instanceRequest);
-        if (instance == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
-        final Host host = controller.getHost(instance.getHostID());
-        if (host == null) {
-            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
-        }
-        return new InstanceResponse(host.getHostInfo().getPublicIP(), instance);
+        return createInstanceResponse(instance);
     }
 
     /**
@@ -85,6 +79,11 @@ public class InstanceAllocationResource {
             description = "Get an instance allocation that is guaranteed to be different from the last one")
     public InstanceResponse newInstance(final InstanceRequest instanceRequest) {
         final Instance instance = controller.getInstanceAllocator().requestNewAllocation(instanceRequest);
+        return createInstanceResponse(instance);
+    }
+
+    @NotNull
+    private InstanceResponse createInstanceResponse(final Instance instance) {
         if (instance == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
