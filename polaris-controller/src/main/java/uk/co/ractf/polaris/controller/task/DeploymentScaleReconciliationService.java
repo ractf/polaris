@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.PolarisConfiguration;
+import uk.co.ractf.polaris.annotation.ExcludeFromGeneratedReport;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
@@ -74,6 +75,7 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
     }
 
     @Override
+    @ExcludeFromGeneratedReport
     protected Scheduler scheduler() {
         return Scheduler.newFixedRateSchedule(polarisConfiguration.getReconciliationTickFrequency(), polarisConfiguration.getReconciliationTickFrequency(), TimeUnit.MILLISECONDS);
     }
