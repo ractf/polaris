@@ -48,6 +48,7 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
 shadowJar {
     mergeServiceFiles()
     exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
