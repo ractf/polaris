@@ -1,8 +1,31 @@
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+        classpath "com.netflix.nebula:gradle-ospackage-plugin:8.5.1"
+        classpath "com.palantir.gradle.gitversion:gradle-git-version:0.12.3"
+    }
+}
+
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'application'
+apply plugin: 'nebula.ospackage'
+apply plugin: 'com.palantir.git-version'
+
+mainClassName = 'uk.co.ractf.polaris.cli.Main'
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation project(':polaris-api')
     implementation 'io.dropwizard:dropwizard-jackson:2.0.19'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
@@ -10,4 +33,48 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+shadowJar {
+    mergeServiceFiles()
+    exclude 'META-INF/*.DSA', 'META-INF/*.RSA', 'META-INF/*.SF'
+    manifest {
+        attributes 'Implementation-Title': rootProject.name
+        attributes 'Implementation-Version': rootProject.version
+        attributes 'Implementation-Vendor-Id': rootProject.group
+        attributes 'Build-Time': ZonedDateTime.now(ZoneId.of("UTC"))
+                .format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+        attributes 'Built-By': InetAddress.localHost.hostName
+        attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
+        attributes 'Main-Class': mainClassName
+    }
+    archiveName 'polaris-cli.jar'
+}
+
+buildRpm {
+    packageName = 'polaris-cli'
+    def details = versionDetails(prefix: 'rc@')
+    release = details.lastTag
+    version = rootProject.version
+    arch = 'X86_64'
+    os = 'LINUX'
+    license = 'AGPL'
+    url = 'https://github.com/ractf/polaris'
+    vendor = 'RACTF'
+    packageDescription = 'The RACTF challenge scheduler'
+    maintainer = 'RACTF <admins@ractf.co.uk>'
+    user = 'root'
+    group = 'root'
+
+    requires('java-11-openjdk')
+
+    from('src/main/dist/bin') {
+        into '/etc/systemd/system'
+        addParentDirs = false
+    }
+
+    from(shadowJar.outputs.files) {
+        into '/opt/polaris'
+        createDirectoryEntry = true
+    }
 }
