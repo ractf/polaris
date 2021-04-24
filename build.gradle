@@ -1,5 +1,6 @@
 allprojects {
     apply plugin: 'java'
+    apply plugin: uk.co.ractf.polaris.PolarisPlugin
 
     group = 'uk.co.ractf'
     version = '0.0.26'

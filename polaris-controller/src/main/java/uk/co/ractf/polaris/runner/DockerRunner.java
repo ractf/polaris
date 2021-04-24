@@ -80,6 +80,10 @@ public class DockerRunner implements Runner<Container> {
             labels.put("polaris-pod", container.getID());
 
             final Map<PortMapping, PortBinding> portBindings = host.createPortBindings(container.getPortMappings());
+            for (Map.Entry<PortMapping, PortBinding> portShit : portBindings.entrySet()) {
+                System.out.println(portShit.getKey());
+                System.out.println(portShit.getValue());
+            }
 
             CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(container.getImage());
             createContainerCmd = createContainerCmd
