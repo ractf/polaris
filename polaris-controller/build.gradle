@@ -26,23 +26,23 @@ repositories {
 
 dependencies {
     implementation project(':polaris-api')
-    implementation 'io.dropwizard:dropwizard-core:2.0.19'
-    implementation 'io.dropwizard:dropwizard-auth:2.0.19'
-    implementation 'com.smoketurner.dropwizard:consul-core:2.0.12-1'
-    implementation 'com.smoketurner.dropwizard:consul-ribbon:2.0.12-1'
+    implementation "io.dropwizard:dropwizard-core:$dropwizardVersion"
+    implementation "io.dropwizard:dropwizard-auth:$dropwizardVersion"
+    implementation "com.smoketurner.dropwizard:consul-core:2.0.12-1"
+    implementation "com.smoketurner.dropwizard:consul-ribbon:2.0.12-1"
     implementation "io.swagger.core.v3:swagger-core:2.1.7"
     implementation "io.swagger.core.v3:swagger-jaxrs2:2.1.7"
-    implementation 'io.swagger.core.v3:swagger-integration:2.1.7'
-    implementation 'com.github.docker-java:docker-java-core:3.2.7'
-    implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.2.7'
-    implementation 'org.jetbrains:annotations:20.1.0'
-    implementation 'ru.vyarus:dropwizard-guicey:5.2.0'
-    implementation 'io.prometheus:simpleclient_dropwizard:0.10.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    testImplementation 'io.dropwizard:dropwizard-testing:2.0.19'
-    testImplementation 'org.assertj:assertj-core:3.11.1'
-    testImplementation 'org.mockito:mockito-core:3.+'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation "io.swagger.core.v3:swagger-integration:2.1.7"
+    implementation "com.github.docker-java:docker-java-core:3.2.7"
+    implementation "com.github.docker-java:docker-java-transport-httpclient5:3.2.7"
+    implementation "org.jetbrains:annotations:20.1.0"
+    implementation "ru.vyarus:dropwizard-guicey:5.2.0"
+    implementation "io.prometheus:simpleclient_dropwizard:0.10.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+    testImplementation "io.dropwizard:dropwizard-testing:$dropwizardVersion"
+    testImplementation "org.assertj:assertj-core:3.11.1"
+    testImplementation "org.mockito:mockito-core:3.+"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 
 test {
