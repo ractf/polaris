@@ -79,14 +79,15 @@ public class AndromedaEmulationResource {
     @RolesAllowed("ANDROMEDA_GET_INSTANCE")
     @Operation(summary = "Request Instance Allocation", tags = {"Andromeda"},
             description = "Requests an instance allocation from polaris in andromda's format")
-    public AndromedaInstance getInstance(final AndromedaInstanceRequest request) {
+    public Response getInstance(final AndromedaInstanceRequest request) {
         if (controller.getChallenge(request.getJob()) == null) {
-            Response.status(404).build();
+            return Response.status(404).build();
         }
         final Instance instance = controller.getInstanceAllocator().allocate(
                 new InstanceRequest(request.getJob(), request.getUser(), ""));
-        return new AndromedaInstance(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(),
-                Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]));
+        return Response.status(200).entity(
+                new AndromedaInstance(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(),
+                        Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]))).build();
     }
 
     @POST
