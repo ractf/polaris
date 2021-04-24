@@ -16,6 +16,7 @@ import org.dhatim.dropwizard.prometheus.PrometheusBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
+import uk.co.ractf.polaris.metrics.PolarisMetricSet;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,11 +42,13 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
         });
 
         bootstrap.addBundle(GuiceBundle.builder()
-                .modules(new PolarisModule())
+                .modules(new PolarisModule(bootstrap))
                 //dropwizard-guicey's autoconfig will instantiate *all* implementations of controller and host if we let it see them
-                .enableAutoConfig("uk.co.ractf.polaris.consul",
+                .enableAutoConfig(
+                        "uk.co.ractf.polaris.consul",
                         "uk.co.ractf.polaris.healthchecks",
                         "uk.co.ractf.polaris.instanceallocation",
+                        "uk.co.ractf.polaris.metrics",
                         "uk.co.ractf.polaris.replication",
                         "uk.co.ractf.polaris.resources",
                         "uk.co.ractf.polaris.runner",
@@ -54,7 +57,7 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
                         "uk.co.ractf.polaris.util")
                 .build());
 
-        bootstrap.addBundle(new PrometheusBundle());
+        bootstrap.addBundle(new PrometheusBundle());;
     }
 
     @Override
