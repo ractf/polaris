@@ -31,13 +31,13 @@ jobs:
           name: polaris-javadoc
           path: polaris-apiclient/build/docs/javadoc/
 
-      - uses: jakejarvis/s3-sync-action@master
-        if: github.ref == 'refs/heads/main'
-        with:
-          args: --acl public-read --follow-symlinks --delete
-        env:
-          AWS_S3_BUCKET: 'polaris-apiclient.ractf.co.uk'
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'eu-west-2'
-          SOURCE_DIR: 'polaris-apiclient/build/docs/javadoc'
+#      - uses: jakejarvis/s3-sync-action@master
+#        if: github.ref == 'refs/heads/main'
+#        with:
+#          args: --acl public-read --follow-symlinks --delete
+#        env:
+#          AWS_S3_BUCKET: 'polaris-apiclient.ractf.co.uk'
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          AWS_REGION: 'eu-west-2'
+#          SOURCE_DIR: 'polaris-apiclient/build/docs/javadoc'
