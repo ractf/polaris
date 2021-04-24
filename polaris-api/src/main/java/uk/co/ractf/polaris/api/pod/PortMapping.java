@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
+import java.util.Objects;
+
 /**
  * Represents the mapping between a port on a {@link Pod} and an external port
  *
@@ -50,4 +52,16 @@ public class PortMapping extends JsonRepresentable {
         return advertise;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final PortMapping that = (PortMapping) o;
+        return Objects.equals(port, that.port) && Objects.equals(protocol, that.protocol) && Objects.equals(advertise, that.advertise);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(port, protocol, advertise);
+    }
 }

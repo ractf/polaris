@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a healthcheck that checks a tcp service is healthy using a call/response sequence of payloads
@@ -70,4 +71,16 @@ public class TcpPayloadHealthCheck extends HealthCheck {
         return sequenceTimeout;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final TcpPayloadHealthCheck that = (TcpPayloadHealthCheck) o;
+        return Objects.equals(payloads, that.payloads) && Objects.equals(connectionTimeout, that.connectionTimeout) && Objects.equals(sequenceTimeout, that.sequenceTimeout);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(payloads, connectionTimeout, sequenceTimeout);
+    }
 }

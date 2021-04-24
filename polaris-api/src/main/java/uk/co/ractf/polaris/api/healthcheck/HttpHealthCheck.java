@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Objects;
+
 /**
  * Represents a HTTP healthcheck that checks that a http request to the container on a given port with a specified
  * path and vhost returns the given status code
@@ -67,4 +69,16 @@ public class HttpHealthCheck extends HealthCheck {
         return statusCode;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final HttpHealthCheck that = (HttpHealthCheck) o;
+        return Objects.equals(path, that.path) && Objects.equals(port, that.port) && Objects.equals(vhost, that.vhost) && Objects.equals(statusCode, that.statusCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(path, port, vhost, statusCode);
+    }
 }

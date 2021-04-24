@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Objects;
+
 /**
  * A {@link HealthCheck} that runs a command inside a pod, returns healthy if the given return value is returned.
  *
@@ -47,5 +49,18 @@ public class CommandHealthCheck extends HealthCheck {
 
     public Integer getReturnValue() {
         return returnValue;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final CommandHealthCheck that = (CommandHealthCheck) o;
+        return Objects.equals(command, that.command) && Objects.equals(returnValue, that.returnValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(command, returnValue);
     }
 }

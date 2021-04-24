@@ -6,10 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.healthcheck.HealthCheck;
 import uk.co.ractf.polaris.api.random.RandomEnv;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * An implementation of {@link Pod} that represents a Docker container
@@ -260,4 +257,27 @@ public class Container extends Pod {
         return generatedRandomEnv;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Container container = (Container) o;
+        return Objects.equals(image, container.image) && Objects.equals(repo, container.repo) &&
+                Objects.equals(entrypoint, container.entrypoint) && Objects.equals(env, container.env) &&
+                Objects.equals(randomEnv, container.randomEnv) && Objects.equals(labels, container.labels) &&
+                Objects.equals(affinity, container.affinity) && Objects.equals(antiAffinity, container.antiAffinity) &&
+                Objects.equals(resourceQuota, container.resourceQuota) &&
+                Objects.equals(restartPolicy, container.restartPolicy) && Objects.equals(capDrop, container.capDrop) &&
+                Objects.equals(capAdd, container.capAdd) && Objects.equals(healthChecks, container.healthChecks) &&
+                Objects.equals(terminationTimeout, container.terminationTimeout) &&
+                Objects.equals(portMappings, container.portMappings) && Objects.equals(metadata, container.metadata) &&
+                Objects.equals(generatedRandomEnv, container.generatedRandomEnv);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(image, repo, entrypoint, env, randomEnv, labels, affinity, antiAffinity, resourceQuota,
+                restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, portMappings, metadata,
+                generatedRandomEnv);
+    }
 }

@@ -1,0 +1,59 @@
+{
+  "id": "test",
+  "pods": [
+    {
+      "type": "container",
+      "id": "nginx",
+      "image": "docker.io/library/nginx",
+      "repo": "",
+      "entrypoint": [
+        "ls"
+      ],
+      "env": {
+        "ABC": "123"
+      },
+      "randomEnv": {
+        "TEST_STRING": {
+          "type": "string",
+          "alphabet": "abcdef1234567890",
+          "length": 16
+        },
+        "TEST_INT": {
+          "type": "int",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "labels": {},
+      "affinity": [],
+      "antiAffinity": [],
+      "resourceQuota": {
+        "memory": 1073741824,
+        "swap": 0,
+        "nanoCPUs": 200000000
+      },
+      "restartPolicy": "always",
+      "capDrop": [],
+      "capAdd": [],
+      "terminationTimeout": 5,
+      "metadata": {},
+      "healthChecks": [
+        {
+          "id": "http1",
+          "type": "http",
+          "path": "/",
+          "port": 80,
+          "vhost": "example.com",
+          "statusCode": 404
+        }
+      ],
+      "portMappings": [
+        {
+          "port": 80,
+          "protocol": "tcp",
+          "advertise": true
+        }
+      ]
+    }
+  ]
+}

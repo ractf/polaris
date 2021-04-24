@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -52,4 +53,16 @@ public class RandomEnvInteger extends RandomEnv {
         return String.valueOf(ThreadLocalRandom.current().nextInt(min, max));
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final RandomEnvInteger that = (RandomEnvInteger) o;
+        return Objects.equals(min, that.min) && Objects.equals(max, that.max);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(min, max);
+    }
 }

@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.instance.Instance;
 
+import java.util.Objects;
+
 /**
  * The reponse to an {@link InstanceRequest}, contains the host ip and an {@link Instance} object
  *
@@ -43,5 +45,18 @@ public class InstanceResponse extends JsonRepresentable {
 
     public Instance getInstance() {
         return instance;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final InstanceResponse that = (InstanceResponse) o;
+        return Objects.equals(ip, that.ip) && Objects.equals(instance, that.instance);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ip, instance);
     }
 }

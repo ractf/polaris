@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents the current state of a Polaris host
@@ -149,5 +150,18 @@ public class HostInfo extends JsonRepresentable {
 
     public Map<String, String> getLabels() {
         return labels;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final HostInfo hostInfo = (HostInfo) o;
+        return processors == hostInfo.processors && Double.compare(hostInfo.cpuLoad, cpuLoad) == 0 && totalMemory == hostInfo.totalMemory && freeMemory == hostInfo.freeMemory && totalSwap == hostInfo.totalSwap && freeSwap == hostInfo.freeSwap && Objects.equals(id, hostInfo.id) && Objects.equals(publicIP, hostInfo.publicIP) && Objects.equals(hostname, hostInfo.hostname) && Objects.equals(uname, hostInfo.uname) && Objects.equals(architecture, hostInfo.architecture) && Objects.equals(osName, hostInfo.osName) && Objects.equals(osVersion, hostInfo.osVersion) && Objects.equals(labels, hostInfo.labels);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, publicIP, hostname, uname, architecture, osName, osVersion, processors, cpuLoad, totalMemory, freeMemory, totalSwap, freeSwap, labels);
     }
 }
