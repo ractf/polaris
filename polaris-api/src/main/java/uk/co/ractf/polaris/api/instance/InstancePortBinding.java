@@ -24,8 +24,8 @@ public class InstancePortBinding extends JsonRepresentable {
     private final boolean advertise;
 
     /**
-     * @param port the portspec ie "1234/tcp"
-     * @param ip the ip its bound to
+     * @param port      the portspec ie "1234/tcp"
+     * @param ip        the ip its bound to
      * @param advertise should regular users be shown this port?
      */
     @Contract(pure = true)

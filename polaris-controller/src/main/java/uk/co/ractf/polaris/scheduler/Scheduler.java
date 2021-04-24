@@ -15,7 +15,7 @@ public interface Scheduler {
      * Return the best {@link Host} for this {@link Challenge} to run on out of the {@link Collection}
      *
      * @param challenge the challenge
-     * @param hosts the hosts
+     * @param hosts     the hosts
      * @return the host it should be scheduled on
      */
     Host scheduleChallenge(final Challenge challenge, final Collection<Host> hosts);
@@ -24,7 +24,7 @@ public interface Scheduler {
      * Returns the best {@link Instance} to be descheduled out of the current set
      *
      * @param challenge the {@link Challenge}
-     * @param hosts the clusters {@link Host}s
+     * @param hosts     the clusters {@link Host}s
      * @param instances the instance
      * @return the instance to deschedule
      */

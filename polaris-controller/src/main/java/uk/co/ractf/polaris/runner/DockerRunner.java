@@ -5,7 +5,10 @@ import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.command.StartContainerCmd;
-import com.github.dockerjava.api.model.*;
+import com.github.dockerjava.api.model.Capability;
+import com.github.dockerjava.api.model.HostConfig;
+import com.github.dockerjava.api.model.PortBinding;
+import com.github.dockerjava.api.model.RestartPolicy;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.orbitz.consul.Consul;
@@ -25,7 +28,6 @@ import uk.co.ractf.polaris.host.Host;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ExecutorService;
 
 /**
  * An implementation of {@link Runner} that is capable of running docker {@link Container}s through the docker-java {@link DockerClient}

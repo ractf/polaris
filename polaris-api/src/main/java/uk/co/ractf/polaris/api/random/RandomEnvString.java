@@ -26,9 +26,9 @@ public class RandomEnvString extends RandomEnv {
     private final Integer length;
 
     /**
-     * @param type the type of random env (string)
+     * @param type     the type of random env (string)
      * @param alphabet the alphabet to generate from
-     * @param length the length of the string
+     * @param length   the length of the string
      */
     @Contract(pure = true)
     public RandomEnvString(

@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 /**
  * Resource providing API endpoints for {@link HostInfo} and {@link Host} objects.
- *
+ * <p>
  * Roles defined: HOST_GET
  */
 @Path("/hosts")

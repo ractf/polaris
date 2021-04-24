@@ -2,7 +2,6 @@ package uk.co.ractf.polaris.api.deployment;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
@@ -39,10 +38,10 @@ public class Deployment extends JsonRepresentable {
     /**
      * Create a deployment
      *
-     * @param id the id of the deployment
-     * @param challenge the challenge id to be deployed
+     * @param id          the id of the deployment
+     * @param challenge   the challenge id to be deployed
      * @param replication the replication rules
-     * @param allocation the allocation rules
+     * @param allocation  the allocation rules
      */
     @Contract(pure = true)
     public Deployment(

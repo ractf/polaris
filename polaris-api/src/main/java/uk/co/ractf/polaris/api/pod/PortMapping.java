@@ -26,8 +26,8 @@ public class PortMapping extends JsonRepresentable {
     private final Boolean advertise;
 
     /**
-     * @param port the port the container uses
-     * @param protocol the protocol the port is on
+     * @param port      the port the container uses
+     * @param protocol  the protocol the port is on
      * @param advertise should non admins be told about the port
      */
     @Contract(pure = true)

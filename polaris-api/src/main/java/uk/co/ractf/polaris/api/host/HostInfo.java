@@ -50,20 +50,20 @@ public class HostInfo extends JsonRepresentable {
     private final Map<String, String> labels;
 
     /**
-     * @param id the id of the host
-     * @param publicIP the public ip of the host
-     * @param hostname the hostname of the host
-     * @param uname the kernel details of the host
+     * @param id           the id of the host
+     * @param publicIP     the public ip of the host
+     * @param hostname     the hostname of the host
+     * @param uname        the kernel details of the host
      * @param architecture the architecture of the host
-     * @param osName the name of the operating system
-     * @param osVersion the version of the operating system
-     * @param processors how many processors are available
-     * @param cpuLoad the average cpu load across all cores in the last minute
-     * @param totalMemory total system memory
-     * @param freeMemory free system memory
-     * @param totalSwap total swap space on the host
-     * @param freeSwap free swap space on the host
-     * @param labels labels added to the host
+     * @param osName       the name of the operating system
+     * @param osVersion    the version of the operating system
+     * @param processors   how many processors are available
+     * @param cpuLoad      the average cpu load across all cores in the last minute
+     * @param totalMemory  total system memory
+     * @param freeMemory   free system memory
+     * @param totalSwap    total swap space on the host
+     * @param freeSwap     free swap space on the host
+     * @param labels       labels added to the host
      */
     public HostInfo(
             @JsonProperty("id") final String id,

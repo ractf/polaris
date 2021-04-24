@@ -2,7 +2,6 @@ package uk.co.ractf.polaris.security;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.basic.BasicCredentials;
 import uk.co.ractf.polaris.PolarisConfiguration;

@@ -27,7 +27,7 @@ public abstract class HealthCheck extends JsonRepresentable {
     /**
      * Create a HealthCheck
      *
-     * @param id the id of the healthcheck
+     * @param id   the id of the healthcheck
      * @param type the type of the healthcheck
      */
     @Contract(pure = true)

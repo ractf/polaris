@@ -7,14 +7,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a challenge that can be submitted via the Andromeda emulation resource. This will be converted to a
  * {@link uk.co.ractf.polaris.api.challenge.Challenge} and a {@link uk.co.ractf.polaris.api.deployment.Deployment}
  * {
- *     "name": "fffff",
- *     "port": 80,
- *     "replicas": 10,
- *     "resources": {
- *         "memory": 631242752,
- *         "cpus": "0.2"
- *     },
- *     "image": "docker.pkg.github.com/ractf/challenges/example:latest"
+ * "name": "fffff",
+ * "port": 80,
+ * "replicas": 10,
+ * "resources": {
+ * "memory": 631242752,
+ * "cpus": "0.2"
+ * },
+ * "image": "docker.pkg.github.com/ractf/challenges/example:latest"
  * }
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

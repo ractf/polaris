@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 /**
  * Resource providing API endpoints for {@link Challenge} objects.
- *
+ * <p>
  * Roles defined: CHALLENGE_GET, CHALLENGE_SUBMIT, CHALLENGE_DELETE
  */
 @Path("/challenges")

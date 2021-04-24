@@ -21,11 +21,6 @@ public class Main implements Callable<Integer> {
         System.exit(exitCode);
     }
 
-    @Override
-    public Integer call() {
-        return 0;
-    }
-
     private static void silenceJackson() {
         final PrintStream syserr = System.err;
         System.setErr(new PrintStream(new OutputStream() {
@@ -35,5 +30,10 @@ public class Main implements Callable<Integer> {
         }));
         Java7Handlers.instance();
         System.setErr(syserr);
+    }
+
+    @Override
+    public Integer call() {
+        return 0;
     }
 }

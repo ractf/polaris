@@ -25,7 +25,7 @@ import javax.ws.rs.core.Response;
 
 /**
  * Resource to control allocation of instances to a user or team
- *
+ * <p>
  * Roles defined: ALLOCATE_INSTANCE
  */
 @Path("/instanceallocation")

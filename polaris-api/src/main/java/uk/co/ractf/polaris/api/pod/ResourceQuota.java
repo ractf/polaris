@@ -26,8 +26,8 @@ public class ResourceQuota extends JsonRepresentable {
     private final Long nanoCPUs;
 
     /**
-     * @param memory the memory limit (bytes)
-     * @param swap the swap limit (bytes)
+     * @param memory   the memory limit (bytes)
+     * @param swap     the swap limit (bytes)
      * @param nanoCPUs how many nano cpus to assign
      */
     @Contract(pure = true)

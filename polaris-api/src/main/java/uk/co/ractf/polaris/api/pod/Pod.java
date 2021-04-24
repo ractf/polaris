@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.base.Preconditions;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
@@ -22,7 +21,7 @@ public abstract class Pod extends JsonRepresentable {
 
     /**
      * @param type the type of pod
-     * @param id the pod id
+     * @param id   the pod id
      */
     public Pod(@JsonProperty("type") final String type, @JsonProperty("id") final String id) {
         this.type = type;

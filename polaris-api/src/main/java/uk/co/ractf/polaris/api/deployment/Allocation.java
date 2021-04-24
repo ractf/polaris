@@ -28,7 +28,7 @@ public class Allocation extends JsonRepresentable {
     /**
      * Create an allocation
      *
-     * @param sticky should the allocator make instances sticky on "user" or "team"
+     * @param sticky    should the allocator make instances sticky on "user" or "team"
      * @param userLimit max amount of users on an instance
      * @param teamLimit max amount of teams on an instance
      */

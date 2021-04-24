@@ -1,7 +1,5 @@
 package uk.co.ractf.polaris.controller.task;
 
-import static org.mockito.Mockito.*;
-
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +16,12 @@ import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.host.Host;
 import uk.co.ractf.polaris.scheduler.Scheduler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.mockito.Mockito.*;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class DeploymentScaleReconciliationServiceTest {

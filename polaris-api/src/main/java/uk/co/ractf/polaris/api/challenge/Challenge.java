@@ -2,7 +2,6 @@ package uk.co.ractf.polaris.api.challenge;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.pod.Pod;
@@ -29,7 +28,7 @@ public class Challenge extends JsonRepresentable {
     /**
      * Create a challenge
      *
-     * @param id the id of the challenge
+     * @param id   the id of the challenge
      * @param pods the pods making up the challenge
      */
     @Contract(pure = true)

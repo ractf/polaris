@@ -7,8 +7,8 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 /**
  * Represents the Andromeda resource allocation format.
  * {
- *     "memory": 631242752,
- *     "cpus": "0.2"
+ * "memory": 631242752,
+ * "cpus": "0.2"
  * }
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
