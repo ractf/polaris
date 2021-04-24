@@ -7,10 +7,7 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.random.RandomEnv;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Represents an instance of a {@link Challenge} currently scheduled on Polaris
@@ -106,5 +103,18 @@ public class Instance extends JsonRepresentable {
 
     public void setPortBindings(final List<InstancePortBinding> portBindings) {
         this.portBindings = portBindings;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Instance instance = (Instance) o;
+        return Objects.equals(id, instance.id) && Objects.equals(deploymentID, instance.deploymentID) && Objects.equals(challengeID, instance.challengeID) && Objects.equals(hostID, instance.hostID) && Objects.equals(portBindings, instance.portBindings) && Objects.equals(randomEnv, instance.randomEnv);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, deploymentID, challengeID, hostID, portBindings, randomEnv);
     }
 }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
+import java.util.Objects;
+
 /**
  * Represents the constraints within which {@link uk.co.ractf.polaris.api.instance.Instance}s should be allocated to users
  *
@@ -50,5 +52,18 @@ public class Allocation extends JsonRepresentable {
 
     public Integer getTeamLimit() {
         return teamLimit;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Allocation that = (Allocation) o;
+        return Objects.equals(sticky, that.sticky) && Objects.equals(userLimit, that.userLimit) && Objects.equals(teamLimit, that.teamLimit);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sticky, userLimit, teamLimit);
     }
 }

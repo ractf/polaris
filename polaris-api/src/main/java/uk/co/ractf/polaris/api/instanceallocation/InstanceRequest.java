@@ -6,6 +6,8 @@ import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.instance.Instance;
 
+import java.util.Objects;
+
 /**
  * The details of a user's {@link Instance} allocation request
  *
@@ -51,4 +53,16 @@ public class InstanceRequest extends JsonRepresentable {
         return teamID;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final InstanceRequest that = (InstanceRequest) o;
+        return Objects.equals(challengeID, that.challengeID) && Objects.equals(userID, that.userID) && Objects.equals(teamID, that.teamID);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(challengeID, userID, teamID);
+    }
 }

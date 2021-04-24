@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
+import java.util.Objects;
+
 /**
  * The ports available on an instance
  *
@@ -49,5 +51,18 @@ public class InstancePortBinding extends JsonRepresentable {
     @JsonProperty("advertised")
     public boolean getAdvertise() {
         return advertise;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final InstancePortBinding that = (InstancePortBinding) o;
+        return advertise == that.advertise && Objects.equals(port, that.port) && Objects.equals(ip, that.ip);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(port, ip, advertise);
     }
 }

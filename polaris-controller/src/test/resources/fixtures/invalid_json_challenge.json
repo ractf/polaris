@@ -1,0 +1,22 @@
+{
+  "id": "test",
+  "pods": [
+    {
+      "type": "container",
+      "id": "nginx",
+      "image": "docker.io/library/nginx",
+      "repo": "",
+      "entrypoint": [
+        "ls"
+      ],
+      "env": {
+        "ABC": "123"
+      },
+      "randomEnv": {
+        "TEST_STRING": {
+          "type": "string",
+          "alphabet": "abcdef1234567890",
+          "length": 16
+        },
+        "TEST_INT": {
+          "type": "in

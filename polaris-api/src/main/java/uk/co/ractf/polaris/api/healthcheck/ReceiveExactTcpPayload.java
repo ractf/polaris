@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Objects;
+
 /**
  * Part of a {@link TcpPayloadHealthCheck} sequence that expects to receive an exact set of bytes (in hex)
  *
@@ -35,4 +37,16 @@ public class ReceiveExactTcpPayload extends TcpPayload {
         return hex;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final ReceiveExactTcpPayload that = (ReceiveExactTcpPayload) o;
+        return Objects.equals(hex, that.hex);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hex);
+    }
 }

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
+import java.util.Objects;
+
 /**
  * Represents the resource quote for a pod
  *
@@ -50,4 +52,16 @@ public class ResourceQuota extends JsonRepresentable {
         return nanoCPUs;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final ResourceQuota that = (ResourceQuota) o;
+        return Objects.equals(memory, that.memory) && Objects.equals(swap, that.swap) && Objects.equals(nanoCPUs, that.nanoCPUs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(memory, swap, nanoCPUs);
+    }
 }
