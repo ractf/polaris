@@ -10,3 +10,9 @@ allprojects {
         targetCompatibility = JavaVersion.VERSION_11
     }
 }
+
+subprojects {
+    ext {
+        dropwizardVersion = '2.0.21'
+    }
+}
