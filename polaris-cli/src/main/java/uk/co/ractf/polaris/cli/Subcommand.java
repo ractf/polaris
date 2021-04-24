@@ -3,7 +3,6 @@ package uk.co.ractf.polaris.cli;
 import uk.co.ractf.polaris.apiclient.APIClient;
 import uk.co.ractf.polaris.cli.subcommands.Login;
 
-import java.util.Map;
 import java.util.concurrent.Callable;
 
 public abstract class Subcommand implements Callable<Integer> {
@@ -18,11 +17,9 @@ public abstract class Subcommand implements Callable<Integer> {
 
         final APIClient apiClient = APIClientFactory.createAPIClient();
         try {
-            final Map<String, String> response = apiClient.ping().exec();
-            if (!response.containsKey("username")) {
-                authFail();
-            }
+            apiClient.listChallenges().exec();
         } catch (final Exception e) {
+            e.printStackTrace();
             authFail();
         }
 

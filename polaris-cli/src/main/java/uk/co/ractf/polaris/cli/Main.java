@@ -2,6 +2,7 @@ package uk.co.ractf.polaris.cli;
 
 import com.fasterxml.jackson.databind.ext.Java7Handlers;
 import picocli.CommandLine;
+import uk.co.ractf.polaris.cli.subcommands.Challenge;
 import uk.co.ractf.polaris.cli.subcommands.Login;
 
 import java.io.OutputStream;
@@ -10,7 +11,8 @@ import java.util.concurrent.Callable;
 
 @CommandLine.Command(
         subcommands = {
-                Login.class
+                Login.class,
+                Challenge.class
         }
 )
 public class Main implements Callable<Integer> {

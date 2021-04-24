@@ -82,7 +82,7 @@ import java.util.*;
  *      "metadata": {
  *          "aaa": "bbb"
  *      },
- *      "ports": [
+ *      "portMappings": [
  *          {
  *              "port": 6000,
  *              "protocol": "tcp",
@@ -151,9 +151,9 @@ public class Container extends Pod {
             @JsonProperty("restartPolicy") final String restartPolicy,
             @JsonProperty("capDrop") final List<String> capDrop,
             @JsonProperty("capAdd") final List<String> capAdd,
-            @JsonProperty("healthcheck") final List<HealthCheck> healthChecks,
+            @JsonProperty("healthChecks") final List<HealthCheck> healthChecks,
             @JsonProperty("terminationTimeout") final Integer terminationTimeout,
-            @JsonProperty("ports") final List<PortMapping> portMappings,
+            @JsonProperty("portMappings") final List<PortMapping> portMappings,
             @JsonProperty("metadata") final Map<String, String> metadata) {
         super(type, id);
         this.image = image;

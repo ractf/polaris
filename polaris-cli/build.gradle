@@ -33,6 +33,7 @@ graal {
     mainClass mainClassName
     outputName 'polaris'
     javaVersion '11'
+    option '--enable-https'
 }
 
 configurations {
@@ -89,6 +90,8 @@ task(generateGraalDynamicProxyConfig, dependsOn: 'classes', type: JavaExec) {
     args = ["--output=$outputFile", mainClassName]
 }
 tasks.nativeImage.dependsOn(generateGraalDynamicProxyConfig)
+
+tasks.nativeImage.dependsOn(generateReflectConfig)
 
 buildRpm {
     packageName = 'polaris-cli'
