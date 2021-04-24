@@ -272,12 +272,22 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public boolean lockDeployment(final Deployment deployment) {
-        return consul.keyValueClient().acquireLock(ConsulPath.deploymentLock(deployment.getID()), sessionId);
+        try {
+            return consul.keyValueClient().acquireLock(ConsulPath.deploymentLock(deployment.getID()), sessionId);
+        } catch (final Exception e) {
+            log.error("Error obtaining lock", e);
+            return false;
+        }
     }
 
     @Override
     public boolean unlockDeployment(final Deployment deployment) {
-        return consul.keyValueClient().releaseLock(ConsulPath.deploymentLock(deployment.getID()), sessionId);
+        try {
+            return consul.keyValueClient().releaseLock(ConsulPath.deploymentLock(deployment.getID()), sessionId);
+        } catch (final Exception e) {
+            log.error("Error releasing lock", e);
+            return false;
+        }
     }
 
 }
