@@ -1,5 +1,7 @@
 [Unit]
 Description=The RACTF challenge scheduler
+Requires=consul.service
+After=consul.service
 
 [Service]
 WorkingDirectory=/opt/polaris
