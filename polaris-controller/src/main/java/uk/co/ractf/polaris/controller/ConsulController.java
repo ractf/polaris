@@ -108,7 +108,10 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public void createChallenge(final Challenge challenge) {
-        Preconditions.checkArgument(!challenge.getID().isBlank(), "Challenge id cannot be blank");
+        Preconditions.checkArgument(!challenge.getID().isBlank(), "Challenge id cannot be blank.");
+        if (getChallenge(challenge.getID()) != null) {
+            throw new IllegalArgumentException("Challenge with id " + challenge.getID() + " already exists.");
+        }
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.challenge(challenge.getID()))
@@ -161,7 +164,10 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public void createDeployment(final Deployment deployment) {
-        Preconditions.checkArgument(!deployment.getID().isBlank(), "Deployment id cannot be blank");
+        Preconditions.checkArgument(!deployment.getID().isBlank(), "Deployment id cannot be blank.");
+        if (getDeployment(deployment.getID()) != null) {
+            throw new IllegalArgumentException("Challenge with id " + deployment.getID() + " already exists.");
+        }
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.deployment(deployment.getID()))
