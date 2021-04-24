@@ -96,14 +96,14 @@ public class ChallengeResource {
             description = "Submits a challenge object to the controller")
     public Response submitChallenge(final Challenge challenge) {
         if (controller.getChallenge(challenge.getID()) != null) {
-            controller.createChallenge(challenge);
-            Response.ok(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.OK, challenge.getID())).build();
+            return Response
+                    .status(400)
+                    .entity(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.DUPLICATE, challenge.getID()))
+                    .build();
         }
 
-        return Response
-                .status(400)
-                .entity(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.DUPLICATE, challenge.getID()))
-                .build();
+        controller.createChallenge(challenge);
+        return Response.ok(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.OK, challenge.getID())).build();
     }
 
     /**

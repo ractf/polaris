@@ -17,7 +17,7 @@ public abstract class Subcommand implements Callable<Integer> {
 
         final APIClient apiClient = APIClientFactory.createAPIClient();
         try {
-            apiClient.listChallenges().exec();
+            apiClient.ping().exec();
         } catch (final Exception e) {
             e.printStackTrace();
             authFail();

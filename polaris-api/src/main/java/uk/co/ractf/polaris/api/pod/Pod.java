@@ -11,7 +11,8 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY, visible = true)
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = Container.class, name = "container")
+        @JsonSubTypes.Type(value = Container.class, name = "container"),
+        @JsonSubTypes.Type(value = Container.class, name = "docker"),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Pod extends JsonRepresentable {

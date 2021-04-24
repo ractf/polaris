@@ -78,6 +78,7 @@ public class HttpClientTransport implements APIClientTransport {
         final HttpRequest httpRequest = HttpRequest.newBuilder()
                 .uri(getAPIRoute(route))
                 .method(method, HttpRequest.BodyPublishers.ofString(bodyText))
+                .header("Content-Type", "application/json")
                 .header("Authorization", authHeader)
                 .build();
         try {
