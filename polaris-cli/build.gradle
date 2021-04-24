@@ -5,11 +5,15 @@ import java.time.format.DateTimeFormatter
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
         classpath "com.netflix.nebula:gradle-ospackage-plugin:8.5.1"
         classpath "com.palantir.gradle.gitversion:gradle-git-version:0.12.3"
+        classpath "gradle.plugin.com.palantir.graal:gradle-graal:0.7.2"
     }
 }
 
@@ -17,6 +21,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 apply plugin: 'nebula.ospackage'
 apply plugin: 'com.palantir.git-version'
+apply plugin: 'com.palantir.graal'
 
 mainClassName = 'uk.co.ractf.polaris.cli.Main'
 
@@ -24,11 +29,28 @@ repositories {
     mavenCentral()
 }
 
+graal {
+    mainClass mainClassName
+    outputName 'polaris'
+    javaVersion '11'
+}
+
+configurations {
+    generateConfig
+}
+
 dependencies {
     implementation project(':polaris-api')
     implementation 'io.dropwizard:dropwizard-jackson:2.0.19'
+    implementation 'info.picocli:picocli:4.6.1'
+    annotationProcessor 'info.picocli:picocli-codegen:4.6.1'
+    generateConfig 'info.picocli:picocli-codegen:4.6.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+compileJava {
+    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
 }
 
 test {
@@ -50,6 +72,22 @@ shadowJar {
     }
     archiveName 'polaris-cli.jar'
 }
+
+task(generateGraalReflectionConfig, dependsOn: 'classes', type: JavaExec) {
+    main = 'picocli.codegen.aot.graalvm.ReflectionConfigGenerator'
+    classpath = configurations.generateConfig + sourceSets.main.runtimeClasspath
+    def outputFile = "${buildDir}/resources/main/META-INF/native-image/${project.group}/${project.name}/reflect-config.json"
+    args = ["--output=$outputFile", mainClassName]
+}
+tasks.nativeImage.dependsOn(generateGraalReflectionConfig)
+
+task(generateGraalDynamicProxyConfig, dependsOn: 'classes', type: JavaExec) {
+    main = 'picocli.codegen.aot.graalvm.DynamicProxyConfigGenerator'
+    classpath = configurations.generateConfig + sourceSets.main.runtimeClasspath
+    def outputFile = "${buildDir}/resources/main/META-INF/native-image/${project.group}/${project.name}/proxy-config.json"
+    args = ["--output=$outputFile", mainClassName]
+}
+tasks.nativeImage.dependsOn(generateGraalDynamicProxyConfig)
 
 buildRpm {
     packageName = 'polaris-cli'
