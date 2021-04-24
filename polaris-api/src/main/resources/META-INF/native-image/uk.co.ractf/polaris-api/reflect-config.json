@@ -119,6 +119,13 @@
     "allPublicMethods": true
   },
   {
+    "name": "uk.co.ractf.polaris.api.challenge.ChallengeSubmitResponse",
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
     "name": "uk.co.ractf.polaris.api.andromeda.AndromedaAuthentication",
     "allDeclaredConstructors": true,
     "allPublicConstructors": true,
