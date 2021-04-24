@@ -14,7 +14,7 @@ public interface Runner<T extends Pod> {
     /**
      * Starts a {@link Pod} with given {@link Instance} details
      *
-     * @param pod the pod
+     * @param pod      the pod
      * @param instance instance details
      */
     void startPod(final T pod, final Instance instance);
@@ -22,7 +22,7 @@ public interface Runner<T extends Pod> {
     /**
      * Stops a {@link Pod} with given {@link Instance} details
      *
-     * @param pod the pod
+     * @param pod      the pod
      * @param instance instance details
      */
     void stopPod(final T pod, final Instance instance);
@@ -30,7 +30,7 @@ public interface Runner<T extends Pod> {
     /**
      * Forcefully update a specific {@link Instance} of a {@link Pod}
      *
-     * @param pod the pod
+     * @param pod      the pod
      * @param instance the instance to update
      */
     void forceUpdatePod(final T pod, final Instance instance);
@@ -38,7 +38,7 @@ public interface Runner<T extends Pod> {
     /**
      * Restart a specific {@link Instance} of a {@link Pod}
      *
-     * @param pod the pod
+     * @param pod      the pod
      * @param instance the instance to restart
      */
     void restartPod(final T pod, final Instance instance);
@@ -54,7 +54,7 @@ public interface Runner<T extends Pod> {
     /**
      * Returns if the runner has started this {@link Instance} of this {@link Pod}
      *
-     * @param pod the pod
+     * @param pod      the pod
      * @param instance the instance
      * @return if its started
      */

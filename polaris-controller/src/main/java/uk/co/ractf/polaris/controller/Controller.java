@@ -164,7 +164,7 @@ public interface Controller {
      * Register a newly scheduled {@link Instance} to a {@link Deployment}
      *
      * @param deployment the deployment of the instance
-     * @param instance the instance
+     * @param instance   the instance
      */
     void registerInstance(final Deployment deployment, final Instance instance);
 
@@ -172,7 +172,7 @@ public interface Controller {
      * Unregisters an {@link Instance} from a given {@link Deployment}, probably because its been descheduled
      *
      * @param deployment the deployment of the instance
-     * @param instance the instance
+     * @param instance   the instance
      */
     void unregisterInstance(final Deployment deployment, final Instance instance);
 

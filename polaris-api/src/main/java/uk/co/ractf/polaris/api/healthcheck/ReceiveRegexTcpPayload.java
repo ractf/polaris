@@ -26,8 +26,8 @@ public class ReceiveRegexTcpPayload extends TcpPayload {
     /**
      * Create a ReceiveRegexTcpPayload
      *
-     * @param type the type of tcppayload (regex)
-     * @param regex the regex to match
+     * @param type    the type of tcppayload (regex)
+     * @param regex   the regex to match
      * @param encoded true if regex should be matched against the hex
      */
     @Contract(pure = true)

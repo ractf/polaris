@@ -26,8 +26,8 @@ public class RandomEnvInteger extends RandomEnv {
 
     /**
      * @param type the type of random env (int)
-     * @param min the minimum integer
-     * @param max the maximum integer
+     * @param min  the minimum integer
+     * @param max  the maximum integer
      */
     @Contract(pure = true)
     public RandomEnvInteger(

@@ -40,11 +40,11 @@ public class TcpPayloadHealthCheck extends HealthCheck {
     /**
      * Create a TcpPayloadHealthCheck
      *
-     * @param id id of the healthcheck
-     * @param type type of the healthcheck (tcppayload)
-     * @param payloads the payloads to send/receive
+     * @param id                id of the healthcheck
+     * @param type              type of the healthcheck (tcppayload)
+     * @param payloads          the payloads to send/receive
      * @param connectionTimeout the timeout on the initial connection
-     * @param sequenceTimeout the timeout on the whole sequence
+     * @param sequenceTimeout   the timeout on the whole sequence
      */
     @Contract(pure = true)
     public TcpPayloadHealthCheck(

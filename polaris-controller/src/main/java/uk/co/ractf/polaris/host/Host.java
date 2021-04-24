@@ -40,7 +40,7 @@ public interface Host {
     /**
      * Creates an instance of a {@link Challenge} on this host with a certain {@link Deployment} group
      *
-     * @param challenge the challenge
+     * @param challenge  the challenge
      * @param deployment the deployment of the challenge
      * @return an instance of the challenge
      */

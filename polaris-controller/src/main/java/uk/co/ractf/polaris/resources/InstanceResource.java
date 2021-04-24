@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * Resource for controlling {@link Instance} objects.
- *
+ * <p>
  * Roles defined: INSTANCE_LIST
  */
 @Path("/instances")
@@ -39,7 +39,7 @@ public class InstanceResource {
      * Return a {@link Map} of instance id to {@link Instance} for all instances matching the host id regex
      * and the challenge id regex. Results are only filtered if a filter is not omitted.
      *
-     * @param hostFilter regex to apply to host ids
+     * @param hostFilter      regex to apply to host ids
      * @param challengeFilter regex to apply to challenge ids
      * @return map of instance id to instance
      */

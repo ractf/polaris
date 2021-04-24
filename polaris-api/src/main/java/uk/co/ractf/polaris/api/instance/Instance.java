@@ -34,10 +34,10 @@ public class Instance extends JsonRepresentable {
     /**
      * The
      *
-     * @param id the id of the instance
+     * @param id           the id of the instance
      * @param deploymentID the id of the deployment it belongs to
-     * @param challengeID the id of the challenge it belongs to
-     * @param hostID the id of the host its scheduled on
+     * @param challengeID  the id of the challenge it belongs to
+     * @param hostID       the id of the host its scheduled on
      */
     @Contract(pure = true)
     public Instance(@JsonProperty("id") final String id,
@@ -82,6 +82,10 @@ public class Instance extends JsonRepresentable {
         return portBindings;
     }
 
+    public void setPortBindings(final List<InstancePortBinding> portBindings) {
+        this.portBindings = portBindings;
+    }
+
     /**
      * @return the {@link RandomEnv} variables that have been generated for the pod
      */
@@ -90,19 +94,15 @@ public class Instance extends JsonRepresentable {
         return randomEnv;
     }
 
+    public void setRandomEnv(final Map<String, String> randomEnv) {
+        this.randomEnv = randomEnv;
+    }
+
     /**
      * @param portBinding the port binding to add
      */
     public void addPortBinding(final InstancePortBinding portBinding) {
         portBindings.add(portBinding);
-    }
-
-    public void setRandomEnv(final Map<String, String> randomEnv) {
-        this.randomEnv = randomEnv;
-    }
-
-    public void setPortBindings(final List<InstancePortBinding> portBindings) {
-        this.portBindings = portBindings;
     }
 
     @Override

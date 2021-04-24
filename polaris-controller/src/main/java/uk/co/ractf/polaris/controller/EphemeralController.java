@@ -19,7 +19,9 @@ import uk.co.ractf.polaris.instanceallocation.EphemeralInstanceAllocator;
 import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 
 @Singleton
 public class EphemeralController implements Controller, Managed {

@@ -13,6 +13,12 @@ import java.util.List;
  */
 public class PolarisConfiguration extends Configuration {
 
+    @NotNull
+    @Valid
+    public final ConsulFactory consul = new ConsulFactory();
+    @NotNull
+    @Valid
+    public final RibbonJerseyClientConfiguration client = new RibbonJerseyClientConfiguration();
     private int threadpoolSize;
     private int taskThreadpoolSize;
     private String controllerType;
@@ -31,14 +37,6 @@ public class PolarisConfiguration extends Configuration {
     private String registryUsername;
     private String registryPassword;
     private boolean killOrphans;
-
-    @NotNull
-    @Valid
-    public final ConsulFactory consul = new ConsulFactory();
-
-    @NotNull
-    @Valid
-    public final RibbonJerseyClientConfiguration client = new RibbonJerseyClientConfiguration();
 
     public int getThreadpoolSize() {
         return threadpoolSize;

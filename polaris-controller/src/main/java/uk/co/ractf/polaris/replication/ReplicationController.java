@@ -14,15 +14,6 @@ import java.util.List;
  */
 public interface ReplicationController {
 
-    /**
-     * Calculate how many instances need scheduling or descheduling based on the current state of the cluster.
-     *
-     * @param instances the current instance list
-     * @param controller the polaris controller
-     * @return the amount to scale by
-     */
-    int getScaleAmount(final List<Instance> instances, final Controller controller);
-
     @Contract("null -> new")
     static ReplicationController create(final Replication replication) {
         if (replication instanceof StaticReplication) {
@@ -30,5 +21,14 @@ public interface ReplicationController {
         }
         return new NullReplicationController();
     }
+
+    /**
+     * Calculate how many instances need scheduling or descheduling based on the current state of the cluster.
+     *
+     * @param instances  the current instance list
+     * @param controller the polaris controller
+     * @return the amount to scale by
+     */
+    int getScaleAmount(final List<Instance> instances, final Controller controller);
 
 }

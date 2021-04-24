@@ -24,9 +24,9 @@ public class TcpHealthCheck extends HealthCheck {
     private final Integer timeout;
 
     /**
-     * @param id the id of the healthcheck
-     * @param type the type of the healthcheck (tcp)
-     * @param port the port to connect to
+     * @param id      the id of the healthcheck
+     * @param type    the type of the healthcheck (tcp)
+     * @param port    the port to connect to
      * @param timeout the connection timeout
      */
     public TcpHealthCheck(

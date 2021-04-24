@@ -31,11 +31,11 @@ public class HttpHealthCheck extends HealthCheck {
     /**
      * Create a HttpHealthCheck
      *
-     * @param id the id of the health check
-     * @param type the type of the health check (http)
-     * @param path the path to make a request on
-     * @param port the port to make a request on
-     * @param vhost the vhost to specify
+     * @param id         the id of the health check
+     * @param type       the type of the health check (http)
+     * @param path       the path to make a request on
+     * @param port       the port to make a request on
+     * @param vhost      the vhost to specify
      * @param statusCode the status code to expect
      */
     @Contract(pure = true)

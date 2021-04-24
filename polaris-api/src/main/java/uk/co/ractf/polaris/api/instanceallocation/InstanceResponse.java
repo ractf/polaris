@@ -28,7 +28,7 @@ public class InstanceResponse extends JsonRepresentable {
     private final Instance instance;
 
     /**
-     * @param ip the ip the instance is on
+     * @param ip       the ip the instance is on
      * @param instance the instance details
      */
     @Contract(pure = true)

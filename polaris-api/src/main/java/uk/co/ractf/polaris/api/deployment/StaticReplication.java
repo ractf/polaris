@@ -24,7 +24,7 @@ public class StaticReplication extends Replication {
     /**
      * Create a StaticReplication
      *
-     * @param type the type of replication (static)
+     * @param type   the type of replication (static)
      * @param amount the amount of replicas
      */
     @Contract(pure = true)

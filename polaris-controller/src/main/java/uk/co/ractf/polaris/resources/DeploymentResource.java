@@ -6,7 +6,6 @@ import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.controller.Controller;
 
@@ -19,7 +18,7 @@ import java.util.regex.Pattern;
 
 /**
  * Resource providing API endpoints for {@link Deployment} objects
- *
+ * <p>
  * Roles defined: DEPLOYMENT_GET, DEPLOYMENT_CREATE, DEPLOYMENT_UPDATE, DEPLOYMENT_DELETE
  */
 @Path("/deployments")
@@ -40,7 +39,7 @@ public class DeploymentResource {
      * and the challenge id regex. Results are only filtered if a filter is not omitted.
      *
      * @param deploymentFilter regex to apply to deployment ids
-     * @param challengeFilter regex to apply to challenge ids
+     * @param challengeFilter  regex to apply to challenge ids
      * @return the matching deployments
      */
     @GET

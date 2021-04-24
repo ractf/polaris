@@ -7,8 +7,8 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 /**
  * Represents the format in which instance's are requested and resets requested from andromeda.
  * {
- *     "user": "123",
- *     "job": "challenge"
+ * "user": "123",
+ * "job": "challenge"
  * }
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

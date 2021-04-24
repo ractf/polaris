@@ -27,9 +27,9 @@ public class CommandHealthCheck extends HealthCheck {
     /**
      * Create a CommandHealthCheck
      *
-     * @param id the id of the healthcheck
-     * @param type the type of the healthcheck (command)
-     * @param command the command to run
+     * @param id          the id of the healthcheck
+     * @param type        the type of the healthcheck (command)
+     * @param command     the command to run
      * @param returnValue what that command should return if healthy
      */
     @Contract(pure = true)

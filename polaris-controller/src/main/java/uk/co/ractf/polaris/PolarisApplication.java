@@ -29,11 +29,11 @@ public class PolarisApplication extends Application<PolarisConfiguration> {
 
     private static final Logger log = LoggerFactory.getLogger(PolarisApplication.class);
 
-    public static void main(final String[] args) throws Exception {
-        new PolarisApplication().run(args);
+    public PolarisApplication() {
     }
 
-    public PolarisApplication() {
+    public static void main(final String[] args) throws Exception {
+        new PolarisApplication().run(args);
     }
 
     @Override
