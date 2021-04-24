@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.challenge.ChallengeDeleteResponse;
 import uk.co.ractf.polaris.api.challenge.ChallengeSubmitResponse;
 import uk.co.ractf.polaris.controller.Controller;
 
@@ -116,8 +117,14 @@ public class ChallengeResource {
     @ExceptionMetered
     @RolesAllowed("CHALLENGE_DELETE")
     @Operation(summary = "Delete Challenge", tags = {"Challenge"}, description = "Deletes a challenge from the controller")
-    public void deleteChallenge(@PathParam("id") final String id) {
+    public Response deleteChallenge(@PathParam("id") final String id) {
+        if (controller.getChallenge(id) == null) {
+            return Response.status(404)
+                    .entity(new ChallengeDeleteResponse(ChallengeDeleteResponse.Status.NOT_FOUND, id)).build();
+        }
         controller.deleteChallenge(id);
+        return Response.status(200)
+                .entity(new ChallengeDeleteResponse(ChallengeDeleteResponse.Status.SUCCESS, id)).build();
     }
 
 }

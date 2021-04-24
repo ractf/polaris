@@ -1,10 +1,7 @@
 package uk.co.ractf.polaris.apiclient;
 
 import uk.co.ractf.polaris.api.challenge.Challenge;
-import uk.co.ractf.polaris.apiclient.command.GetChallengeCommand;
-import uk.co.ractf.polaris.apiclient.command.ListChallengesCommand;
-import uk.co.ractf.polaris.apiclient.command.PingCommand;
-import uk.co.ractf.polaris.apiclient.command.SubmitChallengeCommand;
+import uk.co.ractf.polaris.apiclient.command.*;
 
 public interface APIClient {
 
@@ -21,5 +18,7 @@ public interface APIClient {
     GetChallengeCommand getChallenge(final String id);
 
     SubmitChallengeCommand submitChallenge(final Challenge challenge);
+
+    DeleteChallengeCommand deleteChallenge(final String id);
 
 }

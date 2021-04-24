@@ -15,6 +15,6 @@ public class GetChallengeCommand extends AbstractCommand<Challenge> {
 
     @Override
     public Challenge exec() {
-        return apiClientTransport.get("/challenge/" + id, Challenge.class);
+        return apiClientTransport.get("/challenges/" + id, Challenge.class);
     }
 }
