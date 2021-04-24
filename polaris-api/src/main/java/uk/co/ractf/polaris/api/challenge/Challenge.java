@@ -33,7 +33,6 @@ public class Challenge extends JsonRepresentable {
      */
     @Contract(pure = true)
     public Challenge(@JsonProperty("id") final String id, @JsonProperty("pods") final List<Pod> pods) {
-        Preconditions.checkArgument(!id.isBlank());
         this.id = id;
         this.pods = pods;
     }

@@ -1,6 +1,7 @@
 package uk.co.ractf.polaris.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -80,7 +81,9 @@ public class ConsulController implements Controller, Managed {
             if (challengeData.isPresent()) {
                 try {
                     final Challenge challenge = Challenge.parse(challengeData.get(), Challenge.class);
-                    challengeMap.put(challenge.getID(), challenge);
+                    if (!challenge.getID().isBlank()) {
+                        challengeMap.put(challenge.getID(), challenge);
+                    }
                 } catch (final JsonProcessingException exception) {
                     log.error("Error deserializing challenge " + challengePath, exception);
                 }
@@ -105,6 +108,7 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public void createChallenge(final Challenge challenge) {
+        Preconditions.checkArgument(!challenge.getID().isBlank(), "Challenge id cannot be blank");
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.challenge(challenge.getID()))
@@ -130,7 +134,9 @@ public class ConsulController implements Controller, Managed {
             if (deploymentData.isPresent()) {
                 try {
                     final Deployment deployment = Deployment.parse(deploymentData.get(), Deployment.class);
-                    deploymentMap.put(deployment.getID(), deployment);
+                    if (!deployment.getID().isBlank()) {
+                        deploymentMap.put(deployment.getID(), deployment);
+                    }
                 } catch (final JsonProcessingException exception) {
                     log.error("Error deserializing deployment " + deploymentPath, exception);
                 }
@@ -155,6 +161,7 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public void createDeployment(final Deployment deployment) {
+        Preconditions.checkArgument(!deployment.getID().isBlank(), "Deployment id cannot be blank");
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.deployment(deployment.getID()))

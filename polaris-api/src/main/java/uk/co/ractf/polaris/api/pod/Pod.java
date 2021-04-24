@@ -25,7 +25,6 @@ public abstract class Pod extends JsonRepresentable {
      * @param id the pod id
      */
     public Pod(@JsonProperty("type") final String type, @JsonProperty("id") final String id) {
-        Preconditions.checkArgument(!id.isBlank());
         this.type = type;
         this.id = id;
     }
