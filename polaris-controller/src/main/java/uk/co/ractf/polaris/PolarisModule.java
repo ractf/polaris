@@ -14,6 +14,7 @@ import com.palominolabs.metrics.guice.MetricsInstrumentationModule;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.Duration;
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
+import uk.co.ractf.polaris.annotation.ExcludeFromGeneratedReport;
 import uk.co.ractf.polaris.controller.ConsulController;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.controller.EphemeralController;
@@ -28,6 +29,7 @@ import uk.co.ractf.polaris.scheduler.Scheduler;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+@ExcludeFromGeneratedReport
 public class PolarisModule extends DropwizardAwareModule<PolarisConfiguration> {
 
     private final Bootstrap<PolarisConfiguration> bootstrap;

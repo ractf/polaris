@@ -3,7 +3,9 @@ package uk.co.ractf.polaris.host.service;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
+import uk.co.ractf.polaris.annotation.ExcludeFromGeneratedReport;
 
+@ExcludeFromGeneratedReport
 public class HostServiceModule extends AbstractModule {
 
     @Override
