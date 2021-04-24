@@ -56,6 +56,8 @@
     <a href="https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml/badge.svg></a>
     <a href="https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml/badge.svg></a>
     <a href="https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/build-cli-rpm.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-cli-rpm.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/build-cli-jar.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-cli-jar.yml/badge.svg></a>
 </div>
 
 ## Table of Contents
