@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris;
 
+import com.codahale.metrics.MetricRegistry;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientConfig;
@@ -9,6 +10,8 @@ import com.github.dockerjava.transport.DockerHttpClient;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.orbitz.consul.Consul;
+import com.palominolabs.metrics.guice.MetricsInstrumentationModule;
+import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.Duration;
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 import uk.co.ractf.polaris.controller.ConsulController;
@@ -26,6 +29,12 @@ import uk.co.ractf.polaris.scheduler.Scheduler;
 import java.util.concurrent.ScheduledExecutorService;
 
 public class PolarisModule extends DropwizardAwareModule<PolarisConfiguration> {
+
+    private final Bootstrap<PolarisConfiguration> bootstrap;
+
+    public PolarisModule(final Bootstrap<PolarisConfiguration> bootstrap) {
+        this.bootstrap = bootstrap;
+    }
 
     @Override
     public void configure() {
@@ -55,7 +64,10 @@ public class PolarisModule extends DropwizardAwareModule<PolarisConfiguration> {
             bind(Controller.class).to(EphemeralController.class).in(Singleton.class);
         }
 
+        bind(MetricRegistry.class).toInstance(bootstrap.getMetricRegistry());
+
         install(new HostServiceModule());
         install(new ControllerServiceModule());
+
     }
 }

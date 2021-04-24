@@ -4,11 +4,14 @@ import com.codahale.metrics.health.HealthCheck;
 import com.github.dockerjava.api.DockerClient;
 import com.google.common.util.concurrent.SimpleTimeLimiter;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import ru.vyarus.dropwizard.guice.module.installer.feature.health.NamedHealthCheck;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class DockerPingHealthCheck extends HealthCheck {
+@Singleton
+public class DockerPingHealthCheck extends NamedHealthCheck {
 
     private final DockerClient dockerClient;
 
@@ -28,4 +31,8 @@ public class DockerPingHealthCheck extends HealthCheck {
         return Result.healthy();
     }
 
+    @Override
+    public String getName() {
+        return "dockerping";
+    }
 }
