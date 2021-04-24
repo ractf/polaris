@@ -8,6 +8,7 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.pod.Pod;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a challenge that can run on Polaris, comprised of one or more {@link Pod}s
@@ -62,4 +63,16 @@ public class Challenge extends JsonRepresentable {
         return null;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Challenge challenge = (Challenge) o;
+        return Objects.equals(id, challenge.id) && Objects.equals(pods, challenge.pods);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, pods);
+    }
 }

@@ -58,7 +58,7 @@ public class AndromedaEmulationResource {
                 0L,
                 (long) (Double.parseDouble(challenge.getResources().getCpus()) * 1_000_000_000));
         final PortMapping portMapping = new PortMapping(challenge.getPort(), "tcp", true);
-        final Pod pod = new Container("docker", challenge.getName(), challenge.getImage(), "",
+        final Pod pod = new Container("container", challenge.getName(), challenge.getImage(), "",
                 new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(),
                 new ArrayList<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>());
