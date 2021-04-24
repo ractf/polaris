@@ -16,11 +16,12 @@ import org.dhatim.dropwizard.prometheus.PrometheusBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
-import uk.co.ractf.polaris.metrics.PolarisMetricSet;
+import uk.co.ractf.polaris.annotation.ExcludeFromGeneratedReport;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@ExcludeFromGeneratedReport
 public class PolarisApplication extends Application<PolarisConfiguration> {
 
     private static final Logger log = LoggerFactory.getLogger(PolarisApplication.class);
