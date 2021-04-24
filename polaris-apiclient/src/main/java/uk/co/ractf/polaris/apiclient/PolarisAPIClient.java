@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.apiclient;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.apiclient.command.GetChallengeCommand;
 import uk.co.ractf.polaris.apiclient.command.ListChallengesCommand;
+import uk.co.ractf.polaris.apiclient.command.PingCommand;
 import uk.co.ractf.polaris.apiclient.command.SubmitChallengeCommand;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 import uk.co.ractf.polaris.apiclient.transport.HttpClientTransport;
@@ -13,6 +14,11 @@ public class PolarisAPIClient implements APIClient {
 
     PolarisAPIClient(final String apiRoot, final String username, final String password) {
         this.transport = new HttpClientTransport(apiRoot, username, password);
+    }
+
+    @Override
+    public PingCommand ping() {
+        return new PingCommand(transport);
     }
 
     @Override

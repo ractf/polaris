@@ -1,13 +1,15 @@
 package uk.co.ractf.polaris.cli.subcommands;
 
 import picocli.CommandLine;
-import uk.co.ractf.polaris.cli.Subcommand;
+import uk.co.ractf.polaris.cli.CLIConfig;
+
+import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "login")
-public class Login extends Subcommand {
+public class Login implements Callable<Integer> {
 
-    @CommandLine.Option(names = {"-u", "--user"}, description = "Username")
-    private String user;
+    @CommandLine.Option(names = {"-u", "--username"}, description = "Username")
+    private String username;
 
     @CommandLine.Option(names = {"-p", "--password"}, description = "Password")
     private String password;
@@ -15,19 +17,23 @@ public class Login extends Subcommand {
     @CommandLine.Parameters(index = "0")
     private String host;
 
-    @CommandLine.Option(names = {"-P", "--port"}, defaultValue = "8080", description = "Port")
-    private int port;
-
     @Override
-    public int run() throws Exception {
-        if (user == null) {
+    public Integer call() {
+        if (host == null) {
+            host = System.console().readLine("Host: ");
+        }
+        if (username == null) {
             System.out.printf("Login to %s%n", host);
-            user = System.console().readLine("Username: ");
+            username = System.console().readLine("Username: ");
         }
         if (password == null) {
             password = String.valueOf(System.console().readPassword("Password: "));
         }
+        if (!host.startsWith("http")) {
+            host = "http://" + host;
+        }
+
+        new CLIConfig(host, username, password).save();
         return 0;
     }
-
 }

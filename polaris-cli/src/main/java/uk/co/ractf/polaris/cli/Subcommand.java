@@ -1,13 +1,37 @@
 package uk.co.ractf.polaris.cli;
 
+import uk.co.ractf.polaris.apiclient.APIClient;
+import uk.co.ractf.polaris.cli.subcommands.Login;
+
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 public abstract class Subcommand implements Callable<Integer> {
 
-    public abstract int run() throws Exception;
+    public abstract int run(final APIClient apiClient) throws Exception;
 
     @Override
     public Integer call() throws Exception {
-        return run();
+        if (!CLIConfig.doesFileExist()) {
+            new Login().call();
+        }
+
+        final APIClient apiClient = APIClientFactory.createAPIClient();
+        try {
+            final Map<String, String> response = apiClient.ping().exec();
+            if (!response.containsKey("username")) {
+                authFail();
+            }
+        } catch (final Exception e) {
+            authFail();
+        }
+
+        return run(apiClient);
     }
+
+    private void authFail() {
+        System.out.println("Something went wrong authenticating with polaris, run `polaris login` or try again.");
+        System.exit(1);
+    }
+
 }
