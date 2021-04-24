@@ -48,7 +48,6 @@ public class Deployment extends JsonRepresentable {
             @JsonProperty("challenge") final String challenge,
             @JsonProperty("replication") final Replication replication,
             @JsonProperty("allocation") final Allocation allocation) {
-        Preconditions.checkArgument(!id.isBlank());
         this.id = id;
         this.challenge = challenge;
         this.replication = replication;
