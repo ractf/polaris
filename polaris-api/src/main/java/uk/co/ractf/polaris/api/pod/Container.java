@@ -119,24 +119,25 @@ public class Container extends Pod {
 
     /**
      * Creates a container
-     * @param type the type of the pod (container)
-     * @param id the id of the container
-     * @param image the image to use
-     * @param repo the repository id
-     * @param entrypoint the container entrypoint
-     * @param env the environment variables to set
-     * @param randomEnv the randomised environment variables to set
-     * @param labels labels to add to the container
-     * @param affinity which types of host a pod should be preferentially scheduled on
-     * @param antiAffinity which types of host a pod should avoid being scheduled on
-     * @param resourceQuota the resource quota of the container
-     * @param restartPolicy the restart policy of the container
-     * @param capDrop capabilities to drop
-     * @param capAdd capabilities to add
-     * @param healthChecks healthchecks for the pod
+     *
+     * @param type               the type of the pod (container)
+     * @param id                 the id of the container
+     * @param image              the image to use
+     * @param repo               the repository id
+     * @param entrypoint         the container entrypoint
+     * @param env                the environment variables to set
+     * @param randomEnv          the randomised environment variables to set
+     * @param labels             labels to add to the container
+     * @param affinity           which types of host a pod should be preferentially scheduled on
+     * @param antiAffinity       which types of host a pod should avoid being scheduled on
+     * @param resourceQuota      the resource quota of the container
+     * @param restartPolicy      the restart policy of the container
+     * @param capDrop            capabilities to drop
+     * @param capAdd             capabilities to add
+     * @param healthChecks       healthchecks for the pod
      * @param terminationTimeout the timeout to use when the pod is terminated
-     * @param portMappings ports to expose
-     * @param metadata other metadata
+     * @param portMappings       ports to expose
+     * @param metadata           other metadata
      */
     public Container(
             @JsonProperty("type") final String type,

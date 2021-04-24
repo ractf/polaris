@@ -10,7 +10,7 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 /**
  * Represents a pod that can be scheduled on Polaris
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY, visible = true)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Container.class, name = "container")
 })

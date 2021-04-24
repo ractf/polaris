@@ -10,7 +10,7 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 /**
  * Base class for a randomly generated environment variables
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY, visible = true)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = RandomEnvString.class, name = "string"),
         @JsonSubTypes.Type(value = RandomEnvInteger.class, name = "int")

@@ -11,7 +11,7 @@ import uk.co.ractf.polaris.api.pod.Pod;
 /**
  * Base class for all healthchecks that can be ran against a {@link Pod}
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TcpHealthCheck.class, name = "tcp"),
         @JsonSubTypes.Type(value = HttpHealthCheck.class, name = "http"),
