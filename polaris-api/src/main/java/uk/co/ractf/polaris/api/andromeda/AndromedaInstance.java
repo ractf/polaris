@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.api.andromeda;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
@@ -11,7 +12,9 @@ public class AndromedaInstance extends JsonRepresentable {
     private final String ip;
     private final Integer port;
 
-    public AndromedaInstance(final String ip, final Integer port) {
+    public AndromedaInstance(
+            @JsonProperty("ip") final String ip,
+            @JsonProperty("port") final Integer port) {
         this.ip = ip;
         this.port = port;
     }
