@@ -29,21 +29,21 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
 
     @Override
     public Instance allocate(final InstanceRequest request) {
-        final StickyInstances sticky = stickyInstances.computeIfAbsent(request.getChallengeID(), x -> new EphemeralStickyInstances());
-        if (sticky.getUser(request.getUserID()) != null) {
-            final Instance instance = controller.getInstance(sticky.getUser(request.getUserID()));
+        final StickyInstances sticky = stickyInstances.computeIfAbsent(request.getChallenge(), x -> new EphemeralStickyInstances());
+        if (sticky.getUser(request.getUser()) != null) {
+            final Instance instance = controller.getInstance(sticky.getUser(request.getUser()));
             if (instance != null) {
                 return instance;
             }
         }
-        if (sticky.getTeam(request.getTeamID()) != null) {
-            final Instance instance = controller.getInstance(sticky.getTeam(request.getUserID()));
+        if (sticky.getTeam(request.getTeam()) != null) {
+            final Instance instance = controller.getInstance(sticky.getTeam(request.getUser()));
             if (instance != null) {
                 return instance;
             }
         }
 
-        final List<Deployment> deployments = controller.getDeploymentsOfChallenge(request.getChallengeID());
+        final List<Deployment> deployments = controller.getDeploymentsOfChallenge(request.getChallenge());
         double bestInstanceScore = -1;
         Instance bestInstance = null;
         String bestInstanceSticky = null;
@@ -52,8 +52,8 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
             for (final Instance instance : controller.getInstancesForDeployment(deployment.getID())) {
                 if (instanceUsers.get(instance.getID()).size() >= allocation.getUserLimit() ||
                         instanceTeams.get(instance.getID()).size() >= allocation.getTeamLimit() ||
-                        userAvoids.get(request.getUserID()).contains(instance.getID()) ||
-                        teamAvoids.get(request.getTeamID()).contains(instance.getID())) {
+                        userAvoids.get(request.getUser()).contains(instance.getID()) ||
+                        teamAvoids.get(request.getTeam()).contains(instance.getID())) {
                     continue;
                 }
                 final double userScore = (double) instanceUsers.get(instance.getID()).size() / allocation.getUserLimit();
@@ -72,16 +72,16 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
             int instanceCount = 0;
             for (final Deployment deployment : deployments) {
                 for (final Instance instance : controller.getInstancesForDeployment(deployment.getID())) {
-                    if (userAvoids.get(request.getUserID()).contains(instance.getID()) ||
-                            teamAvoids.get(request.getTeamID()).contains(instance.getID())) {
+                    if (userAvoids.get(request.getUser()).contains(instance.getID()) ||
+                            teamAvoids.get(request.getTeam()).contains(instance.getID())) {
                         avoided++;
                     }
                     instanceCount++;
                 }
             }
             if (avoided > instanceCount * 0.5) {
-                userAvoids.removeAll(request.getUserID());
-                teamAvoids.removeAll(request.getTeamID());
+                userAvoids.removeAll(request.getUser());
+                teamAvoids.removeAll(request.getTeam());
             }
             //TODO: notify admins
             Collections.shuffle(deployments);
@@ -91,9 +91,9 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
         }
 
         if ("user".equals(bestInstanceSticky)) {
-            stickyInstances.get(request.getChallengeID()).setUser(bestInstance.getID(), request.getUserID());
+            stickyInstances.get(request.getChallenge()).setUser(bestInstance.getID(), request.getUser());
         } else if ("team".equals(bestInstanceSticky)) {
-            stickyInstances.get(request.getChallengeID()).setTeam(bestInstance.getID(), request.getTeamID());
+            stickyInstances.get(request.getChallenge()).setTeam(bestInstance.getID(), request.getTeam());
         }
 
         return bestInstance;
@@ -101,13 +101,13 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
 
     @Override
     public Instance requestNewAllocation(final InstanceRequest request) {
-        if (stickyInstances.get(request.getChallengeID()).getTeam(request.getTeamID()) != null) {
-            teamAvoids.put(request.getTeamID(), stickyInstances.get(request.getChallengeID()).getTeam(request.getTeamID()));
-            stickyInstances.get(request.getChallengeID()).clearTeam(request.getTeamID());
+        if (stickyInstances.get(request.getChallenge()).getTeam(request.getTeam()) != null) {
+            teamAvoids.put(request.getTeam(), stickyInstances.get(request.getChallenge()).getTeam(request.getTeam()));
+            stickyInstances.get(request.getChallenge()).clearTeam(request.getTeam());
         }
-        if (stickyInstances.get(request.getChallengeID()).getUser(request.getUserID()) != null) {
-            userAvoids.put(request.getUserID(), stickyInstances.get(request.getChallengeID()).getUser(request.getUserID()));
-            stickyInstances.get(request.getChallengeID()).clearUser(request.getUserID());
+        if (stickyInstances.get(request.getChallenge()).getUser(request.getUser()) != null) {
+            userAvoids.put(request.getUser(), stickyInstances.get(request.getChallenge()).getUser(request.getUser()));
+            stickyInstances.get(request.getChallenge()).clearUser(request.getUser());
         }
         return allocate(request);
     }
