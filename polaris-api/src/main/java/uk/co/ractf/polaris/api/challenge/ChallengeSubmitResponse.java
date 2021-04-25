@@ -1,8 +1,10 @@
 package uk.co.ractf.polaris.api.challenge;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChallengeSubmitResponse extends JsonRepresentable {
 
     public enum Status {
