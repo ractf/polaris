@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.api.instance;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
@@ -17,6 +18,7 @@ import java.util.Objects;
  *     }
  * </pre>
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InstancePortBinding extends JsonRepresentable {
 
     private final String port;
@@ -48,7 +50,7 @@ public class InstancePortBinding extends JsonRepresentable {
         return ip;
     }
 
-    @JsonProperty("advertised")
+    @JsonProperty("advertise")
     public boolean getAdvertise() {
         return advertise;
     }
