@@ -96,7 +96,7 @@ public class DockerRunner implements Runner<Container> {
                                     .withPortBindings(new ArrayList<>(portBindings.values()))
                                     .withCapAdd(createCapabilityArray(container.getCapAdd()))
                                     .withCapDrop(createCapabilityArray(container.getCapDrop()))
-                                    .withNanoCPUs(container.getResourceQuota().getNanoCPUs())
+                                    .withNanoCPUs(container.getResourceQuota().getNanocpu())
                                     .withMemory(container.getResourceQuota().getMemory())
                                     .withRestartPolicy(RestartPolicy.alwaysRestart())
                                     .withMemorySwap(container.getResourceQuota().getSwap()));

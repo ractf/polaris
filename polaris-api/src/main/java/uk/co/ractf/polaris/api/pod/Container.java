@@ -102,7 +102,7 @@ public class Container extends Pod {
     private final Map<String, RandomEnv> randomEnv;
     private final Map<String, String> labels;
     private final List<String> affinity;
-    private final List<String> antiAffinity;
+    private final List<String> antiaffinity;
     private final ResourceQuota resourceQuota;
     private final String restartPolicy;
     private final List<String> capDrop;
@@ -126,7 +126,7 @@ public class Container extends Pod {
      * @param randomEnv          the randomised environment variables to set
      * @param labels             labels to add to the container
      * @param affinity           which types of host a pod should be preferentially scheduled on
-     * @param antiAffinity       which types of host a pod should avoid being scheduled on
+     * @param antiaffinity       which types of host a pod should avoid being scheduled on
      * @param resourceQuota      the resource quota of the container
      * @param restartPolicy      the restart policy of the container
      * @param capDrop            capabilities to drop
@@ -146,7 +146,7 @@ public class Container extends Pod {
             @JsonProperty("randomEnv") final Map<String, RandomEnv> randomEnv,
             @JsonProperty("labels") final Map<String, String> labels,
             @JsonProperty("affinity") final List<String> affinity,
-            @JsonProperty("antiaffinity") final List<String> antiAffinity,
+            @JsonProperty("antiaffinity") final List<String> antiaffinity,
             @JsonProperty("resourceQuota") final ResourceQuota resourceQuota,
             @JsonProperty("restartPolicy") final String restartPolicy,
             @JsonProperty("capDrop") final List<String> capDrop,
@@ -163,7 +163,7 @@ public class Container extends Pod {
         this.randomEnv = randomEnv;
         this.labels = labels;
         this.affinity = affinity;
-        this.antiAffinity = antiAffinity;
+        this.antiaffinity = antiaffinity;
         this.resourceQuota = resourceQuota;
         this.restartPolicy = restartPolicy;
         this.capDrop = capDrop;
@@ -202,8 +202,8 @@ public class Container extends Pod {
         return affinity;
     }
 
-    public List<String> getAntiAffinity() {
-        return antiAffinity;
+    public List<String> getAntiaffinity() {
+        return antiaffinity;
     }
 
     public ResourceQuota getResourceQuota() {
@@ -265,7 +265,7 @@ public class Container extends Pod {
         return Objects.equals(image, container.image) && Objects.equals(repo, container.repo) &&
                 Objects.equals(entrypoint, container.entrypoint) && Objects.equals(env, container.env) &&
                 Objects.equals(randomEnv, container.randomEnv) && Objects.equals(labels, container.labels) &&
-                Objects.equals(affinity, container.affinity) && Objects.equals(antiAffinity, container.antiAffinity) &&
+                Objects.equals(affinity, container.affinity) && Objects.equals(antiaffinity, container.antiaffinity) &&
                 Objects.equals(resourceQuota, container.resourceQuota) &&
                 Objects.equals(restartPolicy, container.restartPolicy) && Objects.equals(capDrop, container.capDrop) &&
                 Objects.equals(capAdd, container.capAdd) && Objects.equals(healthChecks, container.healthChecks) &&
@@ -276,7 +276,7 @@ public class Container extends Pod {
 
     @Override
     public int hashCode() {
-        return Objects.hash(image, repo, entrypoint, env, randomEnv, labels, affinity, antiAffinity, resourceQuota,
+        return Objects.hash(image, repo, entrypoint, env, randomEnv, labels, affinity, antiaffinity, resourceQuota,
                 restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, portMappings, metadata,
                 generatedRandomEnv);
     }

@@ -23,21 +23,21 @@ public class ResourceQuota extends JsonRepresentable {
 
     private final Long memory;
     private final Long swap;
-    private final Long nanoCPUs;
+    private final Long nanocpu;
 
     /**
      * @param memory   the memory limit (bytes)
      * @param swap     the swap limit (bytes)
-     * @param nanoCPUs how many nano cpus to assign
+     * @param nanocpu how many nano cpus to assign
      */
     @Contract(pure = true)
     public ResourceQuota(
             @JsonProperty("memory") final Long memory,
             @JsonProperty("swap") final Long swap,
-            @JsonProperty("nanocpu") final Long nanoCPUs) {
+            @JsonProperty("nanocpu") final Long nanocpu) {
         this.memory = memory;
         this.swap = swap;
-        this.nanoCPUs = nanoCPUs;
+        this.nanocpu = nanocpu;
     }
 
     public Long getMemory() {
@@ -48,8 +48,8 @@ public class ResourceQuota extends JsonRepresentable {
         return swap;
     }
 
-    public Long getNanoCPUs() {
-        return nanoCPUs;
+    public Long getNanocpu() {
+        return nanocpu;
     }
 
     @Override
@@ -57,11 +57,11 @@ public class ResourceQuota extends JsonRepresentable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final ResourceQuota that = (ResourceQuota) o;
-        return Objects.equals(memory, that.memory) && Objects.equals(swap, that.swap) && Objects.equals(nanoCPUs, that.nanoCPUs);
+        return Objects.equals(memory, that.memory) && Objects.equals(swap, that.swap) && Objects.equals(nanocpu, that.nanocpu);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(memory, swap, nanoCPUs);
+        return Objects.hash(memory, swap, nanocpu);
     }
 }
