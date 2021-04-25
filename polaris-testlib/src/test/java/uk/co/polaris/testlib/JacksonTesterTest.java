@@ -9,13 +9,13 @@ public class JacksonTesterTest {
 
     @Test
     public void testValidObject() {
-        JacksonTester.testObject(ValidObject.class, "{\"name\": \"test\", \"id\":\"2\"}");
+        JacksonTester.validateObject(ValidObject.class, "{\"name\": \"test\", \"id\":\"2\"}");
     }
 
     @Test
     public void testInvalidObject() {
         assertThatExceptionOfType(RuntimeException.class).isThrownBy(
-                () -> JacksonTester.testObject(InvalidObject.class, "{\"name\": \"test\", \"id\":\"2\"}"));
+                () -> JacksonTester.validateObject(InvalidObject.class, "{\"name\": \"test\", \"id\":\"2\"}"));
     }
 
 }
