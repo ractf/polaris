@@ -28,7 +28,7 @@ public class JacksonTester {
             map.put("UNKNOWN_PROPERTY_KEY", "UNKNOWN_PROPERTY_VALUE");
             final T t = objectMapper.readValue(objectMapper.writeValueAsString(map), clazz);
             final String result = objectMapper.writeValueAsString(t);
-            assertEquals(objectMapper.readTree(result), objectMapper.readTree(fixture));
+            assertEquals(objectMapper.readTree(fixture), objectMapper.readTree(result));
         } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
