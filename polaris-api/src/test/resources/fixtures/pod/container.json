@@ -40,7 +40,7 @@
     "MKNOD"
   ],
   "restartPolicy": "always",
-  "healthcheck": [
+  "healthChecks": [
     {
       "id": "tcpconnect",
       "type": "tcp",
@@ -56,21 +56,25 @@
           "hex": "deadbeef"
         },
         {
-          "type": "receiveexact",
+          "type": "receive",
           "hex": "deadbeef"
         },
         {
           "type": "receiveregex",
-          "hex": "."
+          "regex": ".",
+          "encoded": false
         }
-      ]
+      ],
+      "connectionTimeout": 5,
+      "sequenceTimeout": 5
     },
     {
       "id": "web",
       "type": "http",
       "path": "/test",
       "port": 80,
-      "vhost": "dave.lc"
+      "vhost": "dave.lc",
+      "statusCode": 500
     }
   ],
   "terminationTimeout": 5,

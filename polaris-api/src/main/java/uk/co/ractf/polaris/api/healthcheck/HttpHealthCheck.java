@@ -24,7 +24,7 @@ import java.util.Objects;
 public class HttpHealthCheck extends HealthCheck {
 
     private final String path;
-    private final String port;
+    private final Integer port;
     private final String vhost;
     private final Integer statusCode;
 
@@ -43,7 +43,7 @@ public class HttpHealthCheck extends HealthCheck {
             @JsonProperty("id") final String id,
             @JsonProperty("type") final String type,
             @JsonProperty("path") final String path,
-            @JsonProperty("port") final String port,
+            @JsonProperty("port") final Integer port,
             @JsonProperty("vhost") final String vhost,
             @JsonProperty("statusCode") final Integer statusCode) {
         super(id, type);
@@ -57,7 +57,7 @@ public class HttpHealthCheck extends HealthCheck {
         return path;
     }
 
-    public String getPort() {
+    public Integer getPort() {
         return port;
     }
 
