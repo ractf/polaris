@@ -1,0 +1,14 @@
+{
+  "name": "fffff",
+  "port": 80,
+  "replicas": 10,
+  "resources": {
+    "memory": 631242752,
+    "cpus": "0.2"
+  },
+  "image": "docker.pkg.github.com/ractf/challenges/example:latest",
+  "registryAuth": {
+    "username": "username",
+    "password": "password"
+  }
+}
