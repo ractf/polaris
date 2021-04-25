@@ -1,0 +1,17 @@
+{
+  "id": "tcppayloadcheck",
+  "type": "tcppayload",
+  "payloads": [
+    {
+      "type": "send",
+      "hex": "1234567890"
+    },
+    {
+      "type": "receiveregex",
+      "regex": ".{6}",
+      "encoded": true
+    }
+  ],
+  "connectionTimeout": 5,
+  "sequenceTimeout": 15
+}

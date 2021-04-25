@@ -1,0 +1,6 @@
+{
+  "id": "cmdhealth1",
+  "type": "command",
+  "command": "ls -la",
+  "returnValue": 0
+}
