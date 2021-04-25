@@ -1,0 +1,5 @@
+{
+  "type": "string",
+  "alphabet": "abcdef1234567890",
+  "length": 16
+}

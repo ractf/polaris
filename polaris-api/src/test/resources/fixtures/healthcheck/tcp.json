@@ -1,0 +1,6 @@
+{
+  "id": "tcpconnect",
+  "type": "tcp",
+  "port": 6000,
+  "timeout": 15
+}

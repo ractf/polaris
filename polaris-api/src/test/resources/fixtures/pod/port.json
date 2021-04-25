@@ -1,0 +1,5 @@
+{
+  "port": 22,
+  "protocol": "tcp",
+  "advertise": false
+}

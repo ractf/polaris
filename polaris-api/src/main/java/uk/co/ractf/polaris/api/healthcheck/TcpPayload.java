@@ -16,7 +16,7 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
         @JsonSubTypes.Type(value = ReceiveRegexTcpPayload.class, name = "receiveregex")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TcpPayload extends JsonRepresentable {
+public abstract class TcpPayload extends JsonRepresentable {
 
     private final String type;
 

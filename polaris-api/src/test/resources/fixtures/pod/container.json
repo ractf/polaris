@@ -1,0 +1,87 @@
+{
+  "type": "container",
+  "id": "example1",
+  "image": "docker.io/bfirsh/reticulate-splines",
+  "repo": "dockerhub",
+  "entrypoint": [],
+  "env": {
+    "aaa": "bbb"
+  },
+  "randomEnv": {
+    "test": {
+      "type": "string",
+      "length": 6,
+      "alphabet": "1234567890abcdef"
+    },
+    "test2": {
+      "type": "int",
+      "min": 69,
+      "max": 420
+    }
+  },
+  "labels": {
+    "key": "value"
+  },
+  "affinity": [
+    "aslr"
+  ],
+  "antiaffinity": [
+    "ARM"
+  ],
+  "resourceQuota": {
+    "memory": 536870912,
+    "swap": 0,
+    "nanocpu": 10000000
+  },
+  "capDrop": [
+    "BLOCK_SUSPEND"
+  ],
+  "capAdd": [
+    "MKNOD"
+  ],
+  "restartPolicy": "always",
+  "healthcheck": [
+    {
+      "id": "tcpconnect",
+      "type": "tcp",
+      "port": 6000,
+      "timeout": 5
+    },
+    {
+      "id": "flagcheck",
+      "type": "tcppayload",
+      "payloads": [
+        {
+          "type": "send",
+          "hex": "deadbeef"
+        },
+        {
+          "type": "receiveexact",
+          "hex": "deadbeef"
+        },
+        {
+          "type": "receiveregex",
+          "hex": "."
+        }
+      ]
+    },
+    {
+      "id": "web",
+      "type": "http",
+      "path": "/test",
+      "port": 80,
+      "vhost": "dave.lc"
+    }
+  ],
+  "terminationTimeout": 5,
+  "metadata": {
+    "aaa": "bbb"
+  },
+  "portMappings": [
+    {
+      "port": 6000,
+      "protocol": "tcp",
+      "advertise": true
+    }
+  ]
+}

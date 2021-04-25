@@ -1,0 +1,18 @@
+{
+  "id": "embedded",
+  "hostname": "polaris1",
+  "uname": "Linux polaris1 5.10.16-arch1-1 #1 SMP PREEMPT Sat, 13 Feb 2021 20:50:18 +0000 x86_64 GNU/Linux",
+  "architecture": "amd64",
+  "processors": 16,
+  "totalMemory": 67437092864,
+  "freeMemory": 38039498752,
+  "totalSwap": 24771100672,
+  "freeSwap": 24771100672,
+  "labels": {
+    "aslr": "on"
+  },
+  "publicIP": "127.0.0.1",
+  "osName": "Linux",
+  "osVersion": "5.10.16-arch1-1",
+  "cpuLoad": 6.22
+}
