@@ -1,9 +1,11 @@
 package uk.co.ractf.polaris.api.andromeda;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 @Deprecated
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AndromedaAuthentication extends JsonRepresentable {
 
     private final String username;
