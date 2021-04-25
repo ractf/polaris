@@ -3,6 +3,8 @@ package uk.co.ractf.polaris.api.andromeda;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 /**
  * Represents a challenge that can be submitted via the Andromeda emulation resource. This will be converted to a
  * {@link uk.co.ractf.polaris.api.challenge.Challenge} and a {@link uk.co.ractf.polaris.api.deployment.Deployment}
@@ -65,5 +67,18 @@ public class AndromedaChallenge {
 
     public AndromedaAuthentication getRegistryAuth() {
         return registryAuth;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AndromedaChallenge)) return false;
+        final AndromedaChallenge that = (AndromedaChallenge) o;
+        return Objects.equals(name, that.name) && Objects.equals(port, that.port) && Objects.equals(replicas, that.replicas) && Objects.equals(resources, that.resources) && Objects.equals(image, that.image) && Objects.equals(registryAuth, that.registryAuth);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, port, replicas, resources, image, registryAuth);
     }
 }

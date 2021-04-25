@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
+import java.util.Objects;
+
 /**
  * Represents the Andromeda resource allocation format.
  * {
@@ -31,5 +33,18 @@ public class AndromedaResources extends JsonRepresentable {
 
     public String getCpus() {
         return cpus;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AndromedaResources)) return false;
+        final AndromedaResources that = (AndromedaResources) o;
+        return Objects.equals(memory, that.memory) && Objects.equals(cpus, that.cpus);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(memory, cpus);
     }
 }
