@@ -1,3 +1,5 @@
+apply plugin: 'jacoco'
+
 repositories {
     mavenCentral()
 }
@@ -8,9 +10,15 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
     testImplementation project(":polaris-testlib")
     testImplementation "io.dropwizard:dropwizard-testing:$dropwizardVersion"
+    testImplementation "nl.jqno.equalsverifier:equalsverifier:3.6"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
 }
