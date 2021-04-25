@@ -22,35 +22,35 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceRequest extends JsonRepresentable {
 
-    private final String challengeID;
-    private final String userID;
-    private final String teamID;
+    private final String challenge;
+    private final String user;
+    private final String team;
 
     /**
-     * @param challengeID the challenge id
-     * @param userID      the user id
-     * @param teamID      the team id
+     * @param challenge the challenge id
+     * @param user      the user id
+     * @param team      the team id
      */
     @Contract(pure = true)
     public InstanceRequest(
-            @JsonProperty("challenge") final String challengeID,
-            @JsonProperty("user") final String userID,
-            @JsonProperty("team") final String teamID) {
-        this.challengeID = challengeID;
-        this.userID = userID;
-        this.teamID = teamID;
+            @JsonProperty("challenge") final String challenge,
+            @JsonProperty("user") final String user,
+            @JsonProperty("team") final String team) {
+        this.challenge = challenge;
+        this.user = user;
+        this.team = team;
     }
 
-    public String getChallengeID() {
-        return challengeID;
+    public String getChallenge() {
+        return challenge;
     }
 
-    public String getUserID() {
-        return userID;
+    public String getUser() {
+        return user;
     }
 
-    public String getTeamID() {
-        return teamID;
+    public String getTeam() {
+        return team;
     }
 
     @Override
@@ -58,11 +58,11 @@ public class InstanceRequest extends JsonRepresentable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final InstanceRequest that = (InstanceRequest) o;
-        return Objects.equals(challengeID, that.challengeID) && Objects.equals(userID, that.userID) && Objects.equals(teamID, that.teamID);
+        return Objects.equals(challenge, that.challenge) && Objects.equals(user, that.user) && Objects.equals(team, that.team);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(challengeID, userID, teamID);
+        return Objects.hash(challenge, user, team);
     }
 }
