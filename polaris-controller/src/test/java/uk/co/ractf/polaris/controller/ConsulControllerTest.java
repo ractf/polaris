@@ -1,17 +1,20 @@
 package uk.co.ractf.polaris.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.util.concurrent.Service;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.SessionClient;
 import com.orbitz.consul.model.session.ImmutableSessionCreatedResponse;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import uk.co.ractf.polaris.PolarisConfiguration;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.consul.ConsulPath;
+import uk.co.ractf.polaris.host.Host;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,8 +36,8 @@ public class ConsulControllerTest {
     private static PolarisConfiguration config;
     private static ConsulController controller;
 
-    @BeforeAll
-    public static void setup() {
+    @BeforeEach
+    public void setup() {
         config = new PolarisConfiguration();
         when(consul.keyValueClient()).thenReturn(keyValueClient);
         final SessionClient sessionClient = mock(SessionClient.class);
@@ -112,6 +115,55 @@ public class ConsulControllerTest {
         when(keyValueClient.performTransaction(any())).thenReturn(null);
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> controller.createChallenge(Challenge.parse(fixture("fixtures/valid_challenge.json"), Challenge.class)));
+    }
+
+    @Test
+    public void testServicesStartAsync() {
+        final Service service = mock(Service.class);
+        controller = new ConsulController(config, consul, Collections.singleton(service));
+        controller.start();
+        verify(service, times(1)).startAsync();
+    }
+
+    @Test
+    public void testServicesStopAsync() {
+        final Service service = mock(Service.class);
+        final ConsulController controller = new ConsulController(config, consul, Collections.singleton(service));
+        controller.stop();
+        verify(service, times(1)).stopAsync();
+    }
+
+    @Test
+    public void testHostAdding() {
+        final Host host = mock(Host.class);
+        when(host.getID()).thenReturn("testHost");
+        controller.addHost(host);
+        assertThat(controller.getHost("testHost")).isEqualTo(host);
+    }
+
+    @Test
+    public void testHostAddingDuplicate() {
+        final Host host = mock(Host.class);
+        when(host.getID()).thenReturn("testHost");
+        final Host host2 = mock(Host.class);
+        when(host2.getID()).thenReturn("testHost");
+        controller.addHost(host);
+        controller.addHost(host2);
+        assertThat(controller.getHost("testHost")).isEqualTo(host);
+    }
+
+    @Test
+    public void testGetHosts() {
+        final Map<String, Host> expected = new HashMap<>();
+        final Host host = mock(Host.class);
+        when(host.getID()).thenReturn("testHost");
+        expected.put("testHost", host);
+        final Host host2 = mock(Host.class);
+        when(host2.getID()).thenReturn("testHost2");
+        expected.put("testHost2", host2);
+        controller.addHost(host);
+        controller.addHost(host2);
+        assertThat(controller.getHosts()).containsAllEntriesOf(expected);
     }
 
 }

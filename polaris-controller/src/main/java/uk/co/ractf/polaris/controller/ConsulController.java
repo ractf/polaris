@@ -68,6 +68,9 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public void addHost(final Host host) {
+        if (hosts.containsKey(host.getID())) {
+            return;
+        }
         hosts.put(host.getID(), host);
     }
 
