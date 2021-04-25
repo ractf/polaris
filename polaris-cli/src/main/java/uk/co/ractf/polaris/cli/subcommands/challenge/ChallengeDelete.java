@@ -17,7 +17,7 @@ public class ChallengeDelete extends Subcommand {
     public int run(final APIClient apiClient) {
         for (final String challenge : challenges) {
             final ChallengeDeleteResponse response = apiClient.deleteChallenge(challenge).exec();
-            if (response.getStatus() == ChallengeDeleteResponse.Status.SUCCESS) {
+            if (response.getStatus() == ChallengeDeleteResponse.Status.OK) {
                 System.out.println("Deleted challenge " + response.getId());
             } else if (response.getStatus() == ChallengeDeleteResponse.Status.NOT_FOUND) {
                 System.out.println("Could not find challenge " + response.getId());

@@ -8,7 +8,7 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 public class ChallengeDeleteResponse extends JsonRepresentable {
 
     public enum Status {
-        SUCCESS, NOT_FOUND;
+        OK, NOT_FOUND;
     }
 
     private final Status status;

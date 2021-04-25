@@ -124,7 +124,7 @@ public class ChallengeResource {
         }
         controller.deleteChallenge(id);
         return Response.status(200)
-                .entity(new ChallengeDeleteResponse(ChallengeDeleteResponse.Status.SUCCESS, id)).build();
+                .entity(new ChallengeDeleteResponse(ChallengeDeleteResponse.Status.OK, id)).build();
     }
 
 }
