@@ -11,7 +11,7 @@ import uk.co.ractf.polaris.api.pod.Pod;
 /**
  * Base class for all healthchecks that can be ran against a {@link Pod}
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = TcpHealthCheck.class, name = "tcp"),
         @JsonSubTypes.Type(value = HttpHealthCheck.class, name = "http"),
@@ -22,7 +22,6 @@ import uk.co.ractf.polaris.api.pod.Pod;
 public abstract class HealthCheck extends JsonRepresentable {
 
     private final String id;
-    private final String type;
 
     /**
      * Create a HealthCheck
@@ -33,9 +32,12 @@ public abstract class HealthCheck extends JsonRepresentable {
     @Contract(pure = true)
     public HealthCheck(
             @JsonProperty("id") final String id,
-            @JsonProperty("id") final String type) {
+            @JsonProperty("type") final String type) {
         this.id = id;
-        this.type = type;
+    }
+
+    public String getId() {
+        return id;
     }
 
 }
