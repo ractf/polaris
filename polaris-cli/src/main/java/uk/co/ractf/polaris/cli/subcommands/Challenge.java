@@ -8,7 +8,7 @@ import uk.co.ractf.polaris.cli.subcommands.challenge.ChallengeSubmit;
 
 import java.util.concurrent.Callable;
 
-@CommandLine.Command(name = "challenge", aliases = {"chal", "ch"}, subcommands = {
+@CommandLine.Command(name = "challenge", aliases = {"chal", "ch", "c"}, subcommands = {
         ChallengeList.class,
         ChallengeDelete.class,
         ChallengeSubmit.class,
