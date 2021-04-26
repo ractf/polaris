@@ -196,8 +196,8 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public Challenge getChallengeFromDeployment(final String deploymentID) {
-        final Deployment deployment = getDeployment(deploymentID);
+    public Challenge getChallengeFromDeployment(final String deploymentId) {
+        final Deployment deployment = getDeployment(deploymentId);
         if (deployment == null) {
             return null;
         }
@@ -240,7 +240,7 @@ public class ConsulController implements Controller, Managed {
             if (instanceData.isPresent()) {
                 try {
                     final Instance instance = Instance.parse(instanceData.get(), Instance.class);
-                    if (instance.getDeploymentID().equals(deployment)) {
+                    if (instance.getDeploymentId().equals(deployment)) {
                         instances.add(instance);
                     }
                 } catch (final JsonProcessingException exception) {

@@ -86,7 +86,7 @@ public class AndromedaEmulationResource {
         final Instance instance = controller.getInstanceAllocator().allocate(
                 new InstanceRequest(request.getJob(), request.getUser(), ""));
         return Response.status(200).entity(
-                new AndromedaInstance(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(),
+                new AndromedaInstance(controller.getHost(instance.getHostId()).getHostInfo().getPublicIP(),
                         Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]))).build();
     }
 
@@ -103,7 +103,7 @@ public class AndromedaEmulationResource {
         }
         final Instance instance = controller.getInstanceAllocator().requestNewAllocation(
                 new InstanceRequest(request.getJob(), request.getUser(), ""));
-        return new AndromedaInstance(controller.getHost(instance.getHostID()).getHostInfo().getPublicIP(),
+        return new AndromedaInstance(controller.getHost(instance.getHostId()).getHostInfo().getPublicIP(),
                 Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]));
     }
 

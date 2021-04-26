@@ -87,7 +87,7 @@ public class InstanceAllocationResource {
         if (instance == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        final Host host = controller.getHost(instance.getHostID());
+        final Host host = controller.getHost(instance.getHostId());
         if (host == null) {
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }

@@ -116,7 +116,7 @@ public class EmbeddedHost implements Host, Managed {
 
     @Override
     public void restartInstance(final Instance instance) {
-        final Challenge challenge = controller.getChallenge(instance.getChallengeID());
+        final Challenge challenge = controller.getChallenge(instance.getChallengeId());
         if (challenge == null) {
             return;
         }

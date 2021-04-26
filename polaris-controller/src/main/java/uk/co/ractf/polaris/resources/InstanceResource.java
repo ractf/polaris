@@ -62,7 +62,7 @@ public class InstanceResource {
             if (hostPattern.matcher(hostEntry.getKey()).find()) {
                 final Map<String, Instance> hostInstances = hostEntry.getValue().getInstances();
                 for (final Map.Entry<String, Instance> entry : hostInstances.entrySet()) {
-                    if (challengePattern.matcher(entry.getValue().getChallengeID()).find()) {
+                    if (challengePattern.matcher(entry.getValue().getChallengeId()).find()) {
                         instances.put(entry.getKey(), entry.getValue());
                     }
                 }

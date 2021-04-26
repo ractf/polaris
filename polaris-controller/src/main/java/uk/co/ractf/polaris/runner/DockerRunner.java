@@ -75,8 +75,8 @@ public class DockerRunner implements Runner<Container> {
             final Map<String, String> labels = container.getLabels();
             labels.put("polaris", container.getId());
             labels.put("polaris-instance", instance.getId());
-            labels.put("polaris-deployment", instance.getDeploymentID());
-            labels.put("polaris-challenge", controller.getChallengeFromDeployment(instance.getDeploymentID()).getId());
+            labels.put("polaris-deployment", instance.getDeploymentId());
+            labels.put("polaris-challenge", controller.getChallengeFromDeployment(instance.getDeploymentId()).getId());
             labels.put("polaris-pod", container.getId());
 
             final Map<PortMapping, PortBinding> portBindings = host.createPortBindings(container.getPortMappings());
@@ -87,7 +87,7 @@ public class DockerRunner implements Runner<Container> {
 
             CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(container.getImage());
             createContainerCmd = createContainerCmd
-                    .withHostName(container.getId() + "-" + instance.getDeploymentID() + "-" + instance.getId().split("-")[0])
+                    .withHostName(container.getId() + "-" + instance.getDeploymentId() + "-" + instance.getId().split("-")[0])
                     .withEnv(container.getFullEnv())
                     .withLabels(labels)
                     .withPortSpecs()
@@ -200,12 +200,12 @@ public class DockerRunner implements Runner<Container> {
     public void killOrphans() {
         for (final com.github.dockerjava.api.model.Container container :
                 dockerClient.listContainersCmd().withLabelFilter(Collections.singletonList("polaris")).exec()) {
-            final String podID = container.getLabels().get("polaris");
-            final String instanceID = container.getLabels().get("polaris-instance");
-            final String challengeID = container.getLabels().get("polaris-challenge");
+            final String podId = container.getLabels().get("polaris");
+            final String instanceId = container.getLabels().get("polaris-instance");
+            final String challengeId = container.getLabels().get("polaris-challenge");
 
-            if (!host.getInstances().containsKey(instanceID)) {
-                final Challenge challenge = controller.getChallenge(challengeID);
+            if (!host.getInstances().containsKey(instanceId)) {
+                final Challenge challenge = controller.getChallenge(challengeId);
                 if (dyingContainers.contains(container.getId())) {
                     continue;
                 }
@@ -213,7 +213,7 @@ public class DockerRunner implements Runner<Container> {
                 dyingContainers.add(container.getId());
                 CompletableFuture.runAsync(() -> {
                     if (challenge != null) {
-                        final int terminationTimeout = ((Container) challenge.getPod(podID)).getTerminationTimeout();
+                        final int terminationTimeout = ((Container) challenge.getPod(podId)).getTerminationTimeout();
                         dockerClient.stopContainerCmd(container.getId()).withTimeout(terminationTimeout).exec();
                     } else {
                         dockerClient.stopContainerCmd(container.getId()).withTimeout(1).exec();

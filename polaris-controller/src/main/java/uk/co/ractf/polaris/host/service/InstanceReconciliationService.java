@@ -71,7 +71,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
         try {
             for (final Map.Entry<String, Instance> entry : host.getInstances().entrySet()) {
                 final Instance instance = entry.getValue();
-                final Challenge challenge = controller.getChallengeFromDeployment(instance.getDeploymentID());
+                final Challenge challenge = controller.getChallengeFromDeployment(instance.getDeploymentId());
                 if (challenge == null) {
                     continue;
                 }
