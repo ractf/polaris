@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.api;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.host.HostInfo;
 
@@ -17,6 +18,11 @@ public class HostTestCase {
     @Test
     public void testHostInfoIgnoreProperties() {
         validateObjectIgnoreProperties(HostInfo.class, fixture("fixtures/host/info.json"));
+    }
+
+    @Test
+    public void testHostInfoEquals() {
+        EqualsVerifier.simple().forClass(HostInfo.class).verify();
     }
 
 }
