@@ -24,3 +24,7 @@ test {
 jacocoTestReport {
     dependsOn test
 }
+
+compileJava {
+    dependsOn generateReflectConfig
+}
