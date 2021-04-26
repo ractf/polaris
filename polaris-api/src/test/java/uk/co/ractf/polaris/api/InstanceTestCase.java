@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.api;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instance.InstancePortBinding;
@@ -19,6 +20,7 @@ public class InstanceTestCase {
     public void testPort() {
         validateObject(InstancePortBinding.class, fixture("fixtures/instance/portbinding.json"));
     }
+
     @Test
     public void testInstanceIgnoreProperties() {
         validateObjectIgnoreProperties(Instance.class, fixture("fixtures/instance/instance.json"));
@@ -27,6 +29,17 @@ public class InstanceTestCase {
     @Test
     public void testPortIgnoreProperties() {
         validateObjectIgnoreProperties(InstancePortBinding.class, fixture("fixtures/instance/portbinding.json"));
+    }
+
+    @Test
+    public void testInstanceEquals() {
+        EqualsVerifier.simple().forClass(Instance.class).verify();
+    }
+
+
+    @Test
+    public void testPortEquals() {
+        EqualsVerifier.simple().forClass(InstancePortBinding.class).verify();
     }
 
 }
