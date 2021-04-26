@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -27,11 +28,11 @@ public class DeploymentResource {
 
     private static final Logger log = LoggerFactory.getLogger(DeploymentResource.class);
 
-    private final Controller controller;
+    private final ClusterState clusterState;
 
     @Inject
-    public DeploymentResource(final Controller controller) {
-        this.controller = controller;
+    public DeploymentResource(final ClusterState clusterState) {
+        this.clusterState = clusterState;
     }
 
     /**
@@ -50,7 +51,7 @@ public class DeploymentResource {
             description = "Gets a map of deployment id to deployment that matches a given regex on id and challenge id.")
     public Map<String, Deployment> getDeployments(@QueryParam("filter") @DefaultValue("") final String deploymentFilter,
                                                   @QueryParam("challengefilter") @DefaultValue("") final String challengeFilter) {
-        final Map<String, Deployment> deploymentMap = controller.getDeployments();
+        final Map<String, Deployment> deploymentMap = clusterState.getDeployments();
         if (deploymentFilter.isEmpty() && challengeFilter.isEmpty()) {
             return deploymentMap;
         }
@@ -80,7 +81,7 @@ public class DeploymentResource {
     @RolesAllowed("DEPLOYMENT_GET")
     @Operation(summary = "Get Deployment", tags = {"Deployment"}, description = "Gets a deployment with a certain id")
     public Deployment getDeployment(@PathParam("id") final String id) {
-        return controller.getDeployment(id);
+        return clusterState.getDeployment(id);
     }
 
     /**
@@ -95,7 +96,11 @@ public class DeploymentResource {
     @Operation(summary = "Create Deployment", tags = {"Deployment"},
             description = "Creates a deployment on the controller which will roll it out eventually")
     public void createDeployment(final Deployment deployment) {
-        controller.createDeployment(deployment);
+        if (clusterState.getDeployment(deployment.getId()) != null) {
+            //TODO: make this a response entity
+            throw new WebApplicationException(400);
+        }
+        clusterState.setDeployment(deployment);
     }
 
     /**
@@ -109,7 +114,7 @@ public class DeploymentResource {
     @RolesAllowed("DEPLOYMENT_UPDATE")
     @Operation(summary = "Update Deployment", tags = {"Deployment"}, description = "Updates a given deployment")
     public void updateDeployment(final Deployment deployment) {
-        controller.updateDeployment(deployment);
+        clusterState.setDeployment(deployment);
     }
 
     /**
@@ -124,7 +129,7 @@ public class DeploymentResource {
     @RolesAllowed("DEPLOYMENT_DELETE")
     @Operation(summary = "Delete Deployment", tags = {"Deployment"}, description = "Deletes a deployment with a certain id")
     public void deleteDeployment(@PathParam("id") final String deployment) {
-        controller.deleteDeployment(deployment);
+        clusterState.deleteDeployment(deployment);
     }
 
 }

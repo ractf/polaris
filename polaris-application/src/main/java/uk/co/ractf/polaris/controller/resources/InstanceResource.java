@@ -7,8 +7,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.node.Node;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -28,11 +29,11 @@ public class InstanceResource {
 
     private static final Logger log = LoggerFactory.getLogger(InstanceResource.class);
 
-    private final Controller controller;
+    private final ClusterState clusterState;
 
     @Inject
-    public InstanceResource(final Controller controller) {
-        this.controller = controller;
+    public InstanceResource(final ClusterState clusterState) {
+        this.clusterState = clusterState;
     }
 
     /**
@@ -52,15 +53,15 @@ public class InstanceResource {
     public Map<String, Instance> getInstances(
             @QueryParam("hostfilter") @DefaultValue("") final String hostFilter,
             @QueryParam("challengefilter") @DefaultValue("") final String challengeFilter) {
-        final Map<String, Node> hosts = controller.getHosts();
+        final Map<String, NodeInfo> hosts = clusterState.getNodes();
         final Map<String, Instance> instances = new HashMap<>();
 
         final Pattern challengePattern = Pattern.compile(challengeFilter);
         final Pattern hostPattern = Pattern.compile(hostFilter);
 
-        for (final Map.Entry<String, Node> hostEntry : hosts.entrySet()) {
+        for (final Map.Entry<String, NodeInfo> hostEntry : hosts.entrySet()) {
             if (hostPattern.matcher(hostEntry.getKey()).find()) {
-                final Map<String, Instance> hostInstances = hostEntry.getValue().getInstances();
+                final Map<String, Instance> hostInstances = clusterState.getInstancesOnNode(hostEntry.getKey());
                 for (final Map.Entry<String, Instance> entry : hostInstances.entrySet()) {
                     if (challengePattern.matcher(entry.getValue().getChallengeId()).find()) {
                         instances.put(entry.getKey(), entry.getValue());

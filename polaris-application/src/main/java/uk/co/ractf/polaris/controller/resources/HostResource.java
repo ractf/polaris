@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.node.Node;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -26,10 +27,12 @@ import java.util.regex.Pattern;
 public class HostResource {
 
     private final Controller controller;
+    private final ClusterState clusterState;
 
     @Inject
-    public HostResource(final Controller controller) {
+    public HostResource(final Controller controller, final ClusterState clusterState) {
         this.controller = controller;
+        this.clusterState = clusterState;
     }
 
     /**
@@ -49,9 +52,9 @@ public class HostResource {
         final Map<String, NodeInfo> hostInfoList = new HashMap<>();
         final Pattern pattern = Pattern.compile(filter);
 
-        for (final Node node : controller.getHosts().values()) {
+        for (final NodeInfo node : clusterState.getNodes().values()) {
             if (pattern.matcher(filter).find()) {
-                hostInfoList.put(node.getId(), node.getHostInfo());
+                hostInfoList.put(node.getId(), node);
             }
         }
         return hostInfoList;
@@ -71,11 +74,11 @@ public class HostResource {
     @Operation(summary = "Get Host", tags = {"Host"},
             description = "Gets a host by id")
     public NodeInfo getHostInfo(@PathParam("id") final String id) {
-        final Node node = controller.getHost(id);
+        final NodeInfo node = clusterState.getNode(id);
         if (node == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        return node.getHostInfo();
+        return node;
     }
 
 }

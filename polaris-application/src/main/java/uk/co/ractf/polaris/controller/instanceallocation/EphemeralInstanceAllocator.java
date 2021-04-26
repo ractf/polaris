@@ -8,6 +8,7 @@ import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,40 +17,40 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EphemeralInstanceAllocator implements InstanceAllocator {
 
-    private final Controller controller;
+    private final ClusterState clusterState;
     private final Map<String, StickyInstances> stickyInstances = new ConcurrentHashMap<>();
     private final Multimap<String, String> instanceUsers = Multimaps.synchronizedSetMultimap(HashMultimap.create());
     private final Multimap<String, String> instanceTeams = Multimaps.synchronizedSetMultimap(HashMultimap.create());
     private final Multimap<String, String> teamAvoids = Multimaps.synchronizedSetMultimap(HashMultimap.create());
     private final Multimap<String, String> userAvoids = Multimaps.synchronizedSetMultimap(HashMultimap.create());
 
-    public EphemeralInstanceAllocator(final Controller controller) {
-        this.controller = controller;
+    public EphemeralInstanceAllocator(final ClusterState clusterState) {
+        this.clusterState = clusterState;
     }
 
     @Override
     public Instance allocate(final InstanceRequest request) {
         final StickyInstances sticky = stickyInstances.computeIfAbsent(request.getChallenge(), x -> new EphemeralStickyInstances());
         if (sticky.getUser(request.getUser()) != null) {
-            final Instance instance = controller.getInstance(sticky.getUser(request.getUser()));
+            final Instance instance = clusterState.getInstance(sticky.getUser(request.getUser()));
             if (instance != null) {
                 return instance;
             }
         }
         if (sticky.getTeam(request.getTeam()) != null) {
-            final Instance instance = controller.getInstance(sticky.getTeam(request.getUser()));
+            final Instance instance = clusterState.getInstance(sticky.getTeam(request.getUser()));
             if (instance != null) {
                 return instance;
             }
         }
 
-        final List<Deployment> deployments = controller.getDeploymentsOfChallenge(request.getChallenge());
+        final List<Deployment> deployments = clusterState.getDeploymentsOfChallenge(request.getChallenge());
         double bestInstanceScore = -1;
         Instance bestInstance = null;
         String bestInstanceSticky = null;
         for (final Deployment deployment : deployments) {
             final Allocation allocation = deployment.getAllocation();
-            for (final Instance instance : controller.getInstancesForDeployment(deployment.getId())) {
+            for (final Instance instance : clusterState.getInstancesForDeployment(deployment.getId())) {
                 if (instanceUsers.get(instance.getId()).size() >= allocation.getUserLimit() ||
                         instanceTeams.get(instance.getId()).size() >= allocation.getTeamLimit() ||
                         userAvoids.get(request.getUser()).contains(instance.getId()) ||
@@ -71,7 +72,7 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
             int avoided = 0;
             int instanceCount = 0;
             for (final Deployment deployment : deployments) {
-                for (final Instance instance : controller.getInstancesForDeployment(deployment.getId())) {
+                for (final Instance instance : clusterState.getInstancesForDeployment(deployment.getId())) {
                     if (userAvoids.get(request.getUser()).contains(instance.getId()) ||
                             teamAvoids.get(request.getTeam()).contains(instance.getId())) {
                         avoided++;
@@ -85,7 +86,7 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
             }
             //TODO: notify admins
             Collections.shuffle(deployments);
-            final List<Instance> instances = controller.getInstancesForDeployment(deployments.get(0).getId());
+            final List<Instance> instances = clusterState.getInstancesForDeployment(deployments.get(0).getId());
             Collections.shuffle(instances);
             return instances.get(0);
         }

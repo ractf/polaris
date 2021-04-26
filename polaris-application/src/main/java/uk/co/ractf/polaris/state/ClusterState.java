@@ -12,7 +12,7 @@ import uk.co.ractf.polaris.node.Node;
 import java.util.List;
 import java.util.Map;
 
-public interface State {
+public interface ClusterState {
 
     /**
      * Gets a {@link Map} of challenge id to {@link Challenge}
@@ -77,6 +77,8 @@ public interface State {
      * @param deployment the deployment
      */
     void setDeployment(final Deployment deployment);
+
+    void deleteDeployment(final String id);
 
     /**
      * Gets a {@link Map} of host id to {@link Node}
@@ -154,5 +156,14 @@ public interface State {
      */
     @CanIgnoreReturnValue
     boolean unlockDeployment(final Deployment deployment);
+
+    /**
+     * Gets a list of {@link Instance}s on a given node. Returns an empty collection if the node id is invalid.
+     *
+     * @param node node id
+     * @return instances on the node
+     */
+    @NotNull
+    Map<String, Instance> getInstancesOnNode(final String node);
 
 }

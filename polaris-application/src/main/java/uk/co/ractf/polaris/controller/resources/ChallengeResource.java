@@ -10,6 +10,7 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.challenge.ChallengeDeleteResponse;
 import uk.co.ractf.polaris.api.challenge.ChallengeSubmitResponse;
 import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
@@ -31,10 +32,12 @@ public class ChallengeResource {
     private static final Logger log = LoggerFactory.getLogger(ChallengeResource.class);
 
     private final Controller controller;
+    private final ClusterState clusterState;
 
     @Inject
-    public ChallengeResource(final Controller controller) {
+    public ChallengeResource(final Controller controller, final ClusterState clusterState) {
         this.controller = controller;
+        this.clusterState = clusterState;
     }
 
     /**
@@ -51,7 +54,7 @@ public class ChallengeResource {
     @Operation(summary = "Get Challenges", tags = {"Challenge"},
             description = "Gets a map of challenge id to challenge that matches a given regex.")
     public Map<String, Challenge> getChallenges(@QueryParam("filter") @DefaultValue("") final String filter) {
-        final Map<String, Challenge> challengeMap = controller.getChallenges();
+        final Map<String, Challenge> challengeMap = clusterState.getChallenges();
         if (filter.isEmpty()) {
             return challengeMap;
         }
@@ -80,7 +83,7 @@ public class ChallengeResource {
     @RolesAllowed("CHALLENGE_GET")
     @Operation(summary = "Get Challenge By ID", tags = {"Challenge"}, description = "Get a challenge by id")
     public Challenge getChallenge(@PathParam("id") final String id) {
-        return controller.getChallenge(id);
+        return clusterState.getChallenge(id);
     }
 
     /**
@@ -95,7 +98,7 @@ public class ChallengeResource {
     @Operation(summary = "Submit Challenge", tags = {"Challenge"},
             description = "Submits a challenge object to the controller")
     public Response submitChallenge(final Challenge challenge) {
-        if (controller.getChallenge(challenge.getId()) != null) {
+        if (clusterState.getChallenge(challenge.getId()) != null) {
             return Response
                     .status(400)
                     .entity(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.DUPLICATE, challenge.getId()))
@@ -118,11 +121,11 @@ public class ChallengeResource {
     @RolesAllowed("CHALLENGE_DELETE")
     @Operation(summary = "Delete Challenge", tags = {"Challenge"}, description = "Deletes a challenge from the controller")
     public Response deleteChallenge(@PathParam("id") final String id) {
-        if (controller.getChallenge(id) == null) {
+        if (clusterState.getChallenge(id) == null) {
             return Response.status(404)
                     .entity(new ChallengeDeleteResponse(ChallengeDeleteResponse.Status.NOT_FOUND, id)).build();
         }
-        controller.deleteChallenge(id);
+        clusterState.deleteChallenge(id);
         return Response.status(200)
                 .entity(new ChallengeDeleteResponse(ChallengeDeleteResponse.Status.OK, id)).build();
     }

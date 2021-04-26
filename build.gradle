@@ -8,6 +8,7 @@ allprojects {
     compileJava {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        options.deprecation = true
     }
 }
 

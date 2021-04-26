@@ -12,9 +12,11 @@ import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceResponse;
+import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
@@ -36,10 +38,12 @@ public class InstanceAllocationResource {
     private static final Logger log = LoggerFactory.getLogger(InstanceAllocationResource.class);
 
     private final Controller controller;
+    private final ClusterState clusterState;
 
     @Inject
-    public InstanceAllocationResource(final Controller controller) {
+    public InstanceAllocationResource(final Controller controller, final ClusterState clusterState) {
         this.controller = controller;
+        this.clusterState = clusterState;
     }
 
     /**
@@ -87,11 +91,11 @@ public class InstanceAllocationResource {
         if (instance == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
-        final Node node = controller.getHost(instance.getHostId());
+        final NodeInfo node = clusterState.getNode(instance.getNodeId());
         if (node == null) {
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
-        return new InstanceResponse(node.getHostInfo().getPublicIP(), instance);
+        return new InstanceResponse(node.getPublicIP(), instance);
     }
 
 }

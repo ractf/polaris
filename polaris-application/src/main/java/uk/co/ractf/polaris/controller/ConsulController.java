@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.state.ClusterState;
 import uk.co.ractf.polaris.util.ConsulPath;
 import uk.co.ractf.polaris.controller.service.ControllerServices;
 import uk.co.ractf.polaris.node.Node;
@@ -41,10 +42,11 @@ public class ConsulController implements Controller, Managed {
     @Inject
     public ConsulController(final ControllerConfiguration config,
                             final Consul consul,
-                            @ControllerServices final Set<Service> services) {
+                            @ControllerServices final Set<Service> services,
+                            final ClusterState clusterState) {
         this.config = config;
         this.consul = consul;
-        this.instanceAllocator = new EphemeralInstanceAllocator(this);
+        this.instanceAllocator = new EphemeralInstanceAllocator(clusterState);
         this.services = services;
         final Session session = ImmutableSession.builder().name("polaris-controller").build();
         this.sessionId = consul.sessionClient().createSession(session).getId();
