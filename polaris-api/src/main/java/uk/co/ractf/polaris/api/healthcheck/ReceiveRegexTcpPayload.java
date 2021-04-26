@@ -26,16 +26,13 @@ public class ReceiveRegexTcpPayload extends TcpPayload {
     /**
      * Create a ReceiveRegexTcpPayload
      *
-     * @param type    the type of tcppayload (regex)
      * @param regex   the regex to match
      * @param encoded true if regex should be matched against the hex
      */
     @Contract(pure = true)
     public ReceiveRegexTcpPayload(
-            @JsonProperty("type") final String type,
             @JsonProperty("regex") final String regex,
             @JsonProperty("encoded") final Boolean encoded) {
-        super(type);
         this.regex = regex;
         this.encoded = encoded;
     }

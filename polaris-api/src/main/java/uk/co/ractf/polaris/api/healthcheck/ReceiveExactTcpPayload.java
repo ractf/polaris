@@ -22,14 +22,11 @@ public class ReceiveExactTcpPayload extends TcpPayload {
     private final String hex;
 
     /**
-     * @param type the type of tcppayload sequence
      * @param hex  the hex bytes to expect exactly
      */
     @Contract(pure = true)
     public ReceiveExactTcpPayload(
-            @JsonProperty("type") final String type,
             @JsonProperty("hex") final String hex) {
-        super(type);
         this.hex = hex;
     }
 

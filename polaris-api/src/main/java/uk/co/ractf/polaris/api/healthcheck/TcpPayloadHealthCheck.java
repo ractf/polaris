@@ -76,11 +76,11 @@ public class TcpPayloadHealthCheck extends HealthCheck {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final TcpPayloadHealthCheck that = (TcpPayloadHealthCheck) o;
-        return Objects.equals(payloads, that.payloads) && Objects.equals(connectionTimeout, that.connectionTimeout) && Objects.equals(sequenceTimeout, that.sequenceTimeout);
+        return Objects.equals(payloads, that.payloads) && Objects.equals(connectionTimeout, that.connectionTimeout) && Objects.equals(sequenceTimeout, that.sequenceTimeout) && Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(payloads, connectionTimeout, sequenceTimeout);
+        return Objects.hash(payloads, connectionTimeout, sequenceTimeout, getId());
     }
 }

@@ -74,11 +74,11 @@ public class HttpHealthCheck extends HealthCheck {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final HttpHealthCheck that = (HttpHealthCheck) o;
-        return Objects.equals(path, that.path) && Objects.equals(port, that.port) && Objects.equals(vhost, that.vhost) && Objects.equals(statusCode, that.statusCode);
+        return Objects.equals(path, that.path) && Objects.equals(port, that.port) && Objects.equals(vhost, that.vhost) && Objects.equals(statusCode, that.statusCode) && Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(path, port, vhost, statusCode);
+        return Objects.hash(path, port, vhost, statusCode, getId());
     }
 }
