@@ -26,14 +26,14 @@ public interface Node {
      *
      * @return host info
      */
-    NodeInfo getHostInfo();
+    NodeInfo getNodeInfo();
 
     /**
      * Sets the host's current state
      *
      * @param nodeInfo {@link NodeInfo}
      */
-    void setHostInfo(final NodeInfo nodeInfo);
+    void getNodeInfo(final NodeInfo nodeInfo);
 
     /**
      * Restarts an {@link Instance}

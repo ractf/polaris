@@ -37,7 +37,6 @@ public class ConsulNode implements Node, Managed {
         this.id = "node"; //TODO
         this.runnerSet = runnerSet;
         this.services = services;
-        log.info("consul node start");
     }
 
     @Override
@@ -63,12 +62,12 @@ public class ConsulNode implements Node, Managed {
     }
 
     @Override
-    public NodeInfo getHostInfo() {
+    public NodeInfo getNodeInfo() {
         return null;
     }
 
     @Override
-    public void setHostInfo(final NodeInfo nodeInfo) {
+    public void getNodeInfo(final NodeInfo nodeInfo) {
 
     }
 

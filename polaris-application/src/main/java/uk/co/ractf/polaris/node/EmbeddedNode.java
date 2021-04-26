@@ -89,12 +89,12 @@ public class EmbeddedNode implements Node, Managed {
     }
 
     @Override
-    public NodeInfo getHostInfo() {
+    public NodeInfo getNodeInfo() {
         return nodeInfo;
     }
 
     @Override
-    public void setHostInfo(final NodeInfo nodeInfo) {
+    public void getNodeInfo(final NodeInfo nodeInfo) {
         this.nodeInfo = nodeInfo;
     }
 
