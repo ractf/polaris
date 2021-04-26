@@ -63,11 +63,11 @@ public class RandomEnvString extends RandomEnv {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final RandomEnvString that = (RandomEnvString) o;
-        return Objects.equals(alphabet, that.alphabet) && Objects.equals(length, that.length);
+        return Objects.equals(alphabet, that.alphabet) && Objects.equals(length, that.length) && Objects.equals(getType(), that.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(alphabet, length);
+        return Objects.hash(alphabet, length, getType());
     }
 }

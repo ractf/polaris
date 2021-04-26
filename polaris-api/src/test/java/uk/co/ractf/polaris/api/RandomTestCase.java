@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.api;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.random.RandomEnvInteger;
 import uk.co.ractf.polaris.api.random.RandomEnvString;
@@ -29,5 +30,15 @@ public class RandomTestCase {
     public void testStrIgnoreProperties() {
         validateObjectIgnoreProperties(RandomEnvString.class, fixture("fixtures/random/str.json"));
     }
+    @Test
+    public void testIntEquals() {
+        EqualsVerifier.simple().forClass(RandomEnvInteger.class).verify();
+    }
+
+    @Test
+    public void testStrEquals() {
+        EqualsVerifier.simple().forClass(RandomEnvString.class).verify();
+    }
+
 
 }
