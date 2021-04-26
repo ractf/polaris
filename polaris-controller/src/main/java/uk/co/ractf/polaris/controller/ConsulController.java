@@ -20,9 +20,9 @@ import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.consul.ConsulPath;
 import uk.co.ractf.polaris.controller.service.ControllerServices;
-import uk.co.ractf.polaris.host.Host;
-import uk.co.ractf.polaris.instanceallocation.EphemeralInstanceAllocator;
-import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;
+import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.controller.instanceallocation.EphemeralInstanceAllocator;
+import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,7 +34,7 @@ public class ConsulController implements Controller, Managed {
 
     private final PolarisConfiguration config;
     private final Consul consul;
-    private final Map<String, Host> hosts = new ConcurrentHashMap<>();
+    private final Map<String, Node> hosts = new ConcurrentHashMap<>();
     private final InstanceAllocator instanceAllocator;
     private final Set<Service> services;
     private final Session session;
@@ -67,11 +67,11 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public void addHost(final Host host) {
-        if (hosts.containsKey(host.getId())) {
+    public void addHost(final Node node) {
+        if (hosts.containsKey(node.getId())) {
             return;
         }
-        hosts.put(host.getId(), host);
+        hosts.put(node.getId(), node);
     }
 
     @Override
@@ -210,12 +210,12 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public Map<String, Host> getHosts() {
+    public Map<String, Node> getHosts() {
         return Collections.unmodifiableMap(hosts);
     }
 
     @Override
-    public Host getHost(final String id) {
+    public Node getHost(final String id) {
         return hosts.get(id);
     }
 

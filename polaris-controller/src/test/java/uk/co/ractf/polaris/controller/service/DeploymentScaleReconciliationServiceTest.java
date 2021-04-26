@@ -13,8 +13,8 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.host.Host;
-import uk.co.ractf.polaris.scheduler.Scheduler;
+import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.controller.scheduler.Scheduler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +28,7 @@ public class DeploymentScaleReconciliationServiceTest {
 
     private final Scheduler scheduler = mock(Scheduler.class);
     private final Controller controller = mock(Controller.class);
-    private final Host host = mock(Host.class);
+    private final Node node = mock(Node.class);
     private final PolarisConfiguration config = new PolarisConfiguration();
     private Instance instance;
 
@@ -43,12 +43,12 @@ public class DeploymentScaleReconciliationServiceTest {
                 new Allocation("team", 500, 500));
         instance = new Instance("test", "test", "test", "test", new ArrayList<>(), new HashMap<>());
         when(controller.getDeployments()).thenReturn(Map.of("test", deployment));
-        when(controller.getHosts()).thenReturn(Map.of("test", host));
+        when(controller.getHosts()).thenReturn(Map.of("test", node));
         when(controller.getChallengeFromDeployment(deployment)).thenReturn(challenge);
         when(controller.lockDeployment(any())).thenReturn(true);
         when(controller.unlockDeployment(any())).thenReturn(true);
-        when(scheduler.scheduleChallenge(any(Challenge.class), anyCollection())).thenReturn(host);
-        when(host.createInstance(any(Challenge.class), any(Deployment.class))).thenReturn(instance);
+        when(scheduler.scheduleChallenge(any(Challenge.class), anyCollection())).thenReturn(node);
+        when(node.createInstance(any(Challenge.class), any(Deployment.class))).thenReturn(instance);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class DeploymentScaleReconciliationServiceTest {
         when(controller.getInstancesForDeployment(any())).thenReturn(Collections.emptyList());
         final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(controller, scheduler, config);
         service.runOneIteration();
-        verify(host, times(15)).createInstance(any(Challenge.class), any(Deployment.class));
+        verify(node, times(15)).createInstance(any(Challenge.class), any(Deployment.class));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class DeploymentScaleReconciliationServiceTest {
         when(controller.unlockDeployment(any())).thenReturn(false);
         final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(controller, scheduler, config);
         service.runOneIteration();
-        verifyNoInteractions(host);
+        verifyNoInteractions(node);
     }
 
     @Test
@@ -81,7 +81,7 @@ public class DeploymentScaleReconciliationServiceTest {
         when(controller.lockDeployment(any())).thenThrow(new RuntimeException());
         final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(controller, scheduler, config);
         service.runOneIteration();
-        verifyNoInteractions(host);
+        verifyNoInteractions(node);
     }
 
 }

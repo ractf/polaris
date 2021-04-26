@@ -14,9 +14,9 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.controller.service.ControllerServices;
-import uk.co.ractf.polaris.host.Host;
-import uk.co.ractf.polaris.instanceallocation.EphemeralInstanceAllocator;
-import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;
+import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.controller.instanceallocation.EphemeralInstanceAllocator;
+import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +33,7 @@ public class EphemeralController implements Controller, Managed {
     private final Multimap<String, Instance> deploymentInstances = Multimaps.synchronizedSetMultimap(HashMultimap.create());
     private final Map<String, Semaphore> deploymentLocks = new ConcurrentHashMap<>();
     private final Map<String, Instance> instances = new ConcurrentHashMap<>();
-    private final Map<String, Host> hosts = new ConcurrentHashMap<>();
+    private final Map<String, Node> hosts = new ConcurrentHashMap<>();
     private final Set<Service> services;
     private final InstanceAllocator instanceAllocator = new EphemeralInstanceAllocator(this);
 
@@ -57,8 +57,8 @@ public class EphemeralController implements Controller, Managed {
     }
 
     @Override
-    public void addHost(final Host host) {
-        hosts.put(host.getId(), host);
+    public void addHost(final Node node) {
+        hosts.put(node.getId(), node);
     }
 
     @Override
@@ -126,12 +126,12 @@ public class EphemeralController implements Controller, Managed {
     }
 
     @Override
-    public Map<String, Host> getHosts() {
+    public Map<String, Node> getHosts() {
         return Collections.unmodifiableMap(hosts);
     }
 
     @Override
-    public Host getHost(final String id) {
+    public Node getHost(final String id) {
         return hosts.get(id);
     }
 

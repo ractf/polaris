@@ -7,8 +7,8 @@ import com.google.inject.Singleton;
 import com.sun.management.OperatingSystemMXBean;
 import io.dropwizard.util.CharStreams;
 import uk.co.ractf.polaris.PolarisConfiguration;
-import uk.co.ractf.polaris.api.host.HostInfo;
-import uk.co.ractf.polaris.host.Host;
+import uk.co.ractf.polaris.api.node.NodeInfo;
+import uk.co.ractf.polaris.host.Node;
 import uk.co.ractf.polaris.util.IPChecker;
 
 import java.io.IOException;
@@ -24,12 +24,12 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class HostInfoSyncService extends AbstractScheduledService {
 
-    private final Host host;
+    private final Node node;
     private final PolarisConfiguration polarisConfiguration;
 
     @Inject
-    public HostInfoSyncService(final Host host, final PolarisConfiguration polarisConfiguration) {
-        this.host = host;
+    public HostInfoSyncService(final Node node, final PolarisConfiguration polarisConfiguration) {
+        this.node = node;
         this.polarisConfiguration = polarisConfiguration;
     }
 
@@ -48,8 +48,8 @@ public class HostInfoSyncService extends AbstractScheduledService {
             final Map<String, String> labels = new HashMap<>();
             labels.put("aslr", Files.readString(Path.of("/proc/sys/kernel/randomize_va_space")));
             final OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            final HostInfo hostInfo = new HostInfo(
-                    host.getId(),
+            final NodeInfo nodeInfo = new NodeInfo(
+                    node.getId(),
                     IPChecker.getExternalIP(),
                     InetAddress.getLocalHost().getHostName(),
                     runCommand("uname -a").trim(),
@@ -64,7 +64,7 @@ public class HostInfoSyncService extends AbstractScheduledService {
                     operatingSystemMXBean.getFreeSwapSpaceSize(),
                     labels);
 
-            host.setHostInfo(hostInfo);
+            node.setHostInfo(nodeInfo);
         } catch (final IOException e) {
             e.printStackTrace();
         }

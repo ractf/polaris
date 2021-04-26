@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import uk.co.ractf.polaris.PolarisConfiguration;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.consul.ConsulPath;
-import uk.co.ractf.polaris.host.Host;
+import uk.co.ractf.polaris.host.Node;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -134,34 +134,34 @@ public class ConsulControllerTest {
 
     @Test
     public void testHostAdding() {
-        final Host host = mock(Host.class);
-        when(host.getId()).thenReturn("testHost");
-        controller.addHost(host);
-        assertThat(controller.getHost("testHost")).isEqualTo(host);
+        final Node node = mock(Node.class);
+        when(node.getId()).thenReturn("testHost");
+        controller.addHost(node);
+        assertThat(controller.getHost("testHost")).isEqualTo(node);
     }
 
     @Test
     public void testHostAddingDuplicate() {
-        final Host host = mock(Host.class);
-        when(host.getId()).thenReturn("testHost");
-        final Host host2 = mock(Host.class);
-        when(host2.getId()).thenReturn("testHost");
-        controller.addHost(host);
-        controller.addHost(host2);
-        assertThat(controller.getHost("testHost")).isEqualTo(host);
+        final Node node = mock(Node.class);
+        when(node.getId()).thenReturn("testHost");
+        final Node node2 = mock(Node.class);
+        when(node2.getId()).thenReturn("testHost");
+        controller.addHost(node);
+        controller.addHost(node2);
+        assertThat(controller.getHost("testHost")).isEqualTo(node);
     }
 
     @Test
     public void testGetHosts() {
-        final Map<String, Host> expected = new HashMap<>();
-        final Host host = mock(Host.class);
-        when(host.getId()).thenReturn("testHost");
-        expected.put("testHost", host);
-        final Host host2 = mock(Host.class);
-        when(host2.getId()).thenReturn("testHost2");
-        expected.put("testHost2", host2);
-        controller.addHost(host);
-        controller.addHost(host2);
+        final Map<String, Node> expected = new HashMap<>();
+        final Node node = mock(Node.class);
+        when(node.getId()).thenReturn("testHost");
+        expected.put("testHost", node);
+        final Node node2 = mock(Node.class);
+        when(node2.getId()).thenReturn("testHost2");
+        expected.put("testHost2", node2);
+        controller.addHost(node);
+        controller.addHost(node2);
         assertThat(controller.getHosts()).containsAllEntriesOf(expected);
     }
 

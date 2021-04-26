@@ -3,7 +3,7 @@ package uk.co.ractf.polaris.host.service;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import uk.co.ractf.polaris.runner.Runner;
+import uk.co.ractf.polaris.host.runner.Runner;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;

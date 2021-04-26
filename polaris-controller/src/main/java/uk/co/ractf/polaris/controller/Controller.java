@@ -4,8 +4,8 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
-import uk.co.ractf.polaris.host.Host;
-import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;
+import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,11 +19,11 @@ import java.util.Map;
 public interface Controller {
 
     /**
-     * Registers a {@link Host} with the controller
+     * Registers a {@link Node} with the controller
      *
-     * @param host the host to add
+     * @param node the host to add
      */
-    void addHost(final Host host);
+    void addHost(final Node node);
 
     /**
      * Gets a {@link Map} of challenge id to {@link Challenge}
@@ -112,20 +112,20 @@ public interface Controller {
     Challenge getChallengeFromDeployment(final Deployment deployment);
 
     /**
-     * Gets a {@link Map} of host id to {@link Host}
+     * Gets a {@link Map} of host id to {@link Node}
      *
      * @return map of hosts
      */
-    Map<String, Host> getHosts();
+    Map<String, Node> getHosts();
 
     /**
-     * Gets a {@link Host} by id
+     * Gets a {@link Node} by id
      *
      * @param id host id
      * @return the host
      */
     @Nullable
-    Host getHost(final String id);
+    Node getHost(final String id);
 
     /**
      * Get all {@link Deployment}s of a {@link Challenge}

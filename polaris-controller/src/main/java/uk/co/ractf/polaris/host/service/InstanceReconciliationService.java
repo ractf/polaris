@@ -14,8 +14,8 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.host.Host;
-import uk.co.ractf.polaris.runner.Runner;
+import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.host.runner.Runner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
     private static final Logger log = LoggerFactory.getLogger(InstanceReconciliationService.class);
 
     private final Controller controller;
-    private final Host host;
+    private final Node node;
     private final Map<Class<? extends Pod>, Runner<? extends Pod>> runners = new HashMap<>();
     private final PolarisConfiguration polarisConfiguration;
     private final LoadingCache<String, String> recentlyStartedInstances = CacheBuilder.newBuilder()
@@ -44,11 +44,11 @@ public class InstanceReconciliationService extends AbstractScheduledService {
 
     @Inject
     public InstanceReconciliationService(final Controller controller,
-                                         final Host host,
+                                         final Node node,
                                          final Set<Runner> runners,
                                          final PolarisConfiguration polarisConfiguration) {
         this.controller = controller;
-        this.host = host;
+        this.node = node;
         this.runnerSet = runners;
         this.polarisConfiguration = polarisConfiguration;
     }
@@ -69,7 +69,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
     @Override
     protected void runOneIteration() {
         try {
-            for (final Map.Entry<String, Instance> entry : host.getInstances().entrySet()) {
+            for (final Map.Entry<String, Instance> entry : node.getInstances().entrySet()) {
                 final Instance instance = entry.getValue();
                 final Challenge challenge = controller.getChallengeFromDeployment(instance.getDeploymentId());
                 if (challenge == null) {
