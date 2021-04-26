@@ -1,7 +1,6 @@
 package uk.co.ractf.polaris.controller.metrics;
 
 import com.codahale.metrics.Gauge;
-import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.state.ClusterState;
 
 public class InstancesGauge implements Gauge<Integer> {

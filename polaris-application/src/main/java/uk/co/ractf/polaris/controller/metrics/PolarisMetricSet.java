@@ -3,7 +3,6 @@ package uk.co.ractf.polaris.controller.metrics;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricSet;
 import com.google.inject.Inject;
-import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.HashMap;

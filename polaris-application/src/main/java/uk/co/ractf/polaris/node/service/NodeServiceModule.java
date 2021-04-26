@@ -3,7 +3,6 @@ package uk.co.ractf.polaris.node.service;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
-import uk.co.ractf.polaris.annotation.ExcludeFromGeneratedReport;
 import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
 
 @ExcludeFromGeneratedTestReport

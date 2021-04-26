@@ -21,9 +21,9 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instance.InstancePortBinding;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.PortMapping;
+import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.state.ClusterState;
 import uk.co.ractf.polaris.util.ConsulPath;
-import uk.co.ractf.polaris.node.Node;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
