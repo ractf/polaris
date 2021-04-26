@@ -36,7 +36,6 @@ public class InstanceTestCase {
         EqualsVerifier.simple().forClass(Instance.class).verify();
     }
 
-
     @Test
     public void testPortEquals() {
         EqualsVerifier.simple().forClass(InstancePortBinding.class).verify();
