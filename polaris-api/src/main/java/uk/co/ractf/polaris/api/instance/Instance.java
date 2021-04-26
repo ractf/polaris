@@ -28,8 +28,8 @@ public class Instance extends JsonRepresentable {
     private final String deploymentID;
     private final String challengeID;
     private final String hostID;
-    private List<InstancePortBinding> portBindings = new ArrayList<>();
-    private Map<String, String> randomEnv = new HashMap<>();
+    private final List<InstancePortBinding> portBindings;
+    private final Map<String, String> randomEnv;
 
     /**
      * The
@@ -82,20 +82,12 @@ public class Instance extends JsonRepresentable {
         return portBindings;
     }
 
-    public void setPortBindings(final List<InstancePortBinding> portBindings) {
-        this.portBindings = portBindings;
-    }
-
     /**
      * @return the {@link RandomEnv} variables that have been generated for the pod
      */
     @JsonProperty("randomEnv")
     public Map<String, String> getRandomEnv() {
         return randomEnv;
-    }
-
-    public void setRandomEnv(final Map<String, String> randomEnv) {
-        this.randomEnv = randomEnv;
     }
 
     /**
