@@ -1,6 +1,7 @@
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
     repositories {
@@ -74,6 +75,12 @@ shadowJar {
         attributes 'Main-Class': mainClassName
     }
     archiveName 'polaris.jar'
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        filter ReplaceTokens, tokens: [version: version]
+    }
 }
 
 buildRpm {
