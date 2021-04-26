@@ -44,11 +44,11 @@ public class StaticReplication extends Replication {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final StaticReplication that = (StaticReplication) o;
-        return Objects.equals(amount, that.amount);
+        return Objects.equals(amount, that.amount) && Objects.equals(getType(), that.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(amount);
+        return Objects.hash(amount, getType());
     }
 }
