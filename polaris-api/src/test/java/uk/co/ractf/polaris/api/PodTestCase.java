@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.api;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.PortMapping;
@@ -39,6 +40,21 @@ public class PodTestCase {
     @Test
     public void testResourceQuotaIgnoreProperties() {
         validateObjectIgnoreProperties(ResourceQuota.class, fixture("fixtures/pod/resources.json"));
+    }
+
+    @Test
+    public void testContainerEquals() {
+        EqualsVerifier.simple().forClass(Container.class).verify();
+    }
+
+    @Test
+    public void testPortMappingEquals() {
+        EqualsVerifier.simple().forClass(PortMapping.class).verify();
+    }
+
+    @Test
+    public void testResourceQuotaEquals() {
+        EqualsVerifier.simple().forClass(ResourceQuota.class).verify();
     }
 
 }
