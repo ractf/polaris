@@ -238,22 +238,31 @@ public class Container extends Pod {
         return metadata;
     }
 
+    private void generateRandomEnvIfEmpty() {
+        if (generatedRandomEnv.isEmpty()) {
+            for (final Map.Entry<String, RandomEnv> entry : randomEnv.entrySet()) {
+                final String generated = entry.getValue().generate();
+                generatedRandomEnv.put(entry.getKey(), generated);
+            }
+        }
+    }
+
     @JsonIgnore
     public List<String> getFullEnv() {
         final List<String> list = new ArrayList<>();
         for (final Map.Entry<String, String> entry : env.entrySet()) {
             list.add(entry.getKey() + "=" + entry.getValue());
         }
-        for (final Map.Entry<String, RandomEnv> entry : randomEnv.entrySet()) {
-            final String generated = entry.getValue().generate();
-            generatedRandomEnv.put(entry.getKey(), generated);
-            list.add(entry.getKey() + "=" + generated);
+        generateRandomEnvIfEmpty();
+        for (final Map.Entry<String, String> entry : generatedRandomEnv.entrySet()) {
+            list.add(entry.getKey() + "=" + entry.getValue());
         }
         return list;
     }
 
     @JsonIgnore
     public Map<String, String> getGeneratedRandomEnv() {
+        generateRandomEnvIfEmpty();
         return generatedRandomEnv;
     }
 
