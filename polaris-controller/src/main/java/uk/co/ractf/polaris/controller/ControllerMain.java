@@ -60,7 +60,7 @@ public class ControllerMain extends Application<PolarisConfiguration> {
                         "uk.co.ractf.polaris.util")
                 .build());
 
-        bootstrap.addBundle(new PrometheusBundle());;
+        bootstrap.addBundle(new PrometheusBundle());
     }
 
     @Override
