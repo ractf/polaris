@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.host;
+package uk.co.ractf.polaris.node;
 
 public class NodeMain {
 

@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.host.runner;
+package uk.co.ractf.polaris.node.runner;
 
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;

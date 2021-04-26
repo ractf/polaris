@@ -13,7 +13,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.controller.scheduler.Scheduler;
 
 import java.util.ArrayList;

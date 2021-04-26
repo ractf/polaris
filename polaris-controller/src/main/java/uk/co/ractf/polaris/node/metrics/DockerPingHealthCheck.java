@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.host.metrics;
+package uk.co.ractf.polaris.node.metrics;
 
 import com.github.dockerjava.api.DockerClient;
 import com.google.common.util.concurrent.SimpleTimeLimiter;

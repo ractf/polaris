@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.host.service;
+package uk.co.ractf.polaris.node.service;
 
 import com.google.common.base.Charsets;
 import com.google.common.util.concurrent.AbstractScheduledService;
@@ -8,7 +8,7 @@ import com.sun.management.OperatingSystemMXBean;
 import io.dropwizard.util.CharStreams;
 import uk.co.ractf.polaris.PolarisConfiguration;
 import uk.co.ractf.polaris.api.node.NodeInfo;
-import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.util.IPChecker;
 
 import java.io.IOException;

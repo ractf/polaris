@@ -1,9 +1,9 @@
-package uk.co.ractf.polaris.host.service;
+package uk.co.ractf.polaris.node.service;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import uk.co.ractf.polaris.host.runner.Runner;
+import uk.co.ractf.polaris.node.runner.Runner;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import uk.co.ractf.polaris.PolarisConfiguration;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.consul.ConsulPath;
-import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.node.Node;
 
 import java.util.Collections;
 import java.util.HashMap;

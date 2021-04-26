@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.node.Node;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;

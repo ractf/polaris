@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.host.service;
+package uk.co.ractf.polaris.node.service;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -14,8 +14,8 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.host.Node;
-import uk.co.ractf.polaris.host.runner.Runner;
+import uk.co.ractf.polaris.node.Node;
+import uk.co.ractf.polaris.node.runner.Runner;
 
 import java.util.HashMap;
 import java.util.Map;

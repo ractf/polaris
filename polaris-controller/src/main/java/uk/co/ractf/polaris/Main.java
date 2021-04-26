@@ -1,7 +1,7 @@
 package uk.co.ractf.polaris;
 
 import uk.co.ractf.polaris.controller.ControllerMain;
-import uk.co.ractf.polaris.host.NodeMain;
+import uk.co.ractf.polaris.node.NodeMain;
 
 import java.util.Arrays;
 
