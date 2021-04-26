@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.host;
+package uk.co.ractf.polaris.node;
 
 import com.github.dockerjava.api.model.AuthConfig;
 import com.github.dockerjava.api.model.PortBinding;

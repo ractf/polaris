@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.host;
+package uk.co.ractf.polaris.node;
 
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 import uk.co.ractf.polaris.PolarisConfiguration;

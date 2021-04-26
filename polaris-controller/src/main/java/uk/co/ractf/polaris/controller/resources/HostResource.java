@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.node.Node;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;

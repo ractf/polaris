@@ -16,11 +16,11 @@ import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 import uk.co.ractf.polaris.PolarisConfiguration;
 import uk.co.ractf.polaris.annotation.ExcludeFromGeneratedReport;
 import uk.co.ractf.polaris.controller.service.ControllerServiceModule;
-import uk.co.ractf.polaris.host.EmbeddedNode;
-import uk.co.ractf.polaris.host.Node;
-import uk.co.ractf.polaris.host.service.HostServiceModule;
-import uk.co.ractf.polaris.host.runner.DockerRunner;
-import uk.co.ractf.polaris.host.runner.Runner;
+import uk.co.ractf.polaris.node.EmbeddedNode;
+import uk.co.ractf.polaris.node.Node;
+import uk.co.ractf.polaris.node.service.HostServiceModule;
+import uk.co.ractf.polaris.node.runner.DockerRunner;
+import uk.co.ractf.polaris.node.runner.Runner;
 import uk.co.ractf.polaris.controller.scheduler.RoundRobinScheduler;
 import uk.co.ractf.polaris.controller.scheduler.Scheduler;
 

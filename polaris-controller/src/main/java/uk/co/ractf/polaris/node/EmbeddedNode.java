@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.host;
+package uk.co.ractf.polaris.node;
 
 import com.github.dockerjava.api.model.*;
 import com.google.common.util.concurrent.Service;
@@ -15,8 +15,8 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.host.service.HostServices;
-import uk.co.ractf.polaris.host.runner.Runner;
+import uk.co.ractf.polaris.node.service.HostServices;
+import uk.co.ractf.polaris.node.runner.Runner;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;

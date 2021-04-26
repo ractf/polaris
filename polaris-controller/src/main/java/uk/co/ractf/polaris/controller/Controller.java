@@ -4,7 +4,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
-import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
 
 import javax.annotation.Nonnull;

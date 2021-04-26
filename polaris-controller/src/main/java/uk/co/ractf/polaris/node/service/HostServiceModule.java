@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.host.service;
+package uk.co.ractf.polaris.node.service;
 
 import com.google.common.util.concurrent.Service;
 import com.google.inject.AbstractModule;
