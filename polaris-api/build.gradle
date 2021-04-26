@@ -12,6 +12,7 @@ dependencies {
     testImplementation "io.dropwizard:dropwizard-testing:$dropwizardVersion"
     testImplementation "nl.jqno.equalsverifier:equalsverifier:3.6"
     testImplementation "org.assertj:assertj-core:3.11.1"
+    testImplementation "org.mockito:mockito-core:3.+"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 

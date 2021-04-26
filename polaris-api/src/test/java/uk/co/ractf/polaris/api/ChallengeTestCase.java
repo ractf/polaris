@@ -5,8 +5,14 @@ import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.challenge.ChallengeDeleteResponse;
 import uk.co.ractf.polaris.api.challenge.ChallengeSubmitResponse;
+import uk.co.ractf.polaris.api.pod.Pod;
+
+import java.util.Collections;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static uk.co.ractf.polaris.testlib.JacksonTester.validateObject;
 import static uk.co.ractf.polaris.testlib.JacksonTester.validateObjectIgnoreProperties;
 
@@ -55,6 +61,22 @@ public class ChallengeTestCase {
     @Test
     public void testChallengeSubmitResponseEquals() {
         EqualsVerifier.simple().forClass(ChallengeSubmitResponse.class).verify();
+    }
+
+    @Test
+    public void testGetPodById() {
+        final Pod pod = mock(Pod.class);
+        when(pod.getID()).thenReturn("test");
+        final Challenge challenge = new Challenge("test", Collections.singletonList(pod));
+        assertThat(challenge.getPod("test")).isEqualTo(pod);
+    }
+
+    @Test
+    public void testGetPodByIdReturnsNull() {
+        final Pod pod = mock(Pod.class);
+        when(pod.getID()).thenReturn("test");
+        final Challenge challenge = new Challenge("test", Collections.singletonList(pod));
+        assertThat(challenge.getPod("test2")).isNull();
     }
 
 }
