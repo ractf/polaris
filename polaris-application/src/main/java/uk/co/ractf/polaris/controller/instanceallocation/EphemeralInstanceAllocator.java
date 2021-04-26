@@ -7,7 +7,6 @@ import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
-import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.Collections;

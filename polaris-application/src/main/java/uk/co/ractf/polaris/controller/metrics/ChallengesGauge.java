@@ -2,7 +2,6 @@ package uk.co.ractf.polaris.controller.metrics;
 
 import com.codahale.metrics.Gauge;
 import com.google.inject.Inject;
-import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.state.ClusterState;
 
 public class ChallengesGauge implements Gauge<Integer> {

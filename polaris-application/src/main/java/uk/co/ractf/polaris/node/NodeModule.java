@@ -11,8 +11,8 @@ import io.dropwizard.util.Duration;
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 import uk.co.ractf.polaris.node.runner.RunnerModule;
 import uk.co.ractf.polaris.node.service.NodeServiceModule;
-import uk.co.ractf.polaris.state.ConsulState;
 import uk.co.ractf.polaris.state.ClusterState;
+import uk.co.ractf.polaris.state.ConsulState;
 
 import java.util.concurrent.ScheduledExecutorService;
 

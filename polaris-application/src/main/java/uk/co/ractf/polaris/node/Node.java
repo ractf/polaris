@@ -2,10 +2,8 @@ package uk.co.ractf.polaris.node;
 
 import com.github.dockerjava.api.model.AuthConfig;
 import com.github.dockerjava.api.model.PortBinding;
-import uk.co.ractf.polaris.api.challenge.Challenge;
-import uk.co.ractf.polaris.api.deployment.Deployment;
-import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 
 import java.util.List;
@@ -38,46 +36,11 @@ public interface Node {
     void setHostInfo(final NodeInfo nodeInfo);
 
     /**
-     * Creates an instance of a {@link Challenge} on this host with a certain {@link Deployment} group
-     *
-     * @param challenge  the challenge
-     * @param deployment the deployment of the challenge
-     * @return an instance of the challenge
-     */
-    @Deprecated
-    Instance createInstance(final Challenge challenge, final Deployment deployment);
-
-    /**
-     * Removes an {@link Instance} from a host
-     *
-     * @param instance the instance
-     */
-    @Deprecated
-    void removeInstance(final Instance instance);
-
-    /**
-     * Get a {@link Map} of instance id to {@link Instance} for instances scheduled on this host.
-     *
-     * @return the instance map
-     */
-    @Deprecated
-    Map<String, Instance> getInstances();
-
-    /**
      * Restarts an {@link Instance}
      *
      * @param instance the instance
      */
     void restartInstance(final Instance instance);
-
-    /**
-     * Gets an {@link Instance} by id
-     *
-     * @param id the id of the instance
-     * @return the instance
-     */
-    @Deprecated
-    Instance getInstance(final String id);
 
     /**
      * Generates {@link PortBinding}s for all the {@link PortMapping}s provided based on which ports are available on

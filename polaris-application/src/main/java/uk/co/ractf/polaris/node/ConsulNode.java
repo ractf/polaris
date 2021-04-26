@@ -8,8 +8,6 @@ import com.google.inject.Singleton;
 import io.dropwizard.lifecycle.Managed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.ractf.polaris.api.challenge.Challenge;
-import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.pod.Pod;
@@ -75,28 +73,8 @@ public class ConsulNode implements Node, Managed {
     }
 
     @Override
-    public Instance createInstance(final Challenge challenge, final Deployment deployment) {
-        return null;
-    }
-
-    @Override
-    public void removeInstance(final Instance instance) {
-
-    }
-
-    @Override
-    public Map<String, Instance> getInstances() {
-        return null;
-    }
-
-    @Override
     public void restartInstance(final Instance instance) {
 
-    }
-
-    @Override
-    public Instance getInstance(final String id) {
-        return null;
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
-import uk.co.ractf.polaris.controller.ControllerConfiguration;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallenge;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallengeSubmitResponse;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
@@ -20,6 +19,8 @@ import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
 import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.controller.ControllerConfiguration;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
@@ -37,11 +38,13 @@ import java.util.HashMap;
 public class AndromedaEmulationResource {
 
     private final Controller controller;
+    private final ClusterState clusterState;
     private final ControllerConfiguration configuration;
 
     @Inject
-    public AndromedaEmulationResource(final Controller controller, final ControllerConfiguration configuration) {
+    public AndromedaEmulationResource(final Controller controller, final ClusterState clusterState, final ControllerConfiguration configuration) {
         this.controller = controller;
+        this.clusterState = clusterState;
         this.configuration = configuration;
     }
 
@@ -69,7 +72,7 @@ public class AndromedaEmulationResource {
         final Deployment deployment = new Deployment(challenge.getName(), challenge.getName(),
                 new StaticReplication("static", challenge.getReplicas()),
                 new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE));
-        controller.createDeployment(deployment);
+        clusterState.setDeployment(deployment);
         return Response.status(200).entity(new AndromedaChallengeSubmitResponse(challenge.getName())).build();
     }
 
@@ -80,13 +83,13 @@ public class AndromedaEmulationResource {
     @Operation(summary = "Request Instance Allocation", tags = {"Andromeda"},
             description = "Requests an instance allocation from polaris in andromda's format")
     public Response getInstance(final AndromedaInstanceRequest request) {
-        if (controller.getChallenge(request.getJob()) == null) {
+        if (clusterState.getChallenge(request.getJob()) == null) {
             return Response.status(404).build();
         }
         final Instance instance = controller.getInstanceAllocator().allocate(
                 new InstanceRequest(request.getJob(), request.getUser(), ""));
         return Response.status(200).entity(
-                new AndromedaInstance(controller.getHost(instance.getNodeId()).getHostInfo().getPublicIP(),
+                new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
                         Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]))).build();
     }
 
@@ -98,12 +101,12 @@ public class AndromedaEmulationResource {
     @Operation(summary = "Request Instance Reset", tags = {"Andromeda"},
             description = "Reset an instance allocation from polaris in andromda's format")
     public AndromedaInstance resetInstance(final AndromedaInstanceRequest request) {
-        if (controller.getChallenge(request.getJob()) == null) {
+        if (clusterState.getChallenge(request.getJob()) == null) {
             Response.status(404).build();
         }
         final Instance instance = controller.getInstanceAllocator().requestNewAllocation(
                 new InstanceRequest(request.getJob(), request.getUser(), ""));
-        return new AndromedaInstance(controller.getHost(instance.getNodeId()).getHostInfo().getPublicIP(),
+        return new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
                 Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]));
     }
 

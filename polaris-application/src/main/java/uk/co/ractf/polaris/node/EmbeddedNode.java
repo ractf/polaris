@@ -8,16 +8,19 @@ import io.dropwizard.lifecycle.Managed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.challenge.Challenge;
-import uk.co.ractf.polaris.api.deployment.Deployment;
-import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.node.service.NodeServices;
 import uk.co.ractf.polaris.node.runner.Runner;
+import uk.co.ractf.polaris.node.service.NodeServices;
+import uk.co.ractf.polaris.state.ClusterState;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -37,6 +40,7 @@ public class EmbeddedNode implements Node, Managed {
     private final Set<Integer> ports = new ConcurrentSkipListSet<>();
     private final Set<Runner> runnerSet;
     private final Set<Service> services;
+    private final ClusterState clusterState;
 
     private final int advertisedMinPort;
     private final int advertisedMaxPort;
@@ -49,7 +53,7 @@ public class EmbeddedNode implements Node, Managed {
     public EmbeddedNode(final Controller controller,
                         final NodeConfiguration configuration,
                         final Set<Runner> runnerSet,
-                        @NodeServices final Set<Service> services) {
+                        @NodeServices final Set<Service> services, final ClusterState clusterState) {
         this.controller = controller;
         this.configuration = configuration;
         this.runnerSet = runnerSet;
@@ -59,8 +63,7 @@ public class EmbeddedNode implements Node, Managed {
         this.advertisedMaxPort = configuration.getAdvertisedMaxPort();
         this.unadvertisedMinPort = configuration.getUnadvertisedMinPort();
         this.unadvertisedMaxPort = configuration.getUnadvertisedMaxPort();
-
-        controller.addHost(this);
+        this.clusterState = clusterState;
     }
 
     @Override
@@ -96,38 +99,14 @@ public class EmbeddedNode implements Node, Managed {
     }
 
     @Override
-    public Instance createInstance(final Challenge challenge, final Deployment deployment) {
-        log.debug("Instance for {} created", challenge.getId());
-        final Instance instance = new Instance(UUID.randomUUID().toString(), deployment.getId(), challenge.getId(),
-                getId(), new ArrayList<>(), new HashMap<>());
-        instances.put(instance.getId(), instance);
-        return instance;
-    }
-
-    @Override
-    public void removeInstance(final Instance instance) {
-        instances.remove(instance.getId());
-    }
-
-    @Override
-    public Map<String, Instance> getInstances() {
-        return Collections.unmodifiableMap(instances);
-    }
-
-    @Override
     public void restartInstance(final Instance instance) {
-        final Challenge challenge = controller.getChallenge(instance.getChallengeId());
+        final Challenge challenge = clusterState.getChallenge(instance.getChallengeId());
         if (challenge == null) {
             return;
         }
         for (final Pod pod : challenge.getPods()) {
             CompletableFuture.runAsync(() -> getRunner(pod).restartPod(pod, instance));
         }
-    }
-
-    @Override
-    public Instance getInstance(final String id) {
-        return instances.get(id);
     }
 
     private int generatePort(final int min, final int max) {

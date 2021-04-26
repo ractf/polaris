@@ -6,18 +6,18 @@ import com.orbitz.consul.Consul;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.Duration;
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
-import uk.co.ractf.polaris.annotation.ExcludeFromGeneratedReport;
+import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
+import uk.co.ractf.polaris.controller.scheduler.RoundRobinScheduler;
+import uk.co.ractf.polaris.controller.scheduler.Scheduler;
 import uk.co.ractf.polaris.controller.service.ControllerServiceModule;
 import uk.co.ractf.polaris.node.EmbeddedNode;
 import uk.co.ractf.polaris.node.Node;
-import uk.co.ractf.polaris.controller.scheduler.RoundRobinScheduler;
-import uk.co.ractf.polaris.controller.scheduler.Scheduler;
-import uk.co.ractf.polaris.state.ConsulState;
 import uk.co.ractf.polaris.state.ClusterState;
+import uk.co.ractf.polaris.state.ConsulState;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-@ExcludeFromGeneratedReport
+@ExcludeFromGeneratedTestReport
 public class ControllerModule extends DropwizardAwareModule<ControllerConfiguration> {
 
     private final Bootstrap<ControllerConfiguration> bootstrap;

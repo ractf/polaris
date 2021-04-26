@@ -14,7 +14,6 @@ import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceResponse;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
 import uk.co.ractf.polaris.state.ClusterState;
 
