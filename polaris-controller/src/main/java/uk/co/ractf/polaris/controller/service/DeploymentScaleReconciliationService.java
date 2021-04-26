@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.controller.task;
+package uk.co.ractf.polaris.controller.service;
 
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.inject.Inject;
