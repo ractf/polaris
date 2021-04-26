@@ -25,9 +25,9 @@ import java.util.*;
 public class Instance extends JsonRepresentable {
 
     private final String id;
-    private final String deploymentID;
-    private final String challengeID;
-    private final String hostID;
+    private final String deploymentId;
+    private final String challengeId;
+    private final String hostId;
     private final List<InstancePortBinding> portBindings;
     private final Map<String, String> randomEnv;
 
@@ -35,21 +35,21 @@ public class Instance extends JsonRepresentable {
      * The
      *
      * @param id           the id of the instance
-     * @param deploymentID the id of the deployment it belongs to
-     * @param challengeID  the id of the challenge it belongs to
-     * @param hostID       the id of the host its scheduled on
+     * @param deploymentId the id of the deployment it belongs to
+     * @param challengeId  the id of the challenge it belongs to
+     * @param hostId       the id of the host its scheduled on
      */
     @Contract(pure = true)
     public Instance(@JsonProperty("id") final String id,
-                    @JsonProperty("deployment") final String deploymentID,
-                    @JsonProperty("challenge") final String challengeID,
-                    @JsonProperty("host") final String hostID,
+                    @JsonProperty("deployment") final String deploymentId,
+                    @JsonProperty("challenge") final String challengeId,
+                    @JsonProperty("host") final String hostId,
                     @JsonProperty("ports") final List<InstancePortBinding> portBindings,
                     @JsonProperty("randomEnv") final Map<String, String> randomEnv) {
         this.id = id;
-        this.deploymentID = deploymentID;
-        this.challengeID = challengeID;
-        this.hostID = hostID;
+        this.deploymentId = deploymentId;
+        this.challengeId = challengeId;
+        this.hostId = hostId;
         this.portBindings = portBindings;
         this.randomEnv = randomEnv;
     }
@@ -60,18 +60,18 @@ public class Instance extends JsonRepresentable {
     }
 
     @JsonProperty("deployment")
-    public String getDeploymentID() {
-        return deploymentID;
+    public String getDeploymentId() {
+        return deploymentId;
     }
 
     @JsonProperty("challenge")
-    public String getChallengeID() {
-        return challengeID;
+    public String getChallengeId() {
+        return challengeId;
     }
 
     @JsonProperty("host")
-    public String getHostID() {
-        return hostID;
+    public String getHostId() {
+        return hostId;
     }
 
     /**
@@ -102,11 +102,11 @@ public class Instance extends JsonRepresentable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final Instance instance = (Instance) o;
-        return Objects.equals(id, instance.id) && Objects.equals(deploymentID, instance.deploymentID) && Objects.equals(challengeID, instance.challengeID) && Objects.equals(hostID, instance.hostID) && Objects.equals(portBindings, instance.portBindings) && Objects.equals(randomEnv, instance.randomEnv);
+        return Objects.equals(id, instance.id) && Objects.equals(deploymentId, instance.deploymentId) && Objects.equals(challengeId, instance.challengeId) && Objects.equals(hostId, instance.hostId) && Objects.equals(portBindings, instance.portBindings) && Objects.equals(randomEnv, instance.randomEnv);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, deploymentID, challengeID, hostID, portBindings, randomEnv);
+        return Objects.hash(id, deploymentId, challengeId, hostId, portBindings, randomEnv);
     }
 }

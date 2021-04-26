@@ -107,7 +107,7 @@ public class EphemeralController implements Controller, Managed {
         CompletableFuture.runAsync(() -> {
             final Collection<Instance> instanceList = deploymentInstances.get(id);
             for (final Instance instance : instanceList) {
-                hosts.get(instance.getHostID()).removeInstance(instance);
+                hosts.get(instance.getHostId()).removeInstance(instance);
                 instances.remove(instance.getId());
             }
             deploymentInstances.removeAll(id);
@@ -115,8 +115,8 @@ public class EphemeralController implements Controller, Managed {
     }
 
     @Override
-    public Challenge getChallengeFromDeployment(final String deploymentID) {
-        final Deployment deployment = deployments.get(deploymentID);
+    public Challenge getChallengeFromDeployment(final String deploymentId) {
+        final Deployment deployment = deployments.get(deploymentId);
         return deployment == null ? null : getChallengeFromDeployment(deployment);
     }
 
