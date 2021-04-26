@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
+import java.util.Objects;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ChallengeSubmitResponse extends JsonRepresentable {
 
@@ -27,5 +29,18 @@ public class ChallengeSubmitResponse extends JsonRepresentable {
 
     public String getId() {
         return id;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ChallengeSubmitResponse)) return false;
+        final ChallengeSubmitResponse response = (ChallengeSubmitResponse) o;
+        return status == response.status && Objects.equals(id, response.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, id);
     }
 }

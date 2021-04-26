@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.api;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.challenge.ChallengeDeleteResponse;
@@ -39,6 +40,21 @@ public class ChallengeTestCase {
     @Test
     public void testChallengeSubmitResponseIgnoreProperties() {
         validateObjectIgnoreProperties(ChallengeSubmitResponse.class, fixture("fixtures/challenge/submitresponse.json"));
+    }
+
+    @Test
+    public void testChallengeEquals() {
+        EqualsVerifier.simple().forClass(Challenge.class).verify();
+    }
+
+    @Test
+    public void testChallengeDeleteResponseEquals() {
+        EqualsVerifier.simple().forClass(ChallengeDeleteResponse.class).verify();
+    }
+
+    @Test
+    public void testChallengeSubmitResponseEquals() {
+        EqualsVerifier.simple().forClass(ChallengeSubmitResponse.class).verify();
     }
 
 }
