@@ -4,4 +4,5 @@ include 'polaris-controller'
 include 'polaris-cli'
 include 'polaris-apiclient'
 include 'polaris-testlib'
+include 'polaris-node'
 
