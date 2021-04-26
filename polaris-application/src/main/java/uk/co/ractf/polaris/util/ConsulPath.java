@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.consul;
+package uk.co.ractf.polaris.util;
 
 import java.util.StringJoiner;
 
@@ -6,7 +6,7 @@ public class ConsulPath {
 
     private static final String CHALLENGES = "polaris/challenges";
     private static final String DEPLOYMENTS = "polaris/deployments";
-    private static final String HOSTS = "polaris/hosts";
+    private static final String NODES = "polaris/nodes";
     private static final String INSTANCES = "polaris/instances";
     private static final String INSTANCE_ALLOCATION = "polaris/instanceallocation";
 
@@ -38,12 +38,12 @@ public class ConsulPath {
         return path(DEPLOYMENTS, id, "lock");
     }
 
-    public static String hosts() {
-        return HOSTS;
+    public static String nodes() {
+        return NODES;
     }
 
-    public static String host(final String id) {
-        return path(HOSTS, id);
+    public static String node(final String id) {
+        return path(NODES, id);
     }
 
     public static String instances() {

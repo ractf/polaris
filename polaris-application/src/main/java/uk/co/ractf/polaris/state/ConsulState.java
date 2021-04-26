@@ -1,8 +1,7 @@
-package uk.co.ractf.polaris.controller;
+package uk.co.ractf.polaris.state;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.Service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.orbitz.consul.Consul;
@@ -10,68 +9,35 @@ import com.orbitz.consul.model.kv.Operation;
 import com.orbitz.consul.model.kv.Verb;
 import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.model.session.Session;
-import io.dropwizard.lifecycle.Managed;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.util.ConsulPath;
-import uk.co.ractf.polaris.controller.service.ControllerServices;
-import uk.co.ractf.polaris.node.Node;
-import uk.co.ractf.polaris.controller.instanceallocation.EphemeralInstanceAllocator;
-import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
-public class ConsulController implements Controller, Managed {
+public class ConsulState implements State {
 
-    private static final Logger log = LoggerFactory.getLogger(ConsulController.class);
+    private static final Logger log = LoggerFactory.getLogger(ConsulState.class);
 
-    private final ControllerConfiguration config;
     private final Consul consul;
-    private final Map<String, Node> hosts = new ConcurrentHashMap<>();
-    private final InstanceAllocator instanceAllocator;
-    private final Set<Service> services;
     private final String sessionId;
 
     @Inject
-    public ConsulController(final ControllerConfiguration config,
-                            final Consul consul,
-                            @ControllerServices final Set<Service> services) {
-        this.config = config;
+    public ConsulState(final Consul consul) {
         this.consul = consul;
-        this.instanceAllocator = new EphemeralInstanceAllocator(this);
-        this.services = services;
-        final Session session = ImmutableSession.builder().name("polaris-controller").build();
+        //TODO: this is probably terrible for debugging
+        final Session session = ImmutableSession.builder().name(UUID.randomUUID().toString()).build();
         this.sessionId = consul.sessionClient().createSession(session).getId();
     }
 
-    @Override
-    public void start() {
-        for (final Service service : services) {
-            service.startAsync();
-        }
-    }
-
-    @Override
-    public void stop() {
-        for (final Service service : services) {
-            service.stopAsync();
-        }
-    }
-
-    @Override
-    public void addHost(final Node node) {
-        if (hosts.containsKey(node.getId())) {
-            return;
-        }
-        hosts.put(node.getId(), node);
-    }
-
+    @NotNull
     @Override
     public Map<String, Challenge> getChallenges() {
         final Map<String, Challenge> challengeMap = new HashMap<>();
@@ -94,6 +60,7 @@ public class ConsulController implements Controller, Managed {
         return challengeMap;
     }
 
+    @Nullable
     @Override
     public Challenge getChallenge(final String id) {
         final Optional<String> challengeData = consul.keyValueClient().getValueAsString(ConsulPath.challenge(id));
@@ -107,12 +74,15 @@ public class ConsulController implements Controller, Managed {
         return null;
     }
 
+    @Nullable
     @Override
-    public void createChallenge(final Challenge challenge) {
+    public Challenge getChallengeFromDeployment(final String deploymentId) {
+        return null;
+    }
+
+    @Override
+    public void setChallenge(final Challenge challenge) {
         Preconditions.checkArgument(!challenge.getId().isBlank(), "Challenge id cannot be blank.");
-        if (getChallenge(challenge.getId()) != null) {
-            throw new IllegalArgumentException("Challenge with id " + challenge.getId() + " already exists.");
-        }
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.challenge(challenge.getId()))
@@ -128,6 +98,7 @@ public class ConsulController implements Controller, Managed {
                         .build());
     }
 
+    @NotNull
     @Override
     public Map<String, Deployment> getDeployments() {
         final Map<String, Deployment> deploymentMap = new HashMap<>();
@@ -150,6 +121,7 @@ public class ConsulController implements Controller, Managed {
         return deploymentMap;
     }
 
+    @Nullable
     @Override
     public Deployment getDeployment(final String id) {
         final Optional<String> deploymentData = consul.keyValueClient().getValueAsString(ConsulPath.deployment(id));
@@ -164,11 +136,8 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public void createDeployment(final Deployment deployment) {
+    public void setDeployment(final Deployment deployment) {
         Preconditions.checkArgument(!deployment.getId().isBlank(), "Deployment id cannot be blank.");
-        if (getDeployment(deployment.getId()) != null) {
-            throw new IllegalArgumentException("Challenge with id " + deployment.getId() + " already exists.");
-        }
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.deployment(deployment.getId()))
@@ -176,49 +145,46 @@ public class ConsulController implements Controller, Managed {
                         .build());
     }
 
+    @NotNull
     @Override
-    public void updateDeployment(final Deployment deployment) {
-        consul.keyValueClient().performTransaction(
-                Operation.builder(Verb.SET)
-                        .key(ConsulPath.deployment(deployment.getId()))
-                        .value(deployment.toJsonString())
-                        .build());
-    }
+    public Map<String, NodeInfo> getNodes() {
+        final Map<String, NodeInfo> nodeMap = new HashMap<>();
+        final List<String> nodePaths = consul.keyValueClient().getKeys(ConsulPath.nodes());
 
-    @Override
-    public void deleteDeployment(final String id) {
-        consul.keyValueClient().performTransaction(
-                Operation.builder(Verb.DELETE)
-                        .key(ConsulPath.deployment(id))
-                        .build());
-    }
-
-    @Override
-    public Challenge getChallengeFromDeployment(final String deploymentId) {
-        final Deployment deployment = getDeployment(deploymentId);
-        if (deployment == null) {
-            return null;
+        for (final String nodePath : nodePaths) {
+            final Optional<String> nodeData = consul.keyValueClient().getValueAsString(nodePath);
+            if (nodeData.isPresent()) {
+                try {
+                    final NodeInfo node = NodeInfo.parse(nodeData.get(), NodeInfo.class);
+                    if (!node.getId().isBlank()) {
+                        nodeMap.put(node.getId(), node);
+                    }
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing node " + nodePath, exception);
+                }
+            }
         }
-        return getChallenge(deployment.getChallenge());
+
+        return nodeMap;
     }
 
+    @Nullable
     @Override
-    public Challenge getChallengeFromDeployment(final Deployment deployment) {
-        return getChallenge(deployment.getChallenge());
+    public NodeInfo getNode(final String id) {
+        final Optional<String> nodeData = consul.keyValueClient().getValueAsString(ConsulPath.node(id));
+        if (nodeData.isPresent()) {
+            try {
+                return NodeInfo.parse(nodeData.get(), NodeInfo.class);
+            } catch (final JsonProcessingException exception) {
+                log.error("Error deserializing node " + id, exception);
+            }
+        }
+        return null;
     }
 
+    @NotNull
     @Override
-    public Map<String, Node> getHosts() {
-        return Collections.unmodifiableMap(hosts);
-    }
-
-    @Override
-    public Node getHost(final String id) {
-        return hosts.get(id);
-    }
-
-    @Override
-    public @NotNull List<Deployment> getDeploymentsOfChallenge(final String challenge) {
+    public List<Deployment> getDeploymentsOfChallenge(final String challenge) {
         final List<Deployment> deployments = new ArrayList<>();
         for (final Map.Entry<String, Deployment> entry : getDeployments().entrySet()) {
             final Deployment deployment = entry.getValue();
@@ -229,8 +195,9 @@ public class ConsulController implements Controller, Managed {
         return deployments;
     }
 
+    @NotNull
     @Override
-    public @NotNull List<Instance> getInstancesForDeployment(final String deployment) {
+    public List<Instance> getInstancesForDeployment(final String deployment) {
         final List<Instance> instances = new ArrayList<>();
         final List<String> instancePaths = consul.keyValueClient().getKeys(ConsulPath.instances());
         for (final String instancePath : instancePaths) {
@@ -249,11 +216,7 @@ public class ConsulController implements Controller, Managed {
         return instances;
     }
 
-    @Override
-    public InstanceAllocator getInstanceAllocator() {
-        return instanceAllocator;
-    }
-
+    @Nullable
     @Override
     public Instance getInstance(final String id) {
         final Optional<String> instanceData = consul.keyValueClient().getValueAsString(ConsulPath.instance(id));
@@ -303,5 +266,4 @@ public class ConsulController implements Controller, Managed {
             return false;
         }
     }
-
 }

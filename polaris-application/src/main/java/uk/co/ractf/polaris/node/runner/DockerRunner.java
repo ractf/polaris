@@ -21,8 +21,8 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instance.InstancePortBinding;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.PortMapping;
-import uk.co.ractf.polaris.consul.ConsulPath;
-import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.state.State;
+import uk.co.ractf.polaris.util.ConsulPath;
 import uk.co.ractf.polaris.node.Node;
 
 import java.util.*;
@@ -38,9 +38,9 @@ public class DockerRunner implements Runner<Container> {
     private static final Logger log = LoggerFactory.getLogger(DockerRunner.class);
 
     private final DockerClient dockerClient;
-    private final Controller controller;
     private final Node node;
     private final Consul consul;
+    private final State state;
 
     private final Set<String> images = new ConcurrentSkipListSet<>();
     private final Set<String> downloadingImages = new ConcurrentSkipListSet<>();
@@ -48,12 +48,12 @@ public class DockerRunner implements Runner<Container> {
     private final Set<String> startingContainers = new ConcurrentSkipListSet<>();
 
     @Inject
-    public DockerRunner(final DockerClient dockerClient, final Controller controller, final Node node,
-                        final Consul consul) {
+    public DockerRunner(final DockerClient dockerClient, final Node node, final Consul consul,
+                        final State state) {
         this.dockerClient = dockerClient;
-        this.controller = controller;
         this.node = node;
         this.consul = consul;
+        this.state = state;
     }
 
     private Capability[] createCapabilityArray(final List<String> capabilities) {
@@ -76,7 +76,7 @@ public class DockerRunner implements Runner<Container> {
             labels.put("polaris", container.getId());
             labels.put("polaris-instance", instance.getId());
             labels.put("polaris-deployment", instance.getDeploymentId());
-            labels.put("polaris-challenge", controller.getChallengeFromDeployment(instance.getDeploymentId()).getId());
+            labels.put("polaris-challenge", instance.getChallengeId());
             labels.put("polaris-pod", container.getId());
 
             final Map<PortMapping, PortBinding> portBindings = node.createPortBindings(container.getPortMappings());
@@ -205,7 +205,7 @@ public class DockerRunner implements Runner<Container> {
             final String challengeId = container.getLabels().get("polaris-challenge");
 
             if (!node.getInstances().containsKey(instanceId)) {
-                final Challenge challenge = controller.getChallenge(challengeId);
+                final Challenge challenge = state.getChallenge(challengeId);
                 if (dyingContainers.contains(container.getId())) {
                     continue;
                 }

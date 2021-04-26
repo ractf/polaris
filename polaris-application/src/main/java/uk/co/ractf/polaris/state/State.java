@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.controller;
+package uk.co.ractf.polaris.state;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.jetbrains.annotations.NotNull;
@@ -6,30 +6,20 @@ import org.jetbrains.annotations.Nullable;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.node.Node;
-import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * The interface that defines what information the Polaris controller needs to receive and how the rest of the application
- * should interact with it.
- */
-public interface Controller {
-
-    /**
-     * Registers a {@link Node} with the controller
-     *
-     * @param node the host to add
-     */
-    void addHost(final Node node);
+public interface State {
 
     /**
      * Gets a {@link Map} of challenge id to {@link Challenge}
      *
      * @return challenge map
      */
+    @NotNull
     Map<String, Challenge> getChallenges();
 
     /**
@@ -42,11 +32,20 @@ public interface Controller {
     Challenge getChallenge(final String id);
 
     /**
-     * Submits a {@link Challenge} that can later be deployed
+     * Resolves a {@link Deployment} id into a challenge
+     *
+     * @param deploymentId the deployment id
+     * @return the challenge that deployment deploys
+     */
+    @Nullable
+    Challenge getChallengeFromDeployment(String deploymentId);
+
+    /**
+     * Sets the data of a {@link Challenge}
      *
      * @param challenge the challenge object
      */
-    void createChallenge(final Challenge challenge);
+    void setChallenge(final Challenge challenge);
 
     /**
      * Remove a {@link Challenge}
@@ -60,6 +59,7 @@ public interface Controller {
      *
      * @return deployment map
      */
+    @NotNull
     Map<String, Deployment> getDeployments();
 
     /**
@@ -76,56 +76,24 @@ public interface Controller {
      *
      * @param deployment the deployment
      */
-    void createDeployment(final Deployment deployment);
-
-    /**
-     * Does an in place update of an existing {@link Deployment}
-     *
-     * @param deployment the new deployment config
-     */
-    void updateDeployment(final Deployment deployment);
-
-    /**
-     * Deletes a {@link Deployment } from the controller, which will eventually cause all the {@link Instance}s of that
-     * deployment to be descheduled
-     *
-     * @param id the deployment id to delete
-     */
-    void deleteDeployment(final String id);
-
-    /**
-     * Resolves a {@link Deployment} id into a challenge
-     *
-     * @param deployment the deployment id
-     * @return the challenge that deployment deploys
-     */
-    @Nullable
-    Challenge getChallengeFromDeployment(final String deployment);
-
-    /**
-     * Resolves a {@link Deployment}'s challenge id into a challenge
-     *
-     * @param deployment the deployment
-     * @return that deployment's challenge
-     */
-    @Nullable
-    Challenge getChallengeFromDeployment(final Deployment deployment);
+    void setDeployment(final Deployment deployment);
 
     /**
      * Gets a {@link Map} of host id to {@link Node}
      *
      * @return map of hosts
      */
-    Map<String, Node> getHosts();
+    @NotNull
+    Map<String, NodeInfo> getNodes();
 
     /**
-     * Gets a {@link Node} by id
+     * Gets a {@link NodeInfo} by id
      *
      * @param id host id
      * @return the host
      */
     @Nullable
-    Node getHost(final String id);
+    NodeInfo getNode(final String id);
 
     /**
      * Get all {@link Deployment}s of a {@link Challenge}
@@ -146,18 +114,12 @@ public interface Controller {
     List<Instance> getInstancesForDeployment(final String deployment);
 
     /**
-     * Returns the {@link InstanceAllocator} that should be used to decide which {@link Instance}s are allocated to which users
-     *
-     * @return the instance allocator
-     */
-    InstanceAllocator getInstanceAllocator();
-
-    /**
      * Gets an {@link Instance} by id
      *
      * @param id the instance id
      * @return the instance
      */
+    @Nullable
     Instance getInstance(final String id);
 
     /**

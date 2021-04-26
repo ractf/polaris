@@ -21,6 +21,8 @@ import uk.co.ractf.polaris.node.runner.DockerRunner;
 import uk.co.ractf.polaris.node.runner.Runner;
 import uk.co.ractf.polaris.controller.scheduler.RoundRobinScheduler;
 import uk.co.ractf.polaris.controller.scheduler.Scheduler;
+import uk.co.ractf.polaris.state.ConsulState;
+import uk.co.ractf.polaris.state.State;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -42,19 +44,11 @@ public class ControllerModule extends DropwizardAwareModule<ControllerConfigurat
                 .build());
         bind(Consul.class).toInstance(configuration().getConsulFactory().build());
 
-        final DockerClientConfig config = DefaultDockerClientConfig.createDefaultConfigBuilder().build();
-        final DockerHttpClient httpClient = new ApacheDockerHttpClient.Builder()
-                .dockerHost(config.getDockerHost())
-                .sslConfig(config.getSSLConfig())
-                .build();
-        bind(DockerClient.class).toInstance(DockerClientImpl.getInstance(config, httpClient));
-
         bind(Node.class).to(EmbeddedNode.class).in(Singleton.class);
         bind(Scheduler.class).to(RoundRobinScheduler.class);
-
         bind(Controller.class).to(ConsulController.class).in(Singleton.class);
-
         bind(MetricRegistry.class).toInstance(bootstrap.getMetricRegistry());
+        bind(State.class).to(ConsulState.class);
 
         install(new ControllerServiceModule());
 
