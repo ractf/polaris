@@ -2,6 +2,7 @@ package uk.co.ractf.polaris;
 
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
+import com.google.common.collect.ObjectArrays;
 import com.smoketurner.dropwizard.consul.ConsulBundle;
 import com.smoketurner.dropwizard.consul.ConsulFactory;
 import io.dropwizard.Application;
@@ -22,15 +23,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ExcludeFromGeneratedReport
-public class PolarisApplication extends Application<PolarisConfiguration> {
+public class ControllerMain extends Application<PolarisConfiguration> {
 
-    private static final Logger log = LoggerFactory.getLogger(PolarisApplication.class);
+    private static final Logger log = LoggerFactory.getLogger(ControllerMain.class);
 
-    public PolarisApplication() {
+    public ControllerMain() {
     }
 
     public static void main(final String[] args) throws Exception {
-        new PolarisApplication().run(args);
+        new ControllerMain().run(ObjectArrays.concat("server", args));
     }
 
     @Override

@@ -19,7 +19,7 @@ apply plugin: 'nebula.ospackage'
 apply plugin: 'com.palantir.git-version'
 apply plugin: 'jacoco'
 
-mainClassName = 'uk.co.ractf.polaris.PolarisApplication'
+mainClassName = 'uk.co.ractf.polaris.Main'
 
 repositories {
     mavenCentral()
