@@ -64,7 +64,7 @@ public class HostInfoSyncService extends AbstractScheduledService {
                     operatingSystemMXBean.getFreeSwapSpaceSize(),
                     labels);
 
-            node.setHostInfo(nodeInfo);
+            node.getNodeInfo(nodeInfo);
         } catch (final IOException e) {
             e.printStackTrace();
         }

@@ -113,7 +113,7 @@ public class DockerRunner implements Runner<Container> {
             instance.getRandomEnv().putAll(container.getGeneratedRandomEnv());
             for (final Map.Entry<PortMapping, PortBinding> entry : portBindings.entrySet()) {
                 instance.addPortBinding(new InstancePortBinding(entry.getValue().getBinding().getHostPortSpec(),
-                        node.getHostInfo().getPublicIP(), entry.getKey().isAdvertise()));
+                        node.getNodeInfo().getPublicIP(), entry.getKey().isAdvertise()));
             }
             log.info("Updating instance {} {}", instance.getId(), instance.toJsonString());
             consul.keyValueClient().performTransaction(
