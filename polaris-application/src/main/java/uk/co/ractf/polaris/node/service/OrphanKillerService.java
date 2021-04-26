@@ -13,11 +13,11 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class OrphanKillerService extends AbstractScheduledService {
 
-    private final Set<Runner> runners;
+    private final Set<Runner<?>> runners;
     private final NodeConfiguration configuration;
 
     @Inject
-    public OrphanKillerService(final Set<Runner> runners, final NodeConfiguration configuration) {
+    public OrphanKillerService(final Set<Runner<?>> runners, final NodeConfiguration configuration) {
         this.runners = runners;
         this.configuration = configuration;
     }
@@ -25,7 +25,7 @@ public class OrphanKillerService extends AbstractScheduledService {
     @Override
     protected void runOneIteration() {
         if (configuration.isKillOrphans()) {
-            for (final Runner runner : runners) {
+            for (final Runner<?> runner : runners) {
                 CompletableFuture.runAsync(runner::killOrphans);
             }
         }

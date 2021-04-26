@@ -11,17 +11,17 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class GarbageCollectionService extends AbstractScheduledService {
 
-    private final Set<Runner> runners;
+    private final Set<Runner<?>> runners;
 
     @Inject
-    public GarbageCollectionService(final Set<Runner> runners) {
+    public GarbageCollectionService(final Set<Runner<?>> runners) {
         this.runners = runners;
     }
 
 
     @Override
     protected void runOneIteration() throws Exception {
-        for (final Runner runner : runners) {
+        for (final Runner<?> runner : runners) {
             runner.garbageCollect();
         }
     }
