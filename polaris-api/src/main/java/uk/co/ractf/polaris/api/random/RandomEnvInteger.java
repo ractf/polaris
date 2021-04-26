@@ -58,11 +58,11 @@ public class RandomEnvInteger extends RandomEnv {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final RandomEnvInteger that = (RandomEnvInteger) o;
-        return Objects.equals(min, that.min) && Objects.equals(max, that.max);
+        return Objects.equals(min, that.min) && Objects.equals(max, that.max) && Objects.equals(getType(), that.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(min, max);
+        return Objects.hash(min, max, getType());
     }
 }
