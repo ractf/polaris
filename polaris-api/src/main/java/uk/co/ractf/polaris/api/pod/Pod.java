@@ -33,7 +33,7 @@ public abstract class Pod extends JsonRepresentable {
         return type;
     }
 
-    public String getID() {
+    public String getId() {
         return id;
     }
 

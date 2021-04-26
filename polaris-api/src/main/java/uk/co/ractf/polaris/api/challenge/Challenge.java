@@ -37,7 +37,7 @@ public class Challenge extends JsonRepresentable {
         this.pods = pods;
     }
 
-    public String getID() {
+    public String getId() {
         return id;
     }
 
@@ -54,7 +54,7 @@ public class Challenge extends JsonRepresentable {
     @JsonIgnoreProperties
     public Pod getPod(final String id) {
         for (final Pod pod : pods) {
-            if (pod.getID().equals(id)) {
+            if (pod.getId().equals(id)) {
                 return pod;
             }
         }

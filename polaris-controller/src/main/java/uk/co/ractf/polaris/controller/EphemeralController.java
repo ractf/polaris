@@ -58,7 +58,7 @@ public class EphemeralController implements Controller, Managed {
 
     @Override
     public void addHost(final Host host) {
-        hosts.put(host.getID(), host);
+        hosts.put(host.getId(), host);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class EphemeralController implements Controller, Managed {
 
     @Override
     public void createChallenge(final Challenge challenge) {
-        challenges.put(challenge.getID(), challenge);
+        challenges.put(challenge.getId(), challenge);
     }
 
     @Override
@@ -93,12 +93,12 @@ public class EphemeralController implements Controller, Managed {
 
     @Override
     public void createDeployment(final Deployment deployment) {
-        deployments.put(deployment.getID(), deployment);
+        deployments.put(deployment.getId(), deployment);
     }
 
     @Override
     public void updateDeployment(final Deployment deployment) {
-        deployments.put(deployment.getID(), deployment);
+        deployments.put(deployment.getId(), deployment);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class EphemeralController implements Controller, Managed {
             final Collection<Instance> instanceList = deploymentInstances.get(id);
             for (final Instance instance : instanceList) {
                 hosts.get(instance.getHostID()).removeInstance(instance);
-                instances.remove(instance.getID());
+                instances.remove(instance.getId());
             }
             deploymentInstances.removeAll(id);
         });
@@ -164,19 +164,19 @@ public class EphemeralController implements Controller, Managed {
 
     @Override
     public void registerInstance(final Deployment deployment, final Instance instance) {
-        instances.put(instance.getID(), instance);
-        deploymentInstances.put(deployment.getID(), instance);
+        instances.put(instance.getId(), instance);
+        deploymentInstances.put(deployment.getId(), instance);
     }
 
     @Override
     public void unregisterInstance(final Deployment deployment, final Instance instance) {
-        instances.remove(instance.getID());
+        instances.remove(instance.getId());
     }
 
     @Override
     public boolean lockDeployment(final Deployment deployment) {
         try {
-            deploymentLocks.computeIfAbsent(deployment.getID(), x -> new Semaphore(1)).acquire();
+            deploymentLocks.computeIfAbsent(deployment.getId(), x -> new Semaphore(1)).acquire();
         } catch (final InterruptedException e) {
             e.printStackTrace();
             return false;
@@ -186,7 +186,7 @@ public class EphemeralController implements Controller, Managed {
 
     @Override
     public boolean unlockDeployment(final Deployment deployment) {
-        deploymentLocks.computeIfAbsent(deployment.getID(), x -> new Semaphore(1)).release();
+        deploymentLocks.computeIfAbsent(deployment.getId(), x -> new Semaphore(1)).release();
         return true;
     }
 

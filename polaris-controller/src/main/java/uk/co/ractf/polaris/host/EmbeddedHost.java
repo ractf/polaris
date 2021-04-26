@@ -81,7 +81,7 @@ public class EmbeddedHost implements Host, Managed {
     }
 
     @Override
-    public String getID() {
+    public String getId() {
         return "embedded";
     }
 
@@ -97,16 +97,16 @@ public class EmbeddedHost implements Host, Managed {
 
     @Override
     public Instance createInstance(final Challenge challenge, final Deployment deployment) {
-        log.debug("Instance for {} created", challenge.getID());
-        final Instance instance = new Instance(UUID.randomUUID().toString(), deployment.getID(), challenge.getID(),
-                getID(), new ArrayList<>(), new HashMap<>());
-        instances.put(instance.getID(), instance);
+        log.debug("Instance for {} created", challenge.getId());
+        final Instance instance = new Instance(UUID.randomUUID().toString(), deployment.getId(), challenge.getId(),
+                getId(), new ArrayList<>(), new HashMap<>());
+        instances.put(instance.getId(), instance);
         return instance;
     }
 
     @Override
     public void removeInstance(final Instance instance) {
-        instances.remove(instance.getID());
+        instances.remove(instance.getId());
     }
 
     @Override

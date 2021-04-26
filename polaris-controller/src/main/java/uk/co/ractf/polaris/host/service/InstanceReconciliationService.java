@@ -76,15 +76,15 @@ public class InstanceReconciliationService extends AbstractScheduledService {
                     continue;
                 }
                 for (final Pod pod : challenge.getPods()) {
-                    if (recentlyStartedInstances.getIfPresent(pod.getID() + instance.getID()) != null) {
+                    if (recentlyStartedInstances.getIfPresent(pod.getId() + instance.getId()) != null) {
                         continue;
                     }
                     if (getRunner(pod).canStartPod(pod)) {
-                        log.debug("ensuring pod started {} {}", pod.getID(), instance.getID());
-                        recentlyStartedInstances.put(pod.getID() + instance.getID(), "");
+                        log.debug("ensuring pod started {} {}", pod.getId(), instance.getId());
+                        recentlyStartedInstances.put(pod.getId() + instance.getId(), "");
                         CompletableFuture.runAsync(() -> {
                             if (!getRunner(pod).isPodStarted(pod, instance)) {
-                                log.info("telling runner to start instance of {} for {}", pod.getID(), instance.getID());
+                                log.info("telling runner to start instance of {} for {}", pod.getId(), instance.getId());
                                 getRunner(pod).startPod(pod, instance);
                             }
                         });

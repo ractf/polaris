@@ -49,15 +49,15 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
         String bestInstanceSticky = null;
         for (final Deployment deployment : deployments) {
             final Allocation allocation = deployment.getAllocation();
-            for (final Instance instance : controller.getInstancesForDeployment(deployment.getID())) {
-                if (instanceUsers.get(instance.getID()).size() >= allocation.getUserLimit() ||
-                        instanceTeams.get(instance.getID()).size() >= allocation.getTeamLimit() ||
-                        userAvoids.get(request.getUser()).contains(instance.getID()) ||
-                        teamAvoids.get(request.getTeam()).contains(instance.getID())) {
+            for (final Instance instance : controller.getInstancesForDeployment(deployment.getId())) {
+                if (instanceUsers.get(instance.getId()).size() >= allocation.getUserLimit() ||
+                        instanceTeams.get(instance.getId()).size() >= allocation.getTeamLimit() ||
+                        userAvoids.get(request.getUser()).contains(instance.getId()) ||
+                        teamAvoids.get(request.getTeam()).contains(instance.getId())) {
                     continue;
                 }
-                final double userScore = (double) instanceUsers.get(instance.getID()).size() / allocation.getUserLimit();
-                final double teamScore = (double) instanceTeams.get(instance.getID()).size() / allocation.getTeamLimit();
+                final double userScore = (double) instanceUsers.get(instance.getId()).size() / allocation.getUserLimit();
+                final double teamScore = (double) instanceTeams.get(instance.getId()).size() / allocation.getTeamLimit();
                 final double instanceScore = userScore * teamScore;
                 if (instanceScore > bestInstanceScore) {
                     bestInstanceScore = instanceScore;
@@ -71,9 +71,9 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
             int avoided = 0;
             int instanceCount = 0;
             for (final Deployment deployment : deployments) {
-                for (final Instance instance : controller.getInstancesForDeployment(deployment.getID())) {
-                    if (userAvoids.get(request.getUser()).contains(instance.getID()) ||
-                            teamAvoids.get(request.getTeam()).contains(instance.getID())) {
+                for (final Instance instance : controller.getInstancesForDeployment(deployment.getId())) {
+                    if (userAvoids.get(request.getUser()).contains(instance.getId()) ||
+                            teamAvoids.get(request.getTeam()).contains(instance.getId())) {
                         avoided++;
                     }
                     instanceCount++;
@@ -85,15 +85,15 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
             }
             //TODO: notify admins
             Collections.shuffle(deployments);
-            final List<Instance> instances = controller.getInstancesForDeployment(deployments.get(0).getID());
+            final List<Instance> instances = controller.getInstancesForDeployment(deployments.get(0).getId());
             Collections.shuffle(instances);
             return instances.get(0);
         }
 
         if ("user".equals(bestInstanceSticky)) {
-            stickyInstances.get(request.getChallenge()).setUser(bestInstance.getID(), request.getUser());
+            stickyInstances.get(request.getChallenge()).setUser(bestInstance.getId(), request.getUser());
         } else if ("team".equals(bestInstanceSticky)) {
-            stickyInstances.get(request.getChallenge()).setTeam(bestInstance.getID(), request.getTeam());
+            stickyInstances.get(request.getChallenge()).setTeam(bestInstance.getId(), request.getTeam());
         }
 
         return bestInstance;

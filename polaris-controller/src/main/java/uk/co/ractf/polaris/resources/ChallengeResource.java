@@ -95,15 +95,15 @@ public class ChallengeResource {
     @Operation(summary = "Submit Challenge", tags = {"Challenge"},
             description = "Submits a challenge object to the controller")
     public Response submitChallenge(final Challenge challenge) {
-        if (controller.getChallenge(challenge.getID()) != null) {
+        if (controller.getChallenge(challenge.getId()) != null) {
             return Response
                     .status(400)
-                    .entity(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.DUPLICATE, challenge.getID()))
+                    .entity(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.DUPLICATE, challenge.getId()))
                     .build();
         }
 
         controller.createChallenge(challenge);
-        return Response.ok(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.OK, challenge.getID())).build();
+        return Response.ok(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.OK, challenge.getId())).build();
     }
 
     /**

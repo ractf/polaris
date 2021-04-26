@@ -7,7 +7,6 @@ import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.SessionClient;
 import com.orbitz.consul.model.session.ImmutableSessionCreatedResponse;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -136,7 +135,7 @@ public class ConsulControllerTest {
     @Test
     public void testHostAdding() {
         final Host host = mock(Host.class);
-        when(host.getID()).thenReturn("testHost");
+        when(host.getId()).thenReturn("testHost");
         controller.addHost(host);
         assertThat(controller.getHost("testHost")).isEqualTo(host);
     }
@@ -144,9 +143,9 @@ public class ConsulControllerTest {
     @Test
     public void testHostAddingDuplicate() {
         final Host host = mock(Host.class);
-        when(host.getID()).thenReturn("testHost");
+        when(host.getId()).thenReturn("testHost");
         final Host host2 = mock(Host.class);
-        when(host2.getID()).thenReturn("testHost");
+        when(host2.getId()).thenReturn("testHost");
         controller.addHost(host);
         controller.addHost(host2);
         assertThat(controller.getHost("testHost")).isEqualTo(host);
@@ -156,10 +155,10 @@ public class ConsulControllerTest {
     public void testGetHosts() {
         final Map<String, Host> expected = new HashMap<>();
         final Host host = mock(Host.class);
-        when(host.getID()).thenReturn("testHost");
+        when(host.getId()).thenReturn("testHost");
         expected.put("testHost", host);
         final Host host2 = mock(Host.class);
-        when(host2.getID()).thenReturn("testHost2");
+        when(host2.getId()).thenReturn("testHost2");
         expected.put("testHost2", host2);
         controller.addHost(host);
         controller.addHost(host2);
