@@ -12,8 +12,8 @@ import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.host.Host;
-import uk.co.ractf.polaris.replication.ReplicationController;
+import uk.co.ractf.polaris.host.Node;
+import uk.co.ractf.polaris.controller.replication.ReplicationController;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,12 +24,12 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
     private static final Logger log = LoggerFactory.getLogger(DeploymentScaleReconciliationService.class);
 
     private final Controller controller;
-    private final uk.co.ractf.polaris.scheduler.Scheduler scheduler;
+    private final uk.co.ractf.polaris.controller.scheduler.Scheduler scheduler;
     private final PolarisConfiguration polarisConfiguration;
 
     @Inject
     public DeploymentScaleReconciliationService(final Controller controller,
-                                                final uk.co.ractf.polaris.scheduler.Scheduler scheduler,
+                                                final uk.co.ractf.polaris.controller.scheduler.Scheduler scheduler,
                                                 final PolarisConfiguration polarisConfiguration) {
         this.controller = controller;
         this.scheduler = scheduler;
@@ -55,11 +55,11 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
                 if (scaleAmount > 0) {
                     log.info("Scheduling instances: {} of {}", scaleAmount, deployment.getId());
                     for (int i = 0; i < scaleAmount; i++) {
-                        final Host host = scheduler.scheduleChallenge(challenge, controller.getHosts().values());
-                        final Instance instance = host.createInstance(challenge, deployment);
-                        log.info("Scheduled instance of {} onto {}", instance.getId(), host.getId());
+                        final Node node = scheduler.scheduleChallenge(challenge, controller.getHosts().values());
+                        final Instance instance = node.createInstance(challenge, deployment);
+                        log.info("Scheduled instance of {} onto {}", instance.getId(), node.getId());
                         controller.registerInstance(deployment, instance);
-                        log.info("Instance of {} successfully registered on {}", instance.getId(), host.getId());
+                        log.info("Instance of {} successfully registered on {}", instance.getId(), node.getId());
                     }
                 } else {
                     for (int i = 0; i > scaleAmount; i--) {
