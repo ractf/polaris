@@ -41,25 +41,25 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
         try {
             log.trace("Starting deployment reconciliation tick {}", controller.getDeployments().size());
             for (final Deployment deployment : controller.getDeployments().values()) {
-                log.debug("Attempting to reconcile deployment {}", deployment.getID());
+                log.debug("Attempting to reconcile deployment {}", deployment.getId());
                 if (!controller.lockDeployment(deployment)) {
-                    log.debug("Could not obtain lock for {}", deployment.getID());
+                    log.debug("Could not obtain lock for {}", deployment.getId());
                     continue;
                 }
-                final List<Instance> instances = controller.getInstancesForDeployment(deployment.getID());
+                final List<Instance> instances = controller.getInstancesForDeployment(deployment.getId());
                 final Challenge challenge = controller.getChallengeFromDeployment(deployment);
 
                 final int scaleAmount = ReplicationController.create(deployment.getReplication()).getScaleAmount(instances, controller);
                 log.debug("Replication: static {} {}", ((StaticReplication) deployment.getReplication()).getAmount(), instances.size());
-                log.debug("Scaling required for {}: {}", deployment.getID(), scaleAmount);
+                log.debug("Scaling required for {}: {}", deployment.getId(), scaleAmount);
                 if (scaleAmount > 0) {
-                    log.info("Scheduling instances: {} of {}", scaleAmount, deployment.getID());
+                    log.info("Scheduling instances: {} of {}", scaleAmount, deployment.getId());
                     for (int i = 0; i < scaleAmount; i++) {
                         final Host host = scheduler.scheduleChallenge(challenge, controller.getHosts().values());
                         final Instance instance = host.createInstance(challenge, deployment);
-                        log.info("Scheduled instance of {} onto {}", instance.getID(), host.getID());
+                        log.info("Scheduled instance of {} onto {}", instance.getId(), host.getId());
                         controller.registerInstance(deployment, instance);
-                        log.info("Instance of {} successfully registered on {}", instance.getID(), host.getID());
+                        log.info("Instance of {} successfully registered on {}", instance.getId(), host.getId());
                     }
                 } else {
                     for (int i = 0; i > scaleAmount; i--) {

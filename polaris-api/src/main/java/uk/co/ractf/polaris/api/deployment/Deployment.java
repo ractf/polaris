@@ -55,7 +55,7 @@ public class Deployment extends JsonRepresentable {
         this.allocation = allocation;
     }
 
-    public String getID() {
+    public String getId() {
         return id;
     }
 

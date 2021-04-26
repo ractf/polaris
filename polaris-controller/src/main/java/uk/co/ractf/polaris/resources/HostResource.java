@@ -51,7 +51,7 @@ public class HostResource {
 
         for (final Host host : controller.getHosts().values()) {
             if (pattern.matcher(filter).find()) {
-                hostInfoList.put(host.getID(), host.getHostInfo());
+                hostInfoList.put(host.getId(), host.getHostInfo());
             }
         }
         return hostInfoList;

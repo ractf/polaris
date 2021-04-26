@@ -68,10 +68,10 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public void addHost(final Host host) {
-        if (hosts.containsKey(host.getID())) {
+        if (hosts.containsKey(host.getId())) {
             return;
         }
-        hosts.put(host.getID(), host);
+        hosts.put(host.getId(), host);
     }
 
     @Override
@@ -84,8 +84,8 @@ public class ConsulController implements Controller, Managed {
             if (challengeData.isPresent()) {
                 try {
                     final Challenge challenge = Challenge.parse(challengeData.get(), Challenge.class);
-                    if (!challenge.getID().isBlank()) {
-                        challengeMap.put(challenge.getID(), challenge);
+                    if (!challenge.getId().isBlank()) {
+                        challengeMap.put(challenge.getId(), challenge);
                     }
                 } catch (final JsonProcessingException exception) {
                     log.error("Error deserializing challenge " + challengePath, exception);
@@ -111,13 +111,13 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public void createChallenge(final Challenge challenge) {
-        Preconditions.checkArgument(!challenge.getID().isBlank(), "Challenge id cannot be blank.");
-        if (getChallenge(challenge.getID()) != null) {
-            throw new IllegalArgumentException("Challenge with id " + challenge.getID() + " already exists.");
+        Preconditions.checkArgument(!challenge.getId().isBlank(), "Challenge id cannot be blank.");
+        if (getChallenge(challenge.getId()) != null) {
+            throw new IllegalArgumentException("Challenge with id " + challenge.getId() + " already exists.");
         }
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
-                        .key(ConsulPath.challenge(challenge.getID()))
+                        .key(ConsulPath.challenge(challenge.getId()))
                         .value(challenge.toJsonString())
                         .build());
     }
@@ -140,8 +140,8 @@ public class ConsulController implements Controller, Managed {
             if (deploymentData.isPresent()) {
                 try {
                     final Deployment deployment = Deployment.parse(deploymentData.get(), Deployment.class);
-                    if (!deployment.getID().isBlank()) {
-                        deploymentMap.put(deployment.getID(), deployment);
+                    if (!deployment.getId().isBlank()) {
+                        deploymentMap.put(deployment.getId(), deployment);
                     }
                 } catch (final JsonProcessingException exception) {
                     log.error("Error deserializing deployment " + deploymentPath, exception);
@@ -167,13 +167,13 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public void createDeployment(final Deployment deployment) {
-        Preconditions.checkArgument(!deployment.getID().isBlank(), "Deployment id cannot be blank.");
-        if (getDeployment(deployment.getID()) != null) {
-            throw new IllegalArgumentException("Challenge with id " + deployment.getID() + " already exists.");
+        Preconditions.checkArgument(!deployment.getId().isBlank(), "Deployment id cannot be blank.");
+        if (getDeployment(deployment.getId()) != null) {
+            throw new IllegalArgumentException("Challenge with id " + deployment.getId() + " already exists.");
         }
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
-                        .key(ConsulPath.deployment(deployment.getID()))
+                        .key(ConsulPath.deployment(deployment.getId()))
                         .value(deployment.toJsonString())
                         .build());
     }
@@ -182,7 +182,7 @@ public class ConsulController implements Controller, Managed {
     public void updateDeployment(final Deployment deployment) {
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
-                        .key(ConsulPath.deployment(deployment.getID()))
+                        .key(ConsulPath.deployment(deployment.getId()))
                         .value(deployment.toJsonString())
                         .build());
     }
@@ -273,7 +273,7 @@ public class ConsulController implements Controller, Managed {
     public void registerInstance(final Deployment deployment, final Instance instance) {
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
-                        .key(ConsulPath.instance(instance.getID()))
+                        .key(ConsulPath.instance(instance.getId()))
                         .value(instance.toJsonString())
                         .build());
     }
@@ -282,14 +282,14 @@ public class ConsulController implements Controller, Managed {
     public void unregisterInstance(final Deployment deployment, final Instance instance) {
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.DELETE)
-                        .key(ConsulPath.instance(instance.getID()))
+                        .key(ConsulPath.instance(instance.getId()))
                         .build());
     }
 
     @Override
     public boolean lockDeployment(final Deployment deployment) {
         try {
-            return consul.keyValueClient().acquireLock(ConsulPath.deploymentLock(deployment.getID()), sessionId);
+            return consul.keyValueClient().acquireLock(ConsulPath.deploymentLock(deployment.getId()), sessionId);
         } catch (final Exception e) {
             log.error("Error obtaining lock", e);
             return false;
@@ -299,7 +299,7 @@ public class ConsulController implements Controller, Managed {
     @Override
     public boolean unlockDeployment(final Deployment deployment) {
         try {
-            return consul.keyValueClient().releaseLock(ConsulPath.deploymentLock(deployment.getID()), sessionId);
+            return consul.keyValueClient().releaseLock(ConsulPath.deploymentLock(deployment.getId()), sessionId);
         } catch (final Exception e) {
             log.error("Error releasing lock", e);
             return false;

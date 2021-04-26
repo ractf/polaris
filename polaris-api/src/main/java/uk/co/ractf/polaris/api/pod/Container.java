@@ -281,13 +281,13 @@ public class Container extends Pod {
                 Objects.equals(terminationTimeout, container.terminationTimeout) &&
                 Objects.equals(portMappings, container.portMappings) && Objects.equals(metadata, container.metadata) &&
                 Objects.equals(generatedRandomEnv, container.generatedRandomEnv) &&
-                Objects.equals(getType(), container.getType()) && Objects.equals(getID(), container.getID());
+                Objects.equals(getType(), container.getType()) && Objects.equals(getId(), container.getId());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(image, repo, entrypoint, env, randomEnv, labels, affinity, antiaffinity, resourceQuota,
                 restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, portMappings, metadata,
-                generatedRandomEnv, getType(), getID());
+                generatedRandomEnv, getType(), getId());
     }
 }

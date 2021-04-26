@@ -21,7 +21,7 @@ public interface Host {
      *
      * @return the host's id
      */
-    String getID();
+    String getId();
 
     /**
      * Gets a {@link HostInfo} object with the host's current state

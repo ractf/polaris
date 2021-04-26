@@ -49,7 +49,7 @@ public class HostInfoSyncService extends AbstractScheduledService {
             labels.put("aslr", Files.readString(Path.of("/proc/sys/kernel/randomize_va_space")));
             final OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
             final HostInfo hostInfo = new HostInfo(
-                    host.getID(),
+                    host.getId(),
                     IPChecker.getExternalIP(),
                     InetAddress.getLocalHost().getHostName(),
                     runCommand("uname -a").trim(),

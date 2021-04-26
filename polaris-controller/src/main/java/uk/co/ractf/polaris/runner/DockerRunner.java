@@ -66,18 +66,18 @@ public class DockerRunner implements Runner<Container> {
 
     @Override
     public void startPod(final Container container, final Instance instance) {
-        if (startingContainers.contains(container.getID() + instance.getID())) {
+        if (startingContainers.contains(container.getId() + instance.getId())) {
             return;
         }
         try {
-            log.info("starting {}", instance.getID());
-            startingContainers.add(container.getID() + instance.getID());
+            log.info("starting {}", instance.getId());
+            startingContainers.add(container.getId() + instance.getId());
             final Map<String, String> labels = container.getLabels();
-            labels.put("polaris", container.getID());
-            labels.put("polaris-instance", instance.getID());
+            labels.put("polaris", container.getId());
+            labels.put("polaris-instance", instance.getId());
             labels.put("polaris-deployment", instance.getDeploymentID());
-            labels.put("polaris-challenge", controller.getChallengeFromDeployment(instance.getDeploymentID()).getID());
-            labels.put("polaris-pod", container.getID());
+            labels.put("polaris-challenge", controller.getChallengeFromDeployment(instance.getDeploymentID()).getId());
+            labels.put("polaris-pod", container.getId());
 
             final Map<PortMapping, PortBinding> portBindings = host.createPortBindings(container.getPortMappings());
             for (Map.Entry<PortMapping, PortBinding> portShit : portBindings.entrySet()) {
@@ -87,7 +87,7 @@ public class DockerRunner implements Runner<Container> {
 
             CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(container.getImage());
             createContainerCmd = createContainerCmd
-                    .withHostName(container.getID() + "-" + instance.getDeploymentID() + "-" + instance.getID().split("-")[0])
+                    .withHostName(container.getId() + "-" + instance.getDeploymentID() + "-" + instance.getId().split("-")[0])
                     .withEnv(container.getFullEnv())
                     .withLabels(labels)
                     .withPortSpecs()
@@ -108,17 +108,17 @@ public class DockerRunner implements Runner<Container> {
             final CreateContainerResponse createContainerResponse = createContainerCmd.exec();
             final StartContainerCmd startContainerCmd = dockerClient.startContainerCmd(createContainerResponse.getId());
             startContainerCmd.exec();
-            startingContainers.remove(container.getID() + instance.getID());
+            startingContainers.remove(container.getId() + instance.getId());
 
             instance.getRandomEnv().putAll(container.getGeneratedRandomEnv());
             for (final Map.Entry<PortMapping, PortBinding> entry : portBindings.entrySet()) {
                 instance.addPortBinding(new InstancePortBinding(entry.getValue().getBinding().getHostPortSpec(),
                         host.getHostInfo().getPublicIP(), entry.getKey().isAdvertise()));
             }
-            log.info("Updating instance {} {}", instance.getID(), instance.toJsonString());
+            log.info("Updating instance {} {}", instance.getId(), instance.toJsonString());
             consul.keyValueClient().performTransaction(
                     Operation.builder(Verb.SET)
-                            .key(ConsulPath.instance(instance.getID()))
+                            .key(ConsulPath.instance(instance.getId()))
                             .value(instance.toJsonString())
                             .build());
         } catch (final Exception e) {
@@ -129,8 +129,8 @@ public class DockerRunner implements Runner<Container> {
     @Override
     public void stopPod(final Container pod, final Instance instance) {
         final Map<String, String> filter = new HashMap<>();
-        filter.put("polaris-pod", pod.getID());
-        filter.put("polaris-instance", instance.getID());
+        filter.put("polaris-pod", pod.getId());
+        filter.put("polaris-instance", instance.getId());
         for (final com.github.dockerjava.api.model.Container container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
             dockerClient.stopContainerCmd(container.getId()).withTimeout(pod.getTerminationTimeout()).exec();
         }
@@ -146,8 +146,8 @@ public class DockerRunner implements Runner<Container> {
     @Override
     public void restartPod(final Container pod, final Instance instance) {
         final Map<String, String> filter = new HashMap<>();
-        filter.put("polaris-pod", pod.getID());
-        filter.put("polaris-instance", instance.getID());
+        filter.put("polaris-pod", pod.getId());
+        filter.put("polaris-instance", instance.getId());
         for (final com.github.dockerjava.api.model.Container container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
             dockerClient.restartContainerCmd(container.getId()).withtTimeout(pod.getTerminationTimeout()).exec();
         }
@@ -161,8 +161,8 @@ public class DockerRunner implements Runner<Container> {
     @Override
     public boolean isPodStarted(final Container pod, final Instance instance) {
         final Map<String, String> filter = new HashMap<>();
-        filter.put("polaris-pod", pod.getID());
-        filter.put("polaris-instance", instance.getID());
+        filter.put("polaris-pod", pod.getId());
+        filter.put("polaris-instance", instance.getId());
         return dockerClient.listContainersCmd().withLabelFilter(filter).withShowAll(true).exec().size() > 0;
     }
 

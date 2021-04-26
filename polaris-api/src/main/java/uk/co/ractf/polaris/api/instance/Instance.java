@@ -55,7 +55,7 @@ public class Instance extends JsonRepresentable {
     }
 
     @JsonProperty("id")
-    public String getID() {
+    public String getId() {
         return id;
     }
 

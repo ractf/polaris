@@ -66,7 +66,7 @@ public class ChallengeTestCase {
     @Test
     public void testGetPodById() {
         final Pod pod = mock(Pod.class);
-        when(pod.getID()).thenReturn("test");
+        when(pod.getId()).thenReturn("test");
         final Challenge challenge = new Challenge("test", Collections.singletonList(pod));
         assertThat(challenge.getPod("test")).isEqualTo(pod);
     }
@@ -74,7 +74,7 @@ public class ChallengeTestCase {
     @Test
     public void testGetPodByIdReturnsNull() {
         final Pod pod = mock(Pod.class);
-        when(pod.getID()).thenReturn("test");
+        when(pod.getId()).thenReturn("test");
         final Challenge challenge = new Challenge("test", Collections.singletonList(pod));
         assertThat(challenge.getPod("test2")).isNull();
     }

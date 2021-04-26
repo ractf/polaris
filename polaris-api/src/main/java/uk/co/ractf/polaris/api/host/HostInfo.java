@@ -96,7 +96,7 @@ public class HostInfo extends JsonRepresentable {
         this.labels = labels;
     }
 
-    public String getID() {
+    public String getId() {
         return id;
     }
 
