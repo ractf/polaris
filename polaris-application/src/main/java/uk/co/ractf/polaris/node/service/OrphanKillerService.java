@@ -3,7 +3,6 @@ package uk.co.ractf.polaris.node.service;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import uk.co.ractf.polaris.controller.ControllerConfiguration;
 import uk.co.ractf.polaris.node.NodeConfiguration;
 import uk.co.ractf.polaris.node.runner.Runner;
 
@@ -24,7 +23,7 @@ public class OrphanKillerService extends AbstractScheduledService {
     }
 
     @Override
-    protected void runOneIteration() throws Exception {
+    protected void runOneIteration() {
         if (configuration.isKillOrphans()) {
             for (final Runner runner : runners) {
                 CompletableFuture.runAsync(runner::killOrphans);

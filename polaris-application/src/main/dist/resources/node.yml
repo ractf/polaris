@@ -1,0 +1,31 @@
+threadpoolSize: 5
+taskThreadpoolSize: 5
+reconciliationTickFrequency: 200
+schedulingAlgorithm: roundRobin
+threadpoolTimeoutSeconds: 30
+advertisedMinPort: 20000
+advertisedMaxPort: 65535
+unadvertisedMinPort: 10000
+unadvertisedMaxPort: 19999
+singleUserUsername: polaris
+singleUserPassword: polaris
+singleUserRoles:
+  - CHALLENGE_GET
+  - CHALLENGE_SUBMIT
+  - CHALLENGE_DELETE
+  - DEPLOYMENT_GET
+  - DEPLOYMENT_CREATE
+  - DEPLOYMENT_UPDATE
+  - DEPLOYMENT_DELETE
+  - ALLOCATE_INSTANCE
+  - INSTANCE_LIST
+  - HOST_GET
+  - ANDROMEDA_CHALLENGE_SUBMIT
+  - ANDROMEDA_GET_INSTANCE
+  - ANDROMEDA_RESET_INSTANCE
+client:
+  refreshInterval: 10 seconds
+consul:
+  endpoint: ${CONSUL-URL:-localhost:8500}
+  serviceId: polaris-node
+  retryInterval: 5 seconds

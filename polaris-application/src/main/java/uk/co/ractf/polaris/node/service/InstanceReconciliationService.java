@@ -9,12 +9,11 @@ import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.ractf.polaris.controller.ControllerConfiguration;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
-import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.node.Node;
+import uk.co.ractf.polaris.node.NodeConfiguration;
 import uk.co.ractf.polaris.node.runner.Runner;
 
 import java.util.HashMap;
@@ -28,10 +27,10 @@ public class InstanceReconciliationService extends AbstractScheduledService {
 
     private static final Logger log = LoggerFactory.getLogger(InstanceReconciliationService.class);
 
-    private final Controller controller;
+    private final uk.co.ractf.polaris.state.State state;
     private final Node node;
     private final Map<Class<? extends Pod>, Runner<? extends Pod>> runners = new HashMap<>();
-    private final ControllerConfiguration controllerConfiguration;
+    private final NodeConfiguration nodeConfiguration;
     private final LoadingCache<String, String> recentlyStartedInstances = CacheBuilder.newBuilder()
             .build(new CacheLoader<>() {
                 @Override
@@ -43,14 +42,12 @@ public class InstanceReconciliationService extends AbstractScheduledService {
     private final Set<Runner> runnerSet;
 
     @Inject
-    public InstanceReconciliationService(final Controller controller,
-                                         final Node node,
-                                         final Set<Runner> runners,
-                                         final ControllerConfiguration controllerConfiguration) {
-        this.controller = controller;
+    public InstanceReconciliationService(final uk.co.ractf.polaris.state.State state, final Node node, final Set<Runner> runners,
+                                         final NodeConfiguration nodeConfiguration) {
+        this.state = state;
         this.node = node;
         this.runnerSet = runners;
-        this.controllerConfiguration = controllerConfiguration;
+        this.nodeConfiguration = nodeConfiguration;
     }
 
     @Override
@@ -71,7 +68,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
         try {
             for (final Map.Entry<String, Instance> entry : node.getInstances().entrySet()) {
                 final Instance instance = entry.getValue();
-                final Challenge challenge = controller.getChallengeFromDeployment(instance.getDeploymentId());
+                final Challenge challenge = state.getChallengeFromDeployment(instance.getDeploymentId());
                 if (challenge == null) {
                     continue;
                 }
@@ -100,7 +97,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
 
     @Override
     protected Scheduler scheduler() {
-        return Scheduler.newFixedRateSchedule(0, controllerConfiguration.getReconciliationTickFrequency(), TimeUnit.MILLISECONDS);
+        return Scheduler.newFixedRateSchedule(0, nodeConfiguration.getReconciliationTickFrequency(), TimeUnit.MILLISECONDS);
     }
 
 }
