@@ -11,6 +11,7 @@ dependencies {
     testImplementation project(":polaris-testlib")
     testImplementation "io.dropwizard:dropwizard-testing:$dropwizardVersion"
     testImplementation "nl.jqno.equalsverifier:equalsverifier:3.6"
+    testImplementation "org.assertj:assertj-core:3.11.1"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 
