@@ -70,7 +70,7 @@ public class Instance extends JsonRepresentable {
     }
 
     @JsonProperty("host")
-    public String getHostId() {
+    public String getNodeId() {
         return hostId;
     }
 

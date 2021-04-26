@@ -6,6 +6,7 @@ import uk.co.ractf.polaris.api.deployment.Replication;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.List;
 
@@ -26,9 +27,9 @@ public interface ReplicationController {
      * Calculate how many instances need scheduling or descheduling based on the current state of the cluster.
      *
      * @param instances  the current instance list
-     * @param controller the polaris controller
+     * @param clusterState the cluster state
      * @return the amount to scale by
      */
-    int getScaleAmount(final List<Instance> instances, final Controller controller);
+    int getScaleAmount(final List<Instance> instances, final ClusterState clusterState);
 
 }

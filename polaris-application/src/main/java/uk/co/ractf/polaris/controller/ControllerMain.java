@@ -17,12 +17,12 @@ import org.dhatim.dropwizard.prometheus.PrometheusBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
-import uk.co.ractf.polaris.annotation.ExcludeFromGeneratedReport;
+import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@ExcludeFromGeneratedReport
+@ExcludeFromGeneratedTestReport
 public class ControllerMain extends Application<ControllerConfiguration> {
 
     private static final Logger log = LoggerFactory.getLogger(ControllerMain.class);

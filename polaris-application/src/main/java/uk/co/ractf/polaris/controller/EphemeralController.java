@@ -17,6 +17,7 @@ import uk.co.ractf.polaris.controller.service.ControllerServices;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.controller.instanceallocation.EphemeralInstanceAllocator;
 import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -36,11 +37,12 @@ public class EphemeralController implements Controller, Managed {
     private final Map<String, Instance> instances = new ConcurrentHashMap<>();
     private final Map<String, Node> hosts = new ConcurrentHashMap<>();
     private final Set<Service> services;
-    private final InstanceAllocator instanceAllocator = new EphemeralInstanceAllocator(this);
+    private final InstanceAllocator instanceAllocator;
 
     @Inject
-    public EphemeralController(@ControllerServices final Set<Service> services) {
+    public EphemeralController(@ControllerServices final Set<Service> services, final ClusterState clusterState) {
         this.services = services;
+        this.instanceAllocator = new EphemeralInstanceAllocator(clusterState);
     }
 
     @Override
@@ -108,7 +110,7 @@ public class EphemeralController implements Controller, Managed {
         CompletableFuture.runAsync(() -> {
             final Collection<Instance> instanceList = deploymentInstances.get(id);
             for (final Instance instance : instanceList) {
-                hosts.get(instance.getHostId()).removeInstance(instance);
+                hosts.get(instance.getNodeId()).removeInstance(instance);
                 instances.remove(instance.getId());
             }
             deploymentInstances.removeAll(id);

@@ -15,6 +15,7 @@ import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.node.NodeConfiguration;
 import uk.co.ractf.polaris.node.runner.Runner;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
 
     private static final Logger log = LoggerFactory.getLogger(InstanceReconciliationService.class);
 
-    private final uk.co.ractf.polaris.state.State state;
+    private final ClusterState state;
     private final Node node;
     private final Map<Class<? extends Pod>, Runner<? extends Pod>> runners = new HashMap<>();
     private final NodeConfiguration nodeConfiguration;
@@ -42,7 +43,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
     private final Set<Runner> runnerSet;
 
     @Inject
-    public InstanceReconciliationService(final uk.co.ractf.polaris.state.State state, final Node node, final Set<Runner> runners,
+    public InstanceReconciliationService(final ClusterState state, final Node node, final Set<Runner> runners,
                                          final NodeConfiguration nodeConfiguration) {
         this.state = state;
         this.node = node;
@@ -66,7 +67,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
     @Override
     protected void runOneIteration() {
         try {
-            for (final Map.Entry<String, Instance> entry : node.getInstances().entrySet()) {
+            for (final Map.Entry<String, Instance> entry : state.getInstancesOnNode(node.getId()).entrySet()) {
                 final Instance instance = entry.getValue();
                 final Challenge challenge = state.getChallengeFromDeployment(instance.getDeploymentId());
                 if (challenge == null) {

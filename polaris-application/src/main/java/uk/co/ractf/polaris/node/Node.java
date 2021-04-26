@@ -44,6 +44,7 @@ public interface Node {
      * @param deployment the deployment of the challenge
      * @return an instance of the challenge
      */
+    @Deprecated
     Instance createInstance(final Challenge challenge, final Deployment deployment);
 
     /**
@@ -51,6 +52,7 @@ public interface Node {
      *
      * @param instance the instance
      */
+    @Deprecated
     void removeInstance(final Instance instance);
 
     /**
@@ -58,6 +60,7 @@ public interface Node {
      *
      * @return the instance map
      */
+    @Deprecated
     Map<String, Instance> getInstances();
 
     /**
@@ -73,6 +76,7 @@ public interface Node {
      * @param id the id of the instance
      * @return the instance
      */
+    @Deprecated
     Instance getInstance(final String id);
 
     /**

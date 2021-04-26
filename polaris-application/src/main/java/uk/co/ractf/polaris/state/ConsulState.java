@@ -22,7 +22,7 @@ import uk.co.ractf.polaris.util.ConsulPath;
 import java.util.*;
 
 @Singleton
-public class ConsulState implements State {
+public class ConsulState implements ClusterState {
 
     private static final Logger log = LoggerFactory.getLogger(ConsulState.class);
 
@@ -142,6 +142,14 @@ public class ConsulState implements State {
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.deployment(deployment.getId()))
                         .value(deployment.toJsonString())
+                        .build());
+    }
+
+    @Override
+    public void deleteDeployment(final String id) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.DELETE)
+                        .key(ConsulPath.deployment(id))
                         .build());
     }
 
@@ -265,5 +273,26 @@ public class ConsulState implements State {
             log.error("Error releasing lock", e);
             return false;
         }
+    }
+
+    @NotNull
+    @Override
+    public Map<String, Instance> getInstancesOnNode(final String node) {
+        final Map<String, Instance> instances = new HashMap<>();
+        final List<String> instancePaths = consul.keyValueClient().getKeys(ConsulPath.instances());
+        for (final String instancePath : instancePaths) {
+            final Optional<String> instanceData = consul.keyValueClient().getValueAsString(instancePath);
+            if (instanceData.isPresent()) {
+                try {
+                    final Instance instance = Instance.parse(instanceData.get(), Instance.class);
+                    if (instance.getNodeId().equals(node)) {
+                        instances.put(instance.getId(), instance);
+                    }
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing instance " + instancePath, exception);
+                }
+            }
+        }
+        return instances;
     }
 }

@@ -12,7 +12,7 @@ import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 import uk.co.ractf.polaris.node.runner.RunnerModule;
 import uk.co.ractf.polaris.node.service.NodeServiceModule;
 import uk.co.ractf.polaris.state.ConsulState;
-import uk.co.ractf.polaris.state.State;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -34,7 +34,7 @@ public class NodeModule extends DropwizardAwareModule<NodeConfiguration> {
 
         bind(DockerClient.class).toInstance(DockerClientImpl.getInstance(config, httpClient));
         bind(Node.class).to(ConsulNode.class);
-        bind(State.class).to(ConsulState.class);
+        bind(ClusterState.class).to(ConsulState.class);
 
         install(new NodeServiceModule());
         install(new RunnerModule());

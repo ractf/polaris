@@ -21,7 +21,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instance.InstancePortBinding;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.PortMapping;
-import uk.co.ractf.polaris.state.State;
+import uk.co.ractf.polaris.state.ClusterState;
 import uk.co.ractf.polaris.util.ConsulPath;
 import uk.co.ractf.polaris.node.Node;
 
@@ -40,7 +40,7 @@ public class DockerRunner implements Runner<Container> {
     private final DockerClient dockerClient;
     private final Node node;
     private final Consul consul;
-    private final State state;
+    private final ClusterState state;
 
     private final Set<String> images = new ConcurrentSkipListSet<>();
     private final Set<String> downloadingImages = new ConcurrentSkipListSet<>();
@@ -49,7 +49,7 @@ public class DockerRunner implements Runner<Container> {
 
     @Inject
     public DockerRunner(final DockerClient dockerClient, final Node node, final Consul consul,
-                        final State state) {
+                        final ClusterState state) {
         this.dockerClient = dockerClient;
         this.node = node;
         this.consul = consul;
@@ -204,7 +204,7 @@ public class DockerRunner implements Runner<Container> {
             final String instanceId = container.getLabels().get("polaris-instance");
             final String challengeId = container.getLabels().get("polaris-challenge");
 
-            if (!node.getInstances().containsKey(instanceId)) {
+            if (!state.getInstancesOnNode(node.getId()).containsKey(instanceId)) {
                 final Challenge challenge = state.getChallenge(challengeId);
                 if (dyingContainers.contains(container.getId())) {
                     continue;

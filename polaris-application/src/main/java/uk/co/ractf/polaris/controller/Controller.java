@@ -23,6 +23,7 @@ public interface Controller {
      *
      * @param node the host to add
      */
+    @Deprecated
     void addHost(final Node node);
 
     /**
@@ -30,6 +31,7 @@ public interface Controller {
      *
      * @return challenge map
      */
+    @Deprecated
     Map<String, Challenge> getChallenges();
 
     /**
@@ -39,6 +41,7 @@ public interface Controller {
      * @return the challenge
      */
     @Nullable
+    @Deprecated
     Challenge getChallenge(final String id);
 
     /**
@@ -53,6 +56,7 @@ public interface Controller {
      *
      * @param id the id of the challenge
      */
+    @Deprecated
     void deleteChallenge(final String id);
 
     /**
@@ -60,6 +64,7 @@ public interface Controller {
      *
      * @return deployment map
      */
+    @Deprecated
     Map<String, Deployment> getDeployments();
 
     /**
@@ -69,6 +74,7 @@ public interface Controller {
      * @return the deployment
      */
     @Nullable
+    @Deprecated
     Deployment getDeployment(final String id);
 
     /**
@@ -76,6 +82,7 @@ public interface Controller {
      *
      * @param deployment the deployment
      */
+    @Deprecated
     void createDeployment(final Deployment deployment);
 
     /**
@@ -83,6 +90,7 @@ public interface Controller {
      *
      * @param deployment the new deployment config
      */
+    @Deprecated
     void updateDeployment(final Deployment deployment);
 
     /**
@@ -91,6 +99,7 @@ public interface Controller {
      *
      * @param id the deployment id to delete
      */
+    @Deprecated
     void deleteDeployment(final String id);
 
     /**
@@ -100,6 +109,7 @@ public interface Controller {
      * @return the challenge that deployment deploys
      */
     @Nullable
+    @Deprecated
     Challenge getChallengeFromDeployment(final String deployment);
 
     /**
@@ -109,6 +119,7 @@ public interface Controller {
      * @return that deployment's challenge
      */
     @Nullable
+    @Deprecated
     Challenge getChallengeFromDeployment(final Deployment deployment);
 
     /**
@@ -116,6 +127,7 @@ public interface Controller {
      *
      * @return map of hosts
      */
+    @Deprecated
     Map<String, Node> getHosts();
 
     /**
@@ -125,6 +137,7 @@ public interface Controller {
      * @return the host
      */
     @Nullable
+    @Deprecated
     Node getHost(final String id);
 
     /**
@@ -134,6 +147,7 @@ public interface Controller {
      * @return all deployments of that challenge
      */
     @NotNull
+    @Deprecated
     List<Deployment> getDeploymentsOfChallenge(final String challenge);
 
     /**
@@ -143,6 +157,7 @@ public interface Controller {
      * @return the instance list
      */
     @NotNull
+    @Deprecated
     List<Instance> getInstancesForDeployment(final String deployment);
 
     /**
@@ -158,6 +173,7 @@ public interface Controller {
      * @param id the instance id
      * @return the instance
      */
+    @Deprecated
     Instance getInstance(final String id);
 
     /**
@@ -166,6 +182,7 @@ public interface Controller {
      * @param deployment the deployment of the instance
      * @param instance   the instance
      */
+    @Deprecated
     void registerInstance(final Deployment deployment, final Instance instance);
 
     /**
@@ -174,6 +191,7 @@ public interface Controller {
      * @param deployment the deployment of the instance
      * @param instance   the instance
      */
+    @Deprecated
     void unregisterInstance(final Deployment deployment, final Instance instance);
 
     /**
@@ -182,6 +200,7 @@ public interface Controller {
      * @param deployment the deployment
      * @return if the lock was successfully acquired
      */
+    @Deprecated
     boolean lockDeployment(final Deployment deployment);
 
     /**
@@ -190,6 +209,7 @@ public interface Controller {
      * @param deployment the deployment
      * @return if the lock was successfully released
      */
+    @Deprecated
     @CanIgnoreReturnValue
     boolean unlockDeployment(final Deployment deployment);
 
