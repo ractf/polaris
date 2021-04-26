@@ -19,7 +19,7 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.consul.ConsulPath;
-import uk.co.ractf.polaris.controller.task.ControllerServices;
+import uk.co.ractf.polaris.controller.service.ControllerServices;
 import uk.co.ractf.polaris.host.Host;
 import uk.co.ractf.polaris.instanceallocation.EphemeralInstanceAllocator;
 import uk.co.ractf.polaris.instanceallocation.InstanceAllocator;

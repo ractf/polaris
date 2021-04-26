@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.controller.task;
+package uk.co.ractf.polaris.controller.service;
 
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.junit.jupiter.api.BeforeEach;
