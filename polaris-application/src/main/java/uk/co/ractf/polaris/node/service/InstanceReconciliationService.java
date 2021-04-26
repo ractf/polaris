@@ -40,10 +40,10 @@ public class InstanceReconciliationService extends AbstractScheduledService {
                 }
             });
 
-    private final Set<Runner> runnerSet;
+    private final Set<Runner<?>> runnerSet;
 
     @Inject
-    public InstanceReconciliationService(final ClusterState state, final Node node, final Set<Runner> runners,
+    public InstanceReconciliationService(final ClusterState state, final Node node, final Set<Runner<?>> runners,
                                          final NodeConfiguration nodeConfiguration) {
         this.state = state;
         this.node = node;

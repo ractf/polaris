@@ -38,7 +38,7 @@ public class EmbeddedNode implements Node, Managed {
 
     private final Map<String, Instance> instances = new ConcurrentHashMap<>();
     private final Set<Integer> ports = new ConcurrentSkipListSet<>();
-    private final Set<Runner> runnerSet;
+    private final Set<Runner<?>> runnerSet;
     private final Set<Service> services;
     private final ClusterState clusterState;
 
@@ -52,7 +52,7 @@ public class EmbeddedNode implements Node, Managed {
     @Inject
     public EmbeddedNode(final Controller controller,
                         final NodeConfiguration configuration,
-                        final Set<Runner> runnerSet,
+                        final Set<Runner<?>> runnerSet,
                         @NodeServices final Set<Service> services, final ClusterState clusterState) {
         this.controller = controller;
         this.configuration = configuration;

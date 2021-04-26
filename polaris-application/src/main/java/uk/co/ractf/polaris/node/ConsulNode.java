@@ -26,13 +26,13 @@ public class ConsulNode implements Node, Managed {
     private static final Logger log = LoggerFactory.getLogger(ConsulNode.class);
 
     private final String id;
-    private final Set<Runner> runnerSet;
+    private final Set<Runner<?>> runnerSet;
     private final Set<Service> services;
     private final Map<Class<? extends Pod>, Runner<? extends Pod>> runners = new HashMap<>();
 
     @Inject
     public ConsulNode(final NodeConfiguration configuration,
-                      final Set<Runner> runnerSet,
+                      final Set<Runner<?>> runnerSet,
                       @NodeServices final Set<Service> services) {
         this.id = "node"; //TODO
         this.runnerSet = runnerSet;
