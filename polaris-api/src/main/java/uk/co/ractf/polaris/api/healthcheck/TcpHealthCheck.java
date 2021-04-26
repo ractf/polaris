@@ -52,11 +52,11 @@ public class TcpHealthCheck extends HealthCheck {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final TcpHealthCheck that = (TcpHealthCheck) o;
-        return Objects.equals(port, that.port) && Objects.equals(timeout, that.timeout);
+        return Objects.equals(port, that.port) && Objects.equals(timeout, that.timeout) && Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(port, timeout);
+        return Objects.hash(port, timeout, getId());
     }
 }

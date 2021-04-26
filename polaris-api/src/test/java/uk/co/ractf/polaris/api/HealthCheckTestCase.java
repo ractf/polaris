@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.api;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.healthcheck.*;
 
@@ -77,6 +78,41 @@ public class HealthCheckTestCase {
     @Test
     public void testTcpPayloadIgnoreProperties() {
         validateObjectIgnoreProperties(TcpPayloadHealthCheck.class, fixture("fixtures/healthcheck/tcppayload.json"));
+    }
+
+    @Test
+    public void testCommandEquals() {
+        EqualsVerifier.simple().forClass(CommandHealthCheck.class).verify();
+    }
+
+    @Test
+    public void testHttpEquals() {
+        EqualsVerifier.simple().forClass(HttpHealthCheck.class).verify();
+    }
+
+    @Test
+    public void testExactTcpEquals() {
+        EqualsVerifier.simple().forClass(ReceiveExactTcpPayload.class).verify();
+    }
+
+    @Test
+    public void testRegexTcpEquals() {
+        EqualsVerifier.simple().forClass(ReceiveRegexTcpPayload.class).verify();
+    }
+
+    @Test
+    public void testSendTcpEquals() {
+        EqualsVerifier.simple().forClass(SendTcpPayload.class).verify();
+    }
+
+    @Test
+    public void testTcpEquals() {
+        EqualsVerifier.simple().forClass(TcpHealthCheck.class).verify();
+    }
+
+    @Test
+    public void testTcpPayloadEquals() {
+        EqualsVerifier.simple().forClass(TcpPayloadHealthCheck.class).verify();
     }
 
 }

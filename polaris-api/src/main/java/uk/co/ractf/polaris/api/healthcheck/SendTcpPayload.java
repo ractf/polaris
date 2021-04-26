@@ -24,14 +24,11 @@ public class SendTcpPayload extends TcpPayload {
     /**
      * Create a SendTcpPayload
      *
-     * @param type the type of tcppayload (send)
      * @param hex  the hex encoded bytes to send
      */
     @Contract(pure = true)
     public SendTcpPayload(
-            @JsonProperty("type") final String type,
             @JsonProperty("hex") final String hex) {
-        super(type);
         this.hex = hex;
     }
 

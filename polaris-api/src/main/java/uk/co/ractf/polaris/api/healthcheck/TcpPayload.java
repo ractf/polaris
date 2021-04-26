@@ -18,14 +18,4 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class TcpPayload extends JsonRepresentable {
 
-    private final String type;
-
-    /**
-     * @param type the type of payload
-     */
-    @Contract(pure = true)
-    public TcpPayload(final String type) {
-        this.type = type;
-    }
-
 }
