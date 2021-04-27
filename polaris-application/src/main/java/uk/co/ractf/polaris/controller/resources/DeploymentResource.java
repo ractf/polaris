@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.DeploymentDeleteResponse;
+import uk.co.ractf.polaris.api.deployment.DeploymentSubmitResponse;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
@@ -101,12 +102,15 @@ public class DeploymentResource {
     @RolesAllowed("DEPLOYMENT_CREATE")
     @Operation(summary = "Create Deployment", tags = {"Deployment"},
             description = "Creates a deployment on the controller which will roll it out eventually")
-    public void createDeployment(final Deployment deployment) {
+    public Response createDeployment(final Deployment deployment) {
         if (clusterState.getDeployment(deployment.getId()) != null) {
-            //TODO: make this a response entity
-            throw new WebApplicationException(400);
+            return Response.status(400)
+                    .entity(new DeploymentSubmitResponse(deployment.getId(), DeploymentSubmitResponse.Status.DUPLICATE))
+                    .build();
         }
+
         clusterState.setDeployment(deployment);
+        return Response.ok(new DeploymentSubmitResponse(deployment.getId(), DeploymentSubmitResponse.Status.OK)).build();
     }
 
     /**
