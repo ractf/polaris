@@ -50,7 +50,6 @@ public class HostInfoSyncService extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() {
-        System.out.println("HostInfoSyncService.runOneIteration");
         try {
             final Map<String, String> labels = new HashMap<>();
             labels.put("aslr", Files.readString(Path.of("/proc/sys/kernel/randomize_va_space")));

@@ -63,8 +63,6 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
                     log.info("Scheduling instances: {} of {}", scaleAmount, deployment.getId());
                     for (int i = 0; i < scaleAmount; i++) {
                         final NodeInfo node = scheduler.scheduleChallenge(challenge, clusterState.getNodes().values());
-                        log.info(String.valueOf(challenge));
-                        log.info(String.valueOf(node));
                         log.info("Scheduled instance of {} onto {}", challenge.getId(), node.getId());
 
                         final Instance instance = createInstance(deployment, challenge, node);

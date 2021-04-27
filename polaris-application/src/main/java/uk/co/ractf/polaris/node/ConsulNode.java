@@ -69,7 +69,6 @@ public class ConsulNode implements Node, Managed {
 
     @Override
     public void setNodeInfo(final NodeInfo nodeInfo) {
-        System.out.println("ConsulNode.setNodeInfo");
         clusterState.setNodeInfo(nodeInfo);
     }
 
