@@ -22,20 +22,24 @@ import java.util.Objects;
 public class InstancePortBinding extends JsonRepresentable {
 
     private final String port;
+    private final String internalPort;
     private final String ip;
     private final boolean advertise;
 
     /**
      * @param port      the portspec ie "1234/tcp"
+     * @param internalPort
      * @param ip        the ip its bound to
      * @param advertise should regular users be shown this port?
      */
     @Contract(pure = true)
     public InstancePortBinding(
             @JsonProperty("port") final String port,
+            @JsonProperty("internalPort") final String internalPort,
             @JsonProperty("ip") final String ip,
             @JsonProperty("advertise") final boolean advertise) {
         this.port = port;
+        this.internalPort = internalPort;
         this.ip = ip;
         this.advertise = advertise;
     }
@@ -53,6 +57,11 @@ public class InstancePortBinding extends JsonRepresentable {
     @JsonProperty("advertise")
     public boolean getAdvertise() {
         return advertise;
+    }
+
+    @JsonProperty("internalPort")
+    public String getInternalPort() {
+        return internalPort;
     }
 
     @Override

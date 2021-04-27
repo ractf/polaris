@@ -190,6 +190,15 @@ public class ConsulState implements ClusterState {
         return null;
     }
 
+    @Override
+    public void setNodeInfo(final NodeInfo nodeInfo) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.SET)
+                        .key(ConsulPath.node(nodeInfo.getId()))
+                        .value(nodeInfo.toJsonString())
+                        .build());
+    }
+
     @NotNull
     @Override
     public List<Deployment> getDeploymentsOfChallenge(final String challenge) {
@@ -239,19 +248,19 @@ public class ConsulState implements ClusterState {
     }
 
     @Override
-    public void registerInstance(final Deployment deployment, final Instance instance) {
+    public void deleteInstance(final Instance instance) {
         consul.keyValueClient().performTransaction(
-                Operation.builder(Verb.SET)
+                Operation.builder(Verb.DELETE)
                         .key(ConsulPath.instance(instance.getId()))
-                        .value(instance.toJsonString())
                         .build());
     }
 
     @Override
-    public void unregisterInstance(final Deployment deployment, final Instance instance) {
+    public void setInstance(final Instance instance) {
         consul.keyValueClient().performTransaction(
-                Operation.builder(Verb.DELETE)
+                Operation.builder(Verb.SET)
                         .key(ConsulPath.instance(instance.getId()))
+                        .value(instance.toJsonString())
                         .build());
     }
 

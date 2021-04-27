@@ -5,25 +5,17 @@ import com.github.dockerjava.api.command.CreateContainerCmd;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.command.StartContainerCmd;
-import com.github.dockerjava.api.model.Capability;
-import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.PortBinding;
-import com.github.dockerjava.api.model.RestartPolicy;
+import com.github.dockerjava.api.model.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.orbitz.consul.Consul;
-import com.orbitz.consul.model.kv.Operation;
-import com.orbitz.consul.model.kv.Verb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instance.InstancePortBinding;
 import uk.co.ractf.polaris.api.pod.Container;
-import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.state.ClusterState;
-import uk.co.ractf.polaris.util.ConsulPath;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -39,7 +31,6 @@ public class DockerRunner implements Runner<Container> {
 
     private final DockerClient dockerClient;
     private final Node node;
-    private final Consul consul;
     private final ClusterState state;
 
     private final Set<String> images = new ConcurrentSkipListSet<>();
@@ -48,11 +39,9 @@ public class DockerRunner implements Runner<Container> {
     private final Set<String> startingContainers = new ConcurrentSkipListSet<>();
 
     @Inject
-    public DockerRunner(final DockerClient dockerClient, final Node node, final Consul consul,
-                        final ClusterState state) {
+    public DockerRunner(final DockerClient dockerClient, final Node node, final ClusterState state) {
         this.dockerClient = dockerClient;
         this.node = node;
-        this.consul = consul;
         this.state = state;
     }
 
@@ -79,10 +68,11 @@ public class DockerRunner implements Runner<Container> {
             labels.put("polaris-challenge", instance.getChallengeId());
             labels.put("polaris-pod", container.getId());
 
-            final Map<PortMapping, PortBinding> portBindings = node.createPortBindings(container.getPortMappings());
-            for (Map.Entry<PortMapping, PortBinding> portShit : portBindings.entrySet()) {
-                System.out.println(portShit.getKey());
-                System.out.println(portShit.getValue());
+            final List<InstancePortBinding> instancePortBindings = instance.getPortBindings();
+            final List<PortBinding> portBindings = new ArrayList<>();
+            for (final InstancePortBinding instancePortBinding : instancePortBindings) {
+                portBindings.add(new PortBinding(new Ports.Binding("0.0.0.0", instancePortBinding.getInternalPort()),
+                        ExposedPort.parse(instancePortBinding.getPort())));
             }
 
             CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(container.getImage());
@@ -93,7 +83,7 @@ public class DockerRunner implements Runner<Container> {
                     .withPortSpecs()
                     .withHostConfig(
                             HostConfig.newHostConfig()
-                                    .withPortBindings(new ArrayList<>(portBindings.values()))
+                                    .withPortBindings(portBindings)
                                     .withCapAdd(createCapabilityArray(container.getCapAdd()))
                                     .withCapDrop(createCapabilityArray(container.getCapDrop()))
                                     .withNanoCPUs(container.getResourceQuota().getNanocpu())
@@ -111,16 +101,8 @@ public class DockerRunner implements Runner<Container> {
             startingContainers.remove(container.getId() + instance.getId());
 
             instance.getRandomEnv().putAll(container.getGeneratedRandomEnv());
-            for (final Map.Entry<PortMapping, PortBinding> entry : portBindings.entrySet()) {
-                instance.addPortBinding(new InstancePortBinding(entry.getValue().getBinding().getHostPortSpec(),
-                        node.getNodeInfo().getPublicIP(), entry.getKey().isAdvertise()));
-            }
             log.info("Updating instance {} {}", instance.getId(), instance.toJsonString());
-            consul.keyValueClient().performTransaction(
-                    Operation.builder(Verb.SET)
-                            .key(ConsulPath.instance(instance.getId()))
-                            .value(instance.toJsonString())
-                            .build());
+            state.setInstance(instance);
         } catch (final Exception e) {
             e.printStackTrace();
         }

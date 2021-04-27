@@ -14,5 +14,9 @@
   "publicIP": "127.0.0.1",
   "osName": "Linux",
   "osVersion": "5.10.16-arch1-1",
-  "cpuLoad": 6.22
+  "cpuLoad": 6.22,
+  "portAllocations": {
+    "tcp": [2],
+    "udp": []
+  }
 }

@@ -8,17 +8,20 @@ import com.google.inject.Singleton;
 import io.dropwizard.lifecycle.Managed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.node.runner.Runner;
 import uk.co.ractf.polaris.node.service.NodeServices;
+import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 @Singleton
 public class ConsulNode implements Node, Managed {
@@ -29,11 +32,12 @@ public class ConsulNode implements Node, Managed {
     private final Set<Runner<?>> runnerSet;
     private final Set<Service> services;
     private final Map<Class<? extends Pod>, Runner<? extends Pod>> runners = new HashMap<>();
+    private final ClusterState clusterState;
 
     @Inject
-    public ConsulNode(final NodeConfiguration configuration,
-                      final Set<Runner<?>> runnerSet,
-                      @NodeServices final Set<Service> services) {
+    public ConsulNode(final NodeConfiguration configuration, final Set<Runner<?>> runnerSet,
+                      @NodeServices final Set<Service> services, final ClusterState clusterState) {
+        this.clusterState = clusterState;
         this.id = "node"; //TODO
         this.runnerSet = runnerSet;
         this.services = services;
@@ -63,17 +67,24 @@ public class ConsulNode implements Node, Managed {
 
     @Override
     public NodeInfo getNodeInfo() {
-        return null;
+        return clusterState.getNode(id);
     }
 
     @Override
-    public void getNodeInfo(final NodeInfo nodeInfo) {
-
+    public void setNodeInfo(final NodeInfo nodeInfo) {
+        clusterState.setNodeInfo(nodeInfo);
     }
 
     @Override
     public void restartInstance(final Instance instance) {
-
+        final Challenge challenge = clusterState.getChallenge(instance.getChallengeId());
+        if (challenge == null) {
+            throw new IllegalStateException("Instance " + instance.getId() + " is of challenge " +
+                    instance.getChallengeId() + " which does not exist in the state");
+        }
+        for (final Pod pod : challenge.getPods()) {
+            CompletableFuture.runAsync(() -> getRunner(pod).restartPod(pod, instance));
+        }
     }
 
     @Override
@@ -85,4 +96,10 @@ public class ConsulNode implements Node, Managed {
     public AuthConfig getAuthConfig() {
         return null;
     }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Pod> Runner<Pod> getRunner(final T pod) {
+        return (Runner<Pod>) runners.get(pod.getClass());
+    }
+
 }

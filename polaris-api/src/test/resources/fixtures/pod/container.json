@@ -81,7 +81,7 @@
   "metadata": {
     "aaa": "bbb"
   },
-  "portMappings": [
+  "ports": [
     {
       "port": 6000,
       "protocol": "tcp",
