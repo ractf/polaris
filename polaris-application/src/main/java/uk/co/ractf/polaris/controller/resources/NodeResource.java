@@ -22,16 +22,14 @@ import java.util.regex.Pattern;
  * <p>
  * Roles defined: HOST_GET
  */
-@Path("/hosts")
+@Path("/nodes")
 @Produces(MediaType.APPLICATION_JSON)
-public class HostResource {
+public class NodeResource {
 
-    private final Controller controller;
     private final ClusterState clusterState;
 
     @Inject
-    public HostResource(final Controller controller, final ClusterState clusterState) {
-        this.controller = controller;
+    public NodeResource(final ClusterState clusterState) {
         this.clusterState = clusterState;
     }
 
@@ -78,6 +76,7 @@ public class HostResource {
         if (node == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
+
         return node;
     }
 

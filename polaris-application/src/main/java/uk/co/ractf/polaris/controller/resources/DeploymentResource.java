@@ -80,7 +80,12 @@ public class DeploymentResource {
     @RolesAllowed("DEPLOYMENT_GET")
     @Operation(summary = "Get Deployment", tags = {"Deployment"}, description = "Gets a deployment with a certain id")
     public Deployment getDeployment(@PathParam("id") final String id) {
-        return clusterState.getDeployment(id);
+        final Deployment deployment = clusterState.getDeployment(id);
+        if (deployment == null) {
+            throw new WebApplicationException(404);
+        }
+
+        return deployment;
     }
 
     /**
@@ -113,6 +118,11 @@ public class DeploymentResource {
     @RolesAllowed("DEPLOYMENT_UPDATE")
     @Operation(summary = "Update Deployment", tags = {"Deployment"}, description = "Updates a given deployment")
     public void updateDeployment(final Deployment deployment) {
+        final Deployment existing = clusterState.getDeployment(deployment.getId());
+        if (existing == null) {
+            throw new WebApplicationException(404);
+        }
+
         clusterState.setDeployment(deployment);
     }
 
@@ -128,6 +138,11 @@ public class DeploymentResource {
     @RolesAllowed("DEPLOYMENT_DELETE")
     @Operation(summary = "Delete Deployment", tags = {"Deployment"}, description = "Deletes a deployment with a certain id")
     public void deleteDeployment(@PathParam("id") final String deployment) {
+        final Deployment existing = clusterState.getDeployment(deployment);
+        if (existing == null) {
+            throw new WebApplicationException(404);
+        }
+
         clusterState.deleteDeployment(deployment);
     }
 
