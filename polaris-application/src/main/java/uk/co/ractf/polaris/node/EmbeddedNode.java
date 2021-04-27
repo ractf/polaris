@@ -42,11 +42,6 @@ public class EmbeddedNode implements Node, Managed {
     private final Set<Service> services;
     private final ClusterState clusterState;
 
-    private final int advertisedMinPort;
-    private final int advertisedMaxPort;
-    private final int unadvertisedMinPort;
-    private final int unadvertisedMaxPort;
-
     private NodeInfo nodeInfo;
 
     @Inject
@@ -58,11 +53,6 @@ public class EmbeddedNode implements Node, Managed {
         this.configuration = configuration;
         this.runnerSet = runnerSet;
         this.services = services;
-
-        this.advertisedMinPort = configuration.getMinPort();
-        this.advertisedMaxPort = configuration.getMaxPort();
-        this.unadvertisedMinPort = configuration.getUnadvertisedMinPort();
-        this.unadvertisedMaxPort = configuration.getUnadvertisedMaxPort();
         this.clusterState = clusterState;
     }
 
@@ -107,43 +97,6 @@ public class EmbeddedNode implements Node, Managed {
         for (final Pod pod : challenge.getPods()) {
             CompletableFuture.runAsync(() -> getRunner(pod).restartPod(pod, instance));
         }
-    }
-
-    private int generatePort(final int min, final int max) {
-        int port;
-        do {
-            port = ThreadLocalRandom.current().nextInt(min, max);
-        } while (ports.contains(port));
-        return port;
-    }
-
-    @Override
-    public Map<PortMapping, PortBinding> createPortBindings(final List<PortMapping> portMappings) {
-        final Map<PortMapping, PortBinding> portBindings = new HashMap<>();
-        int lastAdvertisedPort = generatePort(advertisedMinPort, advertisedMaxPort);
-        int lastUnadvertisedPort = generatePort(unadvertisedMinPort, unadvertisedMaxPort);
-        for (final PortMapping portMapping : portMappings) {
-            final int externalPort = portMapping.isAdvertise() ? lastAdvertisedPort : lastUnadvertisedPort;
-            final InternetProtocol protocol = "udp".equalsIgnoreCase(portMapping.getProtocol()) ? InternetProtocol.UDP : InternetProtocol.TCP;
-            portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", externalPort + "/" + protocol.toString()),
-                    new ExposedPort(portMapping.getPort(), protocol)));
-
-            if (!ports.contains(externalPort + 1)) {
-                if (portMapping.isAdvertise()) {
-                    lastAdvertisedPort++;
-                } else {
-                    lastUnadvertisedPort++;
-                }
-            } else {
-                if (portMapping.isAdvertise()) {
-                    lastAdvertisedPort = generatePort(advertisedMinPort, advertisedMaxPort);
-                } else {
-                    lastUnadvertisedPort = generatePort(unadvertisedMinPort, unadvertisedMaxPort);
-                }
-            }
-            ports.add(externalPort);
-        }
-        return portBindings;
     }
 
     @Override

@@ -3,10 +3,8 @@ taskThreadpoolSize: 5
 reconciliationTickFrequency: 200
 schedulingAlgorithm: roundRobin
 threadpoolTimeoutSeconds: 30
-advertisedMinPort: 20000
-advertisedMaxPort: 65535
-unadvertisedMinPort: 10000
-unadvertisedMaxPort: 19999
+minPort: 20000
+maxPort: 65535
 singleUserUsername: polaris
 singleUserPassword: polaris
 singleUserRoles:

@@ -27,8 +27,6 @@ public class CommonConfiguration extends Configuration {
     private List<String> singleUserRoles;
     private int minPort;
     private int maxPort;
-    private int unadvertisedMinPort;
-    private int unadvertisedMaxPort;
 
     public ConsulFactory getConsulFactory() {
         return consul;
@@ -76,14 +74,6 @@ public class CommonConfiguration extends Configuration {
 
     public int getMaxPort() {
         return maxPort;
-    }
-
-    public int getUnadvertisedMinPort() {
-        return unadvertisedMinPort;
-    }
-
-    public int getUnadvertisedMaxPort() {
-        return unadvertisedMaxPort;
     }
 
 }
