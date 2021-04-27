@@ -19,8 +19,8 @@ public class DeploymentSubmit extends Subcommand {
     @Override
     public int run(final APIClient apiClient) throws Exception {
         for (final File file : files) {
-            final Deployment challenge = Deployment.parse(Files.readString(file.toPath()), Deployment.class);
-            final DeploymentSubmitResponse response = apiClient.submitDeployment(challenge).exec();
+            final Deployment deployment = Deployment.parse(Files.readString(file.toPath()), Deployment.class);
+            final DeploymentSubmitResponse response = apiClient.submitDeployment(deployment).exec();
 
             switch (response.getStatus()) {
                 case OK:
