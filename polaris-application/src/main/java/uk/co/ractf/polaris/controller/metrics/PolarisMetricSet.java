@@ -35,6 +35,8 @@ public class PolarisMetricSet implements MetricSet {
 
         metrics.put("resources.ports.all.allocated", new PortsAllocatedGauge(clusterState));
         metrics.put("resources.ports.tcp.allocated", new TcpPortsAllocatedGauge(clusterState));
+        metrics.put("resources.ports.udp.allocated", new UdpPortsAllocatedGauge(clusterState));
+
         return metrics;
     }
 }
