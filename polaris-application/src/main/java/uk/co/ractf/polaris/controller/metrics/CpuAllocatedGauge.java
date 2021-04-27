@@ -26,6 +26,9 @@ public class CpuAllocatedGauge implements Gauge<Double> {
             for (final Pod pod : challengeEntry.getValue().getPods()) {
                 if (pod instanceof ResourceLimited) {
                     final ResourceQuota resourceQuota = ((ResourceLimited) pod).getResourceQuota();
+                    if (resourceQuota == null) {
+                        continue;
+                    }
                     total += (resourceQuota.getNanocpu() / 1_000_000_000D);
                 }
             }

@@ -18,6 +18,9 @@ public class UdpPortsAllocatedGauge implements Gauge<Integer> {
     public Integer getValue() {
         int total = 0;
         for (final Map.Entry<String, NodeInfo> entry : clusterState.getNodes().entrySet()) {
+            if (entry.getValue().getPortAllocations() == null) {
+                continue;
+            }
             total += entry.getValue().getPortAllocations().getUdp().size();
         }
 

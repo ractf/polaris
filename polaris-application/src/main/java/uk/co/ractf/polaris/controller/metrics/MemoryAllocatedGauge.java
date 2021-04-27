@@ -26,6 +26,9 @@ public class MemoryAllocatedGauge implements Gauge<Long> {
             for (final Pod pod : challengeEntry.getValue().getPods()) {
                 if (pod instanceof ResourceLimited) {
                     final ResourceQuota resourceQuota = ((ResourceLimited) pod).getResourceQuota();
+                    if (resourceQuota == null) {
+                        continue;
+                    }
                     total += resourceQuota.getMemory();
                 }
             }
