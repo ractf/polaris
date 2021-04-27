@@ -24,9 +24,12 @@ public class PolarisMetricSet implements MetricSet {
         metrics.put("deployments.count", new DeploymentsGauge(clusterState));
         metrics.put("hosts.count", new HostsGauge(clusterState));
         metrics.put("instances.count", new InstancesGauge(clusterState));
+
         metrics.put("resources.memory.allocated", new MemoryAllocatedGauge(clusterState));
-        metrics.put("resources.cpu.allocated", new CpuAllocatedGauge(clusterState));
         metrics.put("resources.memory.used", new MemoryUsedGauge(clusterState));
+        metrics.put("resources.memory.total", new MemoryTotalGauge(clusterState));
+
+        metrics.put("resources.cpu.allocated", new CpuAllocatedGauge(clusterState));
         metrics.put("resources.cpu.used", new CpuUsedGauge(clusterState));
         return metrics;
     }
