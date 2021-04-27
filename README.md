@@ -52,9 +52,9 @@
 
 <div align="center">
     <a href="https://github.com/ractf/polaris/actions/workflows/create-release.yml"><img src=https://github.com/ractf/polaris/actions/workflows/create-release.yml/badge.svg></a>
-    <a href="https://github.com/ractf/polaris/actions/workflows/build-controller-rpm.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-controller-rpm.yml/badge.svg></a>
-    <a href="https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-controller-jar.yml/badge.svg></a>
-    <a href="https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-controller-javadoc.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/build-application-rpm.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-application-rpm.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/build-application-jar.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-application-jar.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/build-application-javadoc.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-application-javadoc.yml/badge.svg></a>
     <a href="https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-api-javadoc.yml/badge.svg></a>
     <a href="https://github.com/ractf/polaris/actions/workflows/build-cli-rpm.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-cli-rpm.yml/badge.svg></a>
     <a href="https://github.com/ractf/polaris/actions/workflows/build-cli-jar.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-cli-jar.yml/badge.svg></a>
