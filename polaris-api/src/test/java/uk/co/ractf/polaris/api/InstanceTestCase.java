@@ -46,7 +46,7 @@ public class InstanceTestCase {
     @Test
     public void testAddPortBinding() throws JsonProcessingException {
         final Instance instance = Instance.parse(fixture("fixtures/instance/instance.json"), Instance.class);
-        instance.addPortBinding(new InstancePortBinding("69", "0.0.0.0", true));
+        instance.addPortBinding(new InstancePortBinding("69", "420", "0.0.0.0", true));
         assertThat(instance.getPortBindings()).hasSize(1);
     }
 

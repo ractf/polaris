@@ -59,8 +59,8 @@ public class EmbeddedNode implements Node, Managed {
         this.runnerSet = runnerSet;
         this.services = services;
 
-        this.advertisedMinPort = configuration.getAdvertisedMinPort();
-        this.advertisedMaxPort = configuration.getAdvertisedMaxPort();
+        this.advertisedMinPort = configuration.getMinPort();
+        this.advertisedMaxPort = configuration.getMaxPort();
         this.unadvertisedMinPort = configuration.getUnadvertisedMinPort();
         this.unadvertisedMaxPort = configuration.getUnadvertisedMaxPort();
         this.clusterState = clusterState;
@@ -94,7 +94,7 @@ public class EmbeddedNode implements Node, Managed {
     }
 
     @Override
-    public void getNodeInfo(final NodeInfo nodeInfo) {
+    public void setNodeInfo(final NodeInfo nodeInfo) {
         this.nodeInfo = nodeInfo;
     }
 

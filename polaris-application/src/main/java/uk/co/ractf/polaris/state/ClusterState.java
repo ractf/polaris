@@ -78,6 +78,11 @@ public interface ClusterState {
      */
     void setDeployment(final Deployment deployment);
 
+    /**
+     * Removes a {@link Deployment} from the state, causing it to be descheduled
+     *
+     * @param id the deployment id
+     */
     void deleteDeployment(final String id);
 
     /**
@@ -96,6 +101,13 @@ public interface ClusterState {
      */
     @Nullable
     NodeInfo getNode(final String id);
+
+    /**
+     * Sets the info for a node
+     *
+     * @param nodeInfo node info
+     */
+    void setNodeInfo(final NodeInfo nodeInfo);
 
     /**
      * Get all {@link Deployment}s of a {@link Challenge}
@@ -125,20 +137,18 @@ public interface ClusterState {
     Instance getInstance(final String id);
 
     /**
-     * Register a newly scheduled {@link Instance} to a {@link Deployment}
-     *
-     * @param deployment the deployment of the instance
-     * @param instance   the instance
-     */
-    void registerInstance(final Deployment deployment, final Instance instance);
-
-    /**
      * Unregisters an {@link Instance} from a given {@link Deployment}, probably because its been descheduled
      *
-     * @param deployment the deployment of the instance
      * @param instance   the instance
      */
-    void unregisterInstance(final Deployment deployment, final Instance instance);
+    void deleteInstance(final Instance instance);
+
+    /**
+     * Sets the state of an instance
+     *
+     * @param instance the instance details
+     */
+    void setInstance(final Instance instance);
 
     /**
      * Locks a deployment's set of instances so modifications can be made to it

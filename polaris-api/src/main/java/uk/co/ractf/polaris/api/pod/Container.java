@@ -93,7 +93,7 @@ import java.util.*;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Container extends Pod {
+public class Container extends PodWithPorts {
 
     private final String image;
     private final String repo;
@@ -109,7 +109,6 @@ public class Container extends Pod {
     private final List<String> capAdd;
     private final List<HealthCheck> healthChecks;
     private final Integer terminationTimeout;
-    private final List<PortMapping> portMappings;
     private final Map<String, String> metadata;
 
     private final Map<String, String> generatedRandomEnv = new HashMap<>();
@@ -153,9 +152,9 @@ public class Container extends Pod {
             @JsonProperty("capAdd") final List<String> capAdd,
             @JsonProperty("healthChecks") final List<HealthCheck> healthChecks,
             @JsonProperty("terminationTimeout") final Integer terminationTimeout,
-            @JsonProperty("portMappings") final List<PortMapping> portMappings,
+            @JsonProperty("ports") final Set<PortMapping> portMappings,
             @JsonProperty("metadata") final Map<String, String> metadata) {
-        super(type, id);
+        super(type, id, portMappings);
         this.image = image;
         this.repo = repo;
         this.entrypoint = entrypoint;
@@ -170,7 +169,6 @@ public class Container extends Pod {
         this.capAdd = capAdd;
         this.healthChecks = healthChecks;
         this.terminationTimeout = terminationTimeout;
-        this.portMappings = portMappings;
         this.metadata = metadata;
     }
 
@@ -230,10 +228,6 @@ public class Container extends Pod {
         return terminationTimeout;
     }
 
-    public List<PortMapping> getPortMappings() {
-        return portMappings;
-    }
-
     public Map<String, String> getMetadata() {
         return metadata;
     }
@@ -279,7 +273,7 @@ public class Container extends Pod {
                 Objects.equals(restartPolicy, container.restartPolicy) && Objects.equals(capDrop, container.capDrop) &&
                 Objects.equals(capAdd, container.capAdd) && Objects.equals(healthChecks, container.healthChecks) &&
                 Objects.equals(terminationTimeout, container.terminationTimeout) &&
-                Objects.equals(portMappings, container.portMappings) && Objects.equals(metadata, container.metadata) &&
+                Objects.equals(getPorts(), container.getPorts()) && Objects.equals(metadata, container.metadata) &&
                 Objects.equals(generatedRandomEnv, container.generatedRandomEnv) &&
                 Objects.equals(getType(), container.getType()) && Objects.equals(getId(), container.getId());
     }
@@ -287,7 +281,7 @@ public class Container extends Pod {
     @Override
     public int hashCode() {
         return Objects.hash(image, repo, entrypoint, env, randomEnv, labels, affinity, antiaffinity, resourceQuota,
-                restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, portMappings, metadata,
+                restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, getPorts(), metadata,
                 generatedRandomEnv, getType(), getId());
     }
 }

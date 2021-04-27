@@ -64,7 +64,7 @@ public class AndromedaEmulationResource {
         final Pod pod = new Container("container", challenge.getName(), challenge.getImage(), "",
                 new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(),
                 new ArrayList<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
-                new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>());
+                new ArrayList<>(), 5, Collections.singleton(portMapping), new HashMap<>());
         final Challenge polarisChallenge = new Challenge(challenge.getName(), Collections.singletonList(pod));
         //configuration.setRegistryUsername(challenge.getRegistryAuth().getUsername());
         //configuration.setRegistryPassword(challenge.getRegistryAuth().getPassword());

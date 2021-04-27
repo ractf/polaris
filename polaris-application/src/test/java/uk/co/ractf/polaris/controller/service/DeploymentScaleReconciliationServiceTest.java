@@ -17,10 +17,7 @@ import uk.co.ractf.polaris.controller.ControllerConfiguration;
 import uk.co.ractf.polaris.controller.scheduler.Scheduler;
 import uk.co.ractf.polaris.state.ClusterState;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
@@ -39,7 +36,7 @@ public class DeploymentScaleReconciliationServiceTest {
         final Container container = new Container("container", "test", "", "", new ArrayList<>(),
                 new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), new ArrayList<>(),
                 new ResourceQuota(512L, 0L, 1000L), "always", new ArrayList<>(),
-                new ArrayList<>(), new ArrayList<>(), 5, new ArrayList<>(), new HashMap<>());
+                new ArrayList<>(), new ArrayList<>(), 5, new HashSet<>(), new HashMap<>());
         final Challenge challenge = new Challenge("test", Collections.singletonList(container));
         final Deployment deployment = new Deployment("test", "test", new StaticReplication("static", 15),
                 new Allocation("team", 500, 500));
@@ -57,7 +54,7 @@ public class DeploymentScaleReconciliationServiceTest {
         when(clusterState.getInstancesForDeployment(any())).thenReturn(Collections.emptyList());
         final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
-        verify(clusterState, times(15)).registerInstance(any(Deployment.class), any(Instance.class));
+        verify(clusterState, times(15)).setInstance(any(Instance.class));
     }
 
     @Test
@@ -65,7 +62,7 @@ public class DeploymentScaleReconciliationServiceTest {
         when(clusterState.getInstancesForDeployment(any())).thenReturn(Collections.nCopies(20, instance));
         final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
-        verify(clusterState, times(5)).unregisterInstance(any(), any());
+        verify(clusterState, times(5)).deleteInstance(any());
     }
 
     @Test

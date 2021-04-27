@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.controller.service;
 
+import com.github.dockerjava.api.model.PortBinding;
 import com.google.common.util.concurrent.AbstractScheduledService;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -10,15 +11,17 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.instance.InstancePortBinding;
 import uk.co.ractf.polaris.api.node.NodeInfo;
+import uk.co.ractf.polaris.api.pod.Pod;
+import uk.co.ractf.polaris.api.pod.PodWithPorts;
+import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.controller.ControllerConfiguration;
+import uk.co.ractf.polaris.controller.PortAllocator;
 import uk.co.ractf.polaris.controller.replication.ReplicationController;
 import uk.co.ractf.polaris.state.ClusterState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -28,15 +31,15 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
 
     private final ClusterState clusterState;
     private final uk.co.ractf.polaris.controller.scheduler.Scheduler scheduler;
-    private final ControllerConfiguration controllerConfiguration;
+    private final ControllerConfiguration config;
 
     @Inject
     public DeploymentScaleReconciliationService(final ClusterState controller,
                                                 final uk.co.ractf.polaris.controller.scheduler.Scheduler scheduler,
-                                                final ControllerConfiguration controllerConfiguration) {
+                                                final ControllerConfiguration config) {
         this.clusterState = controller;
         this.scheduler = scheduler;
-        this.controllerConfiguration = controllerConfiguration;
+        this.config = config;
     }
 
     @Override
@@ -55,20 +58,21 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
                 final int scaleAmount = ReplicationController.create(deployment.getReplication()).getScaleAmount(instances, clusterState);
                 log.debug("Replication: static {} {}", ((StaticReplication) deployment.getReplication()).getAmount(), instances.size());
                 log.debug("Scaling required for {}: {}", deployment.getId(), scaleAmount);
+
                 if (scaleAmount > 0) {
                     log.info("Scheduling instances: {} of {}", scaleAmount, deployment.getId());
                     for (int i = 0; i < scaleAmount; i++) {
                         final NodeInfo node = scheduler.scheduleChallenge(challenge, clusterState.getNodes().values());
                         log.info("Scheduled instance of {} onto {}", challenge.getId(), node.getId());
-                        final Instance instance = new Instance(UUID.randomUUID().toString(), deployment.getId(), challenge.getId(),
-                                node.getId(), new ArrayList<>(), new HashMap<>());
-                        clusterState.registerInstance(deployment, instance);
+
+                        final Instance instance = createInstance(deployment, challenge, node);
+                        clusterState.setInstance(instance);
                         log.info("Instance of {} successfully registered on {}", instance.getId(), node.getId());
                     }
                 } else {
                     for (int i = 0; i > scaleAmount; i--) {
                         final Instance instance = scheduler.descheduleInstance(challenge, clusterState.getNodes().values(), instances);
-                        clusterState.unregisterInstance(deployment, instance);
+                        clusterState.deleteInstance(instance);
                     }
                 }
                 clusterState.unlockDeployment(deployment);
@@ -78,9 +82,29 @@ public class DeploymentScaleReconciliationService extends AbstractScheduledServi
         }
     }
 
+    private Instance createInstance(final Deployment deployment, final Challenge challenge, final NodeInfo node) {
+        final PortAllocator portAllocator = new PortAllocator(config.getMinPort(), config.getMaxPort(), node.getPortAllocations());
+        final List<InstancePortBinding> portBindings = new ArrayList<>();
+        for (final Pod pod : challenge.getPods()) {
+            if (pod instanceof PodWithPorts) {
+                final Map<PortMapping, PortBinding> portBindingMap = portAllocator.allocate(((PodWithPorts) pod).getPorts());
+                for (final Map.Entry<PortMapping, PortBinding> entry : portBindingMap.entrySet()) {
+                    final PortMapping portMapping = entry.getKey();
+                    final PortBinding portBinding = entry.getValue();
+                    final String internalPort = portMapping.getPort() + "/" + portMapping.getProtocol();
+                    final String externalPort = portBinding.getExposedPort().toString();
+                    portBindings.add(new InstancePortBinding(externalPort, internalPort, node.getPublicIP(), portMapping.isAdvertise()));
+                }
+            }
+        }
+
+        return new Instance(UUID.randomUUID().toString(), deployment.getId(), challenge.getId(),
+                node.getId(), portBindings, new HashMap<>());
+    }
+
     @Override
     @ExcludeFromGeneratedTestReport
     protected Scheduler scheduler() {
-        return Scheduler.newFixedRateSchedule(controllerConfiguration.getReconciliationTickFrequency(), controllerConfiguration.getReconciliationTickFrequency(), TimeUnit.MILLISECONDS);
+        return Scheduler.newFixedRateSchedule(config.getReconciliationTickFrequency(), config.getReconciliationTickFrequency(), TimeUnit.MILLISECONDS);
     }
 }

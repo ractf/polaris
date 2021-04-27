@@ -33,7 +33,7 @@ public interface Node {
      *
      * @param nodeInfo {@link NodeInfo}
      */
-    void getNodeInfo(final NodeInfo nodeInfo);
+    void setNodeInfo(final NodeInfo nodeInfo);
 
     /**
      * Restarts an {@link Instance}

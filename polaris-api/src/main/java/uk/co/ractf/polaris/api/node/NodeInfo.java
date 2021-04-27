@@ -48,22 +48,24 @@ public class NodeInfo extends JsonRepresentable {
     private final long totalSwap;
     private final long freeSwap;
     private final Map<String, String> labels;
+    private final PortAllocations portAllocations;
 
     /**
-     * @param id           the id of the host
-     * @param publicIP     the public ip of the host
-     * @param hostname     the hostname of the host
-     * @param uname        the kernel details of the host
-     * @param architecture the architecture of the host
-     * @param osName       the name of the operating system
-     * @param osVersion    the version of the operating system
-     * @param processors   how many processors are available
-     * @param cpuLoad      the average cpu load across all cores in the last minute
-     * @param totalMemory  total system memory
-     * @param freeMemory   free system memory
-     * @param totalSwap    total swap space on the host
-     * @param freeSwap     free swap space on the host
-     * @param labels       labels added to the host
+     * @param id              the id of the host
+     * @param publicIP        the public ip of the host
+     * @param hostname        the hostname of the host
+     * @param uname           the kernel details of the host
+     * @param architecture    the architecture of the host
+     * @param osName          the name of the operating system
+     * @param osVersion       the version of the operating system
+     * @param processors      how many processors are available
+     * @param cpuLoad         the average cpu load across all cores in the last minute
+     * @param totalMemory     total system memory
+     * @param freeMemory      free system memory
+     * @param totalSwap       total swap space on the host
+     * @param freeSwap        free swap space on the host
+     * @param labels          labels added to the host
+     * @param portAllocations ports allocated on the host
      */
     public NodeInfo(
             @JsonProperty("id") final String id,
@@ -79,7 +81,8 @@ public class NodeInfo extends JsonRepresentable {
             @JsonProperty("freeMemory") final long freeMemory,
             @JsonProperty("totalSwap") final long totalSwap,
             @JsonProperty("freeSwap") final long freeSwap,
-            @JsonProperty("labels") final Map<String, String> labels) {
+            @JsonProperty("labels") final Map<String, String> labels,
+            @JsonProperty("portAllocations") final PortAllocations portAllocations) {
         this.id = id;
         this.publicIP = publicIP;
         this.hostname = hostname;
@@ -94,6 +97,7 @@ public class NodeInfo extends JsonRepresentable {
         this.totalSwap = totalSwap;
         this.freeSwap = freeSwap;
         this.labels = labels;
+        this.portAllocations = portAllocations;
     }
 
     public String getId() {
@@ -152,16 +156,20 @@ public class NodeInfo extends JsonRepresentable {
         return labels;
     }
 
+    public PortAllocations getPortAllocations() {
+        return portAllocations;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final NodeInfo nodeInfo = (NodeInfo) o;
-        return processors == nodeInfo.processors && Double.compare(nodeInfo.cpuLoad, cpuLoad) == 0 && totalMemory == nodeInfo.totalMemory && freeMemory == nodeInfo.freeMemory && totalSwap == nodeInfo.totalSwap && freeSwap == nodeInfo.freeSwap && Objects.equals(id, nodeInfo.id) && Objects.equals(publicIP, nodeInfo.publicIP) && Objects.equals(hostname, nodeInfo.hostname) && Objects.equals(uname, nodeInfo.uname) && Objects.equals(architecture, nodeInfo.architecture) && Objects.equals(osName, nodeInfo.osName) && Objects.equals(osVersion, nodeInfo.osVersion) && Objects.equals(labels, nodeInfo.labels);
+        return processors == nodeInfo.processors && Double.compare(nodeInfo.cpuLoad, cpuLoad) == 0 && totalMemory == nodeInfo.totalMemory && freeMemory == nodeInfo.freeMemory && totalSwap == nodeInfo.totalSwap && freeSwap == nodeInfo.freeSwap && Objects.equals(id, nodeInfo.id) && Objects.equals(publicIP, nodeInfo.publicIP) && Objects.equals(hostname, nodeInfo.hostname) && Objects.equals(uname, nodeInfo.uname) && Objects.equals(architecture, nodeInfo.architecture) && Objects.equals(osName, nodeInfo.osName) && Objects.equals(osVersion, nodeInfo.osVersion) && Objects.equals(labels, nodeInfo.labels) && Objects.equals(portAllocations, nodeInfo.getPortAllocations());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, publicIP, hostname, uname, architecture, osName, osVersion, processors, cpuLoad, totalMemory, freeMemory, totalSwap, freeSwap, labels);
+        return Objects.hash(id, publicIP, hostname, uname, architecture, osName, osVersion, processors, cpuLoad, totalMemory, freeMemory, totalSwap, freeSwap, labels, portAllocations);
     }
 }

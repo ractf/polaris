@@ -25,8 +25,8 @@ public class CommonConfiguration extends Configuration {
     private String singleUserUsername;
     private String singleUserPassword;
     private List<String> singleUserRoles;
-    private int advertisedMinPort;
-    private int advertisedMaxPort;
+    private int minPort;
+    private int maxPort;
     private int unadvertisedMinPort;
     private int unadvertisedMaxPort;
 
@@ -70,12 +70,12 @@ public class CommonConfiguration extends Configuration {
         return singleUserRoles;
     }
 
-    public int getAdvertisedMinPort() {
-        return advertisedMinPort;
+    public int getMinPort() {
+        return minPort;
     }
 
-    public int getAdvertisedMaxPort() {
-        return advertisedMaxPort;
+    public int getMaxPort() {
+        return maxPort;
     }
 
     public int getUnadvertisedMinPort() {
