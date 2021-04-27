@@ -3,7 +3,7 @@ allprojects {
     apply plugin: uk.co.ractf.polaris.PolarisPlugin
 
     group = 'uk.co.ractf'
-    version = '0.0.29'
+    version = '0.0.30'
 
     compileJava {
         sourceCompatibility = JavaVersion.VERSION_11
