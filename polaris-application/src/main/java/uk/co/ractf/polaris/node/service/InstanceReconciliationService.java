@@ -66,7 +66,6 @@ public class InstanceReconciliationService extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() {
-        System.out.println("InstanceReconciliationService.runOneIteration");
         try {
             for (final Map.Entry<String, Instance> entry : state.getInstancesOnNode(node.getId()).entrySet()) {
                 final Instance instance = entry.getValue();
