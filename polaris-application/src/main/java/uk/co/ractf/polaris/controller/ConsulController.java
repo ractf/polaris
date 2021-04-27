@@ -61,19 +61,6 @@ public class ConsulController implements Controller, Managed {
     }
 
     @Override
-    public void createChallenge(final Challenge challenge) {
-        Preconditions.checkArgument(!challenge.getId().isBlank(), "Challenge id cannot be blank.");
-        if (clusterState.getChallenge(challenge.getId()) != null) {
-            throw new IllegalArgumentException("Challenge with id " + challenge.getId() + " already exists.");
-        }
-        consul.keyValueClient().performTransaction(
-                Operation.builder(Verb.SET)
-                        .key(ConsulPath.challenge(challenge.getId()))
-                        .value(challenge.toJsonString())
-                        .build());
-    }
-
-    @Override
     public InstanceAllocator getInstanceAllocator() {
         return instanceAllocator;
     }

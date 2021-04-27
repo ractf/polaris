@@ -11,13 +11,6 @@ import uk.co.ractf.polaris.controller.instanceallocation.InstanceAllocator;
 public interface Controller {
 
     /**
-     * Submits a {@link Challenge} that can later be deployed
-     *
-     * @param challenge the challenge object
-     */
-    void createChallenge(final Challenge challenge);
-
-    /**
      * Returns the {@link InstanceAllocator} that should be used to decide which {@link Instance}s are allocated to which users
      *
      * @return the instance allocator

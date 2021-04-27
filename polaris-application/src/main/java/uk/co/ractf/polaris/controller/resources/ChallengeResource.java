@@ -105,7 +105,7 @@ public class ChallengeResource {
                     .build();
         }
 
-        controller.createChallenge(challenge);
+        clusterState.setChallenge(challenge);
         return Response.ok(new ChallengeSubmitResponse(ChallengeSubmitResponse.Status.OK, challenge.getId())).build();
     }
 
