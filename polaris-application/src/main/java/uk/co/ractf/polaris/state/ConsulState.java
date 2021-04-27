@@ -77,7 +77,19 @@ public class ConsulState implements ClusterState {
     @Nullable
     @Override
     public Challenge getChallengeFromDeployment(final String deploymentId) {
-        return null;
+        final Optional<String> deploymentData = consul.keyValueClient().getValueAsString(ConsulPath.deployment(deploymentId));
+        final Deployment deployment;
+        if (deploymentData.isPresent()) {
+            try {
+                deployment = Deployment.parse(deploymentData.get(), Deployment.class);
+            } catch (final JsonProcessingException exception) {
+                log.error("Error deserializing deployment " + deploymentId, exception);
+                return null;
+            }
+        } else {
+            return null;
+        }
+        return getChallenge(deployment.getChallenge());
     }
 
     @Override
