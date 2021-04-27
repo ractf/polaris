@@ -7,16 +7,16 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DeploymentSubmitResponse extends JsonRepresentable {
+public class DeploymentUpdateResponse extends JsonRepresentable {
 
     public enum Status {
-        OK, DUPLICATE, INVALID, REJECTED;
+        OK, NOT_FOUND, INVALID, REJECTED;
     }
 
     private final String id;
     private final Status status;
 
-    public DeploymentSubmitResponse(
+    public DeploymentUpdateResponse(
             @JsonProperty("id") final String id,
             @JsonProperty("status") final Status status) {
         this.id = id;
@@ -34,8 +34,8 @@ public class DeploymentSubmitResponse extends JsonRepresentable {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof DeploymentSubmitResponse)) return false;
-        final DeploymentSubmitResponse that = (DeploymentSubmitResponse) o;
+        if (!(o instanceof DeploymentUpdateResponse)) return false;
+        final DeploymentUpdateResponse that = (DeploymentUpdateResponse) o;
         return Objects.equals(id, that.id) && status == that.status;
     }
 
@@ -43,5 +43,5 @@ public class DeploymentSubmitResponse extends JsonRepresentable {
     public int hashCode() {
         return Objects.hash(id, status);
     }
-
 }
+

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.DeploymentDeleteResponse;
 import uk.co.ractf.polaris.api.deployment.DeploymentSubmitResponse;
+import uk.co.ractf.polaris.api.deployment.DeploymentUpdateResponse;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
@@ -123,13 +124,16 @@ public class DeploymentResource {
     @ExceptionMetered
     @RolesAllowed("DEPLOYMENT_UPDATE")
     @Operation(summary = "Update Deployment", tags = {"Deployment"}, description = "Updates a given deployment")
-    public void updateDeployment(final Deployment deployment) {
+    public Response updateDeployment(final Deployment deployment) {
         final Deployment existing = clusterState.getDeployment(deployment.getId());
         if (existing == null) {
-            throw new WebApplicationException(404);
+            return Response.status(404)
+                    .entity(new DeploymentUpdateResponse(deployment.getId(), DeploymentUpdateResponse.Status.NOT_FOUND))
+                    .build();
         }
 
         clusterState.setDeployment(deployment);
+        return Response.ok(new DeploymentUpdateResponse(deployment.getId(), DeploymentUpdateResponse.Status.OK)).build();
     }
 
     /**
