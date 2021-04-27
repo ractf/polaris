@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -41,4 +42,9 @@ public class PortAllocations extends JsonRepresentable {
     public int hashCode() {
         return Objects.hash(tcp, udp);
     }
+
+    public static PortAllocations empty() {
+        return new PortAllocations(new HashSet<>(), new HashSet<>());
+    }
+
 }

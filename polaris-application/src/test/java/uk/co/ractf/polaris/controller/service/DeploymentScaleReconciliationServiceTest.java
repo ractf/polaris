@@ -10,6 +10,7 @@ import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
+import uk.co.ractf.polaris.api.node.PortAllocations;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
 import uk.co.ractf.polaris.controller.Controller;
@@ -41,12 +42,18 @@ public class DeploymentScaleReconciliationServiceTest {
         final Deployment deployment = new Deployment("test", "test", new StaticReplication("static", 15),
                 new Allocation("team", 500, 500));
         instance = new Instance("test", "test", "test", "test", new ArrayList<>(), new HashMap<>());
+
+        config.setMinPort(0);
+        config.setMaxPort(65535);
+
         when(clusterState.getDeployments()).thenReturn(Map.of("test", deployment));
         when(clusterState.getNodes()).thenReturn(Map.of("test", node));
         when(clusterState.getChallengeFromDeployment(deployment.getId())).thenReturn(challenge);
         when(clusterState.lockDeployment(any())).thenReturn(true);
         when(clusterState.unlockDeployment(any())).thenReturn(true);
         when(scheduler.scheduleChallenge(any(Challenge.class), anyCollection())).thenReturn(node);
+        final PortAllocations portAllocations = PortAllocations.empty();
+        when(node.getPortAllocations()).thenReturn(portAllocations);
     }
 
     @Test
