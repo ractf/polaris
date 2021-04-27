@@ -4,6 +4,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.Deployment;
+import uk.co.ractf.polaris.api.deployment.DeploymentDeleteResponse;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
@@ -28,6 +29,11 @@ public class DeploymentTestCase {
     }
 
     @Test
+    public void testDeleteResponse() {
+        validateObject(DeploymentDeleteResponse.class, fixture("fixtures/deployment/deleteresponse.json"));
+    }
+
+    @Test
     public void testAllocationIgnoreProperties() {
         validateObjectIgnoreProperties(Allocation.class, fixture("fixtures/deployment/allocation.json"));
     }
@@ -43,6 +49,11 @@ public class DeploymentTestCase {
     }
 
     @Test
+    public void testDeleteResponseIgnoreProperties() {
+        validateObjectIgnoreProperties(DeploymentDeleteResponse.class, fixture("fixtures/deployment/deleteresponse.json"));
+    }
+
+    @Test
     public void testAllocationEquals() {
         EqualsVerifier.simple().forClass(Allocation.class).verify();
     }
@@ -55,6 +66,11 @@ public class DeploymentTestCase {
     @Test
     public void testStaticReplicationEquals() {
         EqualsVerifier.simple().forClass(StaticReplication.class).verify();
+    }
+
+    @Test
+    public void testDeleteResponseEquals() {
+        EqualsVerifier.simple().forClass(DeploymentDeleteResponse.class).verify();
     }
 
 }

@@ -7,11 +7,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.deployment.Deployment;
+import uk.co.ractf.polaris.api.deployment.DeploymentDeleteResponse;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -137,13 +139,16 @@ public class DeploymentResource {
     @ExceptionMetered
     @RolesAllowed("DEPLOYMENT_DELETE")
     @Operation(summary = "Delete Deployment", tags = {"Deployment"}, description = "Deletes a deployment with a certain id")
-    public void deleteDeployment(@PathParam("id") final String deployment) {
+    public Response deleteDeployment(@PathParam("id") final String deployment) {
         final Deployment existing = clusterState.getDeployment(deployment);
         if (existing == null) {
-            throw new WebApplicationException(404);
+            return Response.status(404)
+                    .entity(new DeploymentDeleteResponse(deployment, DeploymentDeleteResponse.Status.NOT_FOUND))
+                    .build();
         }
 
         clusterState.deleteDeployment(deployment);
+        return Response.ok(new DeploymentDeleteResponse(deployment, DeploymentDeleteResponse.Status.OK)).build();
     }
 
 }
