@@ -127,4 +127,9 @@ buildRpm {
         into '/opt/polaris'
         createDirectoryEntry = true
     }
+
+    from(project(':polaris-cli').getTasksByName('nativeImage', true)[0].outputs.files) {
+        into '/usr/bin'
+        fileMode 0755
+    }
 }
