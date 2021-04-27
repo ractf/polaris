@@ -29,7 +29,8 @@ public class MemoryAllocatedGauge implements Gauge<Long> {
                     if (resourceQuota == null) {
                         continue;
                     }
-                    total += resourceQuota.getMemory();
+                    final long mem = resourceQuota.getMemory() == null ? 0 : resourceQuota.getMemory();
+                    total += mem;
                 }
             }
 
