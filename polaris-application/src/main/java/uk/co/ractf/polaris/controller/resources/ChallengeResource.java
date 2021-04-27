@@ -13,6 +13,7 @@ import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -82,8 +83,13 @@ public class ChallengeResource {
     @ExceptionMetered
     @RolesAllowed("CHALLENGE_GET")
     @Operation(summary = "Get Challenge By ID", tags = {"Challenge"}, description = "Get a challenge by id")
-    public Challenge getChallenge(@PathParam("id") final String id) {
-        return clusterState.getChallenge(id);
+    public Response getChallenge(@PathParam("id") final String id) {
+        final Challenge challenge = clusterState.getChallenge(id);
+        if (challenge == null) {
+            throw new WebApplicationException(404);
+        }
+
+        return Response.ok(challenge).build();
     }
 
     /**
@@ -97,7 +103,7 @@ public class ChallengeResource {
     @RolesAllowed("CHALLENGE_SUBMIT")
     @Operation(summary = "Submit Challenge", tags = {"Challenge"},
             description = "Submits a challenge object to the controller")
-    public Response submitChallenge(final Challenge challenge) {
+    public Response submitChallenge(final @Valid Challenge challenge) {
         if (clusterState.getChallenge(challenge.getId()) != null) {
             return Response
                     .status(400)
@@ -125,6 +131,7 @@ public class ChallengeResource {
             return Response.status(404)
                     .entity(new ChallengeDeleteResponse(ChallengeDeleteResponse.Status.NOT_FOUND, id)).build();
         }
+
         clusterState.deleteChallenge(id);
         return Response.status(200)
                 .entity(new ChallengeDeleteResponse(ChallengeDeleteResponse.Status.OK, id)).build();
