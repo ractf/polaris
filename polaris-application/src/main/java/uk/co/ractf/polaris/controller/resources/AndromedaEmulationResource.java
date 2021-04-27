@@ -68,7 +68,7 @@ public class AndromedaEmulationResource {
         final Challenge polarisChallenge = new Challenge(challenge.getName(), Collections.singletonList(pod));
         //configuration.setRegistryUsername(challenge.getRegistryAuth().getUsername());
         //configuration.setRegistryPassword(challenge.getRegistryAuth().getPassword());
-        controller.createChallenge(polarisChallenge);
+        clusterState.setChallenge(polarisChallenge);
         final Deployment deployment = new Deployment(challenge.getName(), challenge.getName(),
                 new StaticReplication("static", challenge.getReplicas()),
                 new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE));
