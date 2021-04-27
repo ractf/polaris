@@ -36,6 +36,9 @@ server:
     - type: http
       port: 9091
 logging:
-  level: INFO
-  loggers:
-    uk.co.ractf: TRACE
+  appenders:
+    - type: sentry
+      threshold: ERROR
+      dsn: https://ef686f9ba8854204a87aff7d5381f7c8@o104250.ingest.sentry.io/5734531
+      environment: production
+      sentryClientFactory: uk.co.ractf.polaris.sentry.PolarisSentryClientFactory
