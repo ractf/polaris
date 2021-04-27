@@ -7,6 +7,7 @@ import com.google.inject.Singleton;
 import com.sun.management.OperatingSystemMXBean;
 import io.dropwizard.util.CharStreams;
 import uk.co.ractf.polaris.api.node.NodeInfo;
+import uk.co.ractf.polaris.api.node.PortAllocations;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.node.NodeConfiguration;
 import uk.co.ractf.polaris.state.ClusterState;
@@ -19,6 +20,7 @@ import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +50,7 @@ public class HostInfoSyncService extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() {
+        System.out.println("HostInfoSyncService.runOneIteration");
         try {
             final Map<String, String> labels = new HashMap<>();
             labels.put("aslr", Files.readString(Path.of("/proc/sys/kernel/randomize_va_space")));
@@ -67,10 +70,10 @@ public class HostInfoSyncService extends AbstractScheduledService {
                     operatingSystemMXBean.getFreePhysicalMemorySize(),
                     operatingSystemMXBean.getTotalSwapSpaceSize(),
                     operatingSystemMXBean.getFreeSwapSpaceSize(),
-                    labels, previousNodeInfo.getPortAllocations());
+                    labels, previousNodeInfo != null ? previousNodeInfo.getPortAllocations() : new PortAllocations(new HashSet<>(), new HashSet<>()));
 
             node.setNodeInfo(nodeInfo);
-        } catch (final IOException e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }

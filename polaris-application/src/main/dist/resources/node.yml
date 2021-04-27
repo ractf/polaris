@@ -1,6 +1,7 @@
 threadpoolSize: 5
 taskThreadpoolSize: 5
 reconciliationTickFrequency: 200
+hostInfoSyncFrequency: 200
 schedulingAlgorithm: roundRobin
 threadpoolTimeoutSeconds: 30
 minPort: 20000
@@ -27,3 +28,14 @@ consul:
   endpoint: ${CONSUL-URL:-localhost:8500}
   serviceId: polaris-node
   retryInterval: 5 seconds
+server:
+  applicationConnectors:
+    - type: http
+      port: 9090
+  adminConnectors:
+    - type: http
+      port: 9091
+logging:
+  level: INFO
+  loggers:
+    uk.co.ractf: TRACE

@@ -35,7 +35,6 @@ public class ControllerModule extends DropwizardAwareModule<ControllerConfigurat
                 .build());
         bind(Consul.class).toInstance(configuration().getConsulFactory().build());
 
-        bind(Node.class).to(EmbeddedNode.class).in(Singleton.class);
         bind(Scheduler.class).to(RoundRobinScheduler.class);
         bind(Controller.class).to(ConsulController.class).in(Singleton.class);
         bind(MetricRegistry.class).toInstance(bootstrap.getMetricRegistry());
