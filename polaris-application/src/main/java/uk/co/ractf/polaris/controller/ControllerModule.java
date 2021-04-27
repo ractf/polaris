@@ -10,8 +10,6 @@ import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
 import uk.co.ractf.polaris.controller.scheduler.RoundRobinScheduler;
 import uk.co.ractf.polaris.controller.scheduler.Scheduler;
 import uk.co.ractf.polaris.controller.service.ControllerServiceModule;
-import uk.co.ractf.polaris.node.EmbeddedNode;
-import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.state.ClusterState;
 import uk.co.ractf.polaris.state.ConsulState;
 
