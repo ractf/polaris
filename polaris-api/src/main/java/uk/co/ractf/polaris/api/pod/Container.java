@@ -93,7 +93,7 @@ import java.util.*;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Container extends PodWithPorts {
+public class Container extends PodWithPorts implements ResourceLimited {
 
     private final String image;
     private final String repo;
