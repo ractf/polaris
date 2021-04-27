@@ -5,7 +5,7 @@ After=consul.service
 
 [Service]
 WorkingDirectory=/opt/polaris
-ExecStart=/bin/java -jar /opt/polaris/polaris.jar controller /etc/polaris/polaris.yml
+ExecStart=/bin/java -jar /opt/polaris/polaris.jar node /etc/polaris/node.yml
 Type=simple
 Restart=on-failure
 RestartSec=10
