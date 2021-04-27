@@ -36,6 +36,11 @@ public class DeploymentTestCase {
     }
 
     @Test
+    public void testUpdateResponse() {
+        validateObject(DeploymentUpdateResponse.class, fixture("fixtures/deployment/updateresponse.json"));
+    }
+
+    @Test
     public void testAllocationIgnoreProperties() {
         validateObjectIgnoreProperties(Allocation.class, fixture("fixtures/deployment/allocation.json"));
     }
@@ -61,6 +66,11 @@ public class DeploymentTestCase {
     }
 
     @Test
+    public void testUpdateResponseIgnoreProperties() {
+        validateObjectIgnoreProperties(DeploymentUpdateResponse.class, fixture("fixtures/deployment/updateresponse.json"));
+    }
+
+    @Test
     public void testAllocationEquals() {
         EqualsVerifier.simple().forClass(Allocation.class).verify();
     }
@@ -83,6 +93,11 @@ public class DeploymentTestCase {
     @Test
     public void testSubmitResponseEquals() {
         EqualsVerifier.simple().forClass(DeploymentSubmitResponse.class).verify();
+    }
+
+    @Test
+    public void testUpdateResponseEquals() {
+        EqualsVerifier.simple().forClass(DeploymentUpdateResponse.class).verify();
     }
 
 }
