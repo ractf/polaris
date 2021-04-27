@@ -1,4 +1,4 @@
-name: Build Polaris Controller Rpm
+name: Build Polaris Application Jar
 
 on: push
 
@@ -23,10 +23,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Run Gradle tests
+        run: ./gradlew polaris-application:test
+
       - name: Build with Gradle
-        run: ./gradlew polaris-controller:buildRpm
+        run: ./gradlew polaris-application:build
 
 #      - uses: actions/upload-artifact@v2
 #        with:
-#          name: polaris.rpm
-#          path: polaris-controller/build/distributions/*.rpm
+#          name: polaris.jar
+#          path: polaris-application/build/libs/polaris.jar

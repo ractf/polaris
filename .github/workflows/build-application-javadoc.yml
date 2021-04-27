@@ -1,4 +1,4 @@
-name: Build Polaris Controller Javadoc
+name: Build Polaris Application Javadoc
 
 on: push
 
@@ -24,12 +24,12 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
-        run: ./gradlew polaris-controller:javadoc
+        run: ./gradlew polaris-application:javadoc
 
       - uses: actions/upload-artifact@v2
         with:
           name: polaris-javadoc
-          path: polaris-controller/build/docs/javadoc/
+          path: polaris-application/build/docs/javadoc/
 
       - uses: jakejarvis/s3-sync-action@master
         if: github.ref == 'refs/heads/main'
