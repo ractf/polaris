@@ -72,4 +72,15 @@ public class InstanceResource {
         return instances;
     }
 
+
+    @DELETE
+    @Timed
+    @ExceptionMetered
+    @RolesAllowed("INSTANCE_DELETE")
+    @Operation(summary = "Delete Instance", tags = {"Instances"},
+            description = "Delete and deschedule an instance")
+    public void deleteInstance(final String instanceId) {
+        clusterState.deleteInstance(clusterState.getInstance(instanceId));
+    }
+
 }
