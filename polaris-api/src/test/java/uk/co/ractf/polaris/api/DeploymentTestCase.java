@@ -2,10 +2,7 @@ package uk.co.ractf.polaris.api;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
-import uk.co.ractf.polaris.api.deployment.Allocation;
-import uk.co.ractf.polaris.api.deployment.Deployment;
-import uk.co.ractf.polaris.api.deployment.DeploymentDeleteResponse;
-import uk.co.ractf.polaris.api.deployment.StaticReplication;
+import uk.co.ractf.polaris.api.deployment.*;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static uk.co.ractf.polaris.testlib.JacksonTester.validateObject;
@@ -34,6 +31,11 @@ public class DeploymentTestCase {
     }
 
     @Test
+    public void testSubmitResponse() {
+        validateObject(DeploymentSubmitResponse.class, fixture("fixtures/deployment/submitresponse.json"));
+    }
+
+    @Test
     public void testAllocationIgnoreProperties() {
         validateObjectIgnoreProperties(Allocation.class, fixture("fixtures/deployment/allocation.json"));
     }
@@ -54,6 +56,11 @@ public class DeploymentTestCase {
     }
 
     @Test
+    public void testSubmitResponseIgnoreProperties() {
+        validateObjectIgnoreProperties(DeploymentSubmitResponse.class, fixture("fixtures/deployment/submitresponse.json"));
+    }
+
+    @Test
     public void testAllocationEquals() {
         EqualsVerifier.simple().forClass(Allocation.class).verify();
     }
@@ -71,6 +78,11 @@ public class DeploymentTestCase {
     @Test
     public void testDeleteResponseEquals() {
         EqualsVerifier.simple().forClass(DeploymentDeleteResponse.class).verify();
+    }
+
+    @Test
+    public void testSubmitResponseEquals() {
+        EqualsVerifier.simple().forClass(DeploymentSubmitResponse.class).verify();
     }
 
 }
