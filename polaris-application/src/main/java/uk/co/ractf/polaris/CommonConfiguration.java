@@ -76,4 +76,11 @@ public class CommonConfiguration extends Configuration {
         return maxPort;
     }
 
+    public void setMinPort(final int minPort) {
+        this.minPort = minPort;
+    }
+
+    public void setMaxPort(final int maxPort) {
+        this.maxPort = maxPort;
+    }
 }

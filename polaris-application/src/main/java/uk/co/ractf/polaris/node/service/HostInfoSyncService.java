@@ -69,7 +69,7 @@ public class HostInfoSyncService extends AbstractScheduledService {
                     operatingSystemMXBean.getFreePhysicalMemorySize(),
                     operatingSystemMXBean.getTotalSwapSpaceSize(),
                     operatingSystemMXBean.getFreeSwapSpaceSize(),
-                    labels, previousNodeInfo != null ? previousNodeInfo.getPortAllocations() : new PortAllocations(new HashSet<>(), new HashSet<>()));
+                    labels, previousNodeInfo != null ? previousNodeInfo.getPortAllocations() : PortAllocations.empty());
 
             node.setNodeInfo(nodeInfo);
         } catch (final Exception e) {
