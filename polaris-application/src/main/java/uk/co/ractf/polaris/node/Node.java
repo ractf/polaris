@@ -43,15 +43,6 @@ public interface Node {
     void restartInstance(final Instance instance);
 
     /**
-     * Generates {@link PortBinding}s for all the {@link PortMapping}s provided based on which ports are available on
-     * the host.
-     *
-     * @param portMappings the portmappings
-     * @return the map of portmapping to portbinding
-     */
-    Map<PortMapping, PortBinding> createPortBindings(List<PortMapping> portMappings);
-
-    /**
      * Gets the docker registry auth config for the host.
      *
      * @return the auth config

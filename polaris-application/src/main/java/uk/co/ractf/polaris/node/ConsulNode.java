@@ -1,7 +1,6 @@
 package uk.co.ractf.polaris.node;
 
 import com.github.dockerjava.api.model.AuthConfig;
-import com.github.dockerjava.api.model.PortBinding;
 import com.google.common.util.concurrent.Service;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -12,13 +11,11 @@ import uk.co.ractf.polaris.api.challenge.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.pod.Pod;
-import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.node.runner.Runner;
 import uk.co.ractf.polaris.node.service.NodeServices;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -85,11 +82,6 @@ public class ConsulNode implements Node, Managed {
         for (final Pod pod : challenge.getPods()) {
             CompletableFuture.runAsync(() -> getRunner(pod).restartPod(pod, instance));
         }
-    }
-
-    @Override
-    public Map<PortMapping, PortBinding> createPortBindings(final List<PortMapping> portMappings) {
-        return null;
     }
 
     @Override
