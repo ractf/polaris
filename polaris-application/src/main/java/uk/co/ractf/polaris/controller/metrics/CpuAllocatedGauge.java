@@ -29,7 +29,8 @@ public class CpuAllocatedGauge implements Gauge<Double> {
                     if (resourceQuota == null) {
                         continue;
                     }
-                    total += (resourceQuota.getNanocpu() / 1_000_000_000D);
+                    final long cpu = resourceQuota.getNanocpu() == null ? 0 : resourceQuota.getNanocpu();
+                    total += (cpu / 1_000_000_000D);
                 }
             }
 
