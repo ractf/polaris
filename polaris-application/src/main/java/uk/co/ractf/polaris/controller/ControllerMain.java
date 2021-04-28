@@ -1,5 +1,6 @@
 package uk.co.ractf.polaris.controller;
 
+import com.codahale.metrics.Gauge;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.google.common.collect.ObjectArrays;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import ru.vyarus.dropwizard.guice.GuiceBundle;
 import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
 
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

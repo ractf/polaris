@@ -13,10 +13,6 @@ public class InstancesGauge implements Gauge<Integer> {
 
     @Override
     public Integer getValue() {
-        int total = 0;
-        for (final String deployment : clusterState.getDeployments().keySet()) {
-            total += clusterState.getInstancesForDeployment(deployment).size();
-        }
-        return total;
+        return clusterState.getInstanceIds().size();
     }
 }

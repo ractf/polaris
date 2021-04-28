@@ -176,4 +176,12 @@ public interface ClusterState {
     @NotNull
     Map<String, Instance> getInstancesOnNode(final String node);
 
+    List<String> getInstanceIds();
+
+    List<String> getDeploymentIds();
+
+    List<String> getChallengeIds();
+
+    Map<String, Instance> getInstances();
+
 }

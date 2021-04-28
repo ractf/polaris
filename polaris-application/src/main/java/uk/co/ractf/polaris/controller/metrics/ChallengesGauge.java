@@ -15,6 +15,6 @@ public class ChallengesGauge implements Gauge<Integer> {
 
     @Override
     public Integer getValue() {
-        return clusterState.getChallenges().size();
+        return clusterState.getChallengeIds().size();
     }
 }

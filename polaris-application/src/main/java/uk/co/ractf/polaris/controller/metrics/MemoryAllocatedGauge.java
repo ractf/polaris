@@ -2,12 +2,13 @@ package uk.co.ractf.polaris.controller.metrics;
 
 import com.codahale.metrics.Gauge;
 import uk.co.ractf.polaris.api.challenge.Challenge;
-import uk.co.ractf.polaris.api.deployment.Deployment;
+import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.ResourceLimited;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
 import uk.co.ractf.polaris.state.ClusterState;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryAllocatedGauge implements Gauge<Long> {
@@ -21,6 +22,12 @@ public class MemoryAllocatedGauge implements Gauge<Long> {
     @Override
     public Long getValue() {
         long totalAllocated = 0;
+        final Map<String, Instance> instanceMap = clusterState.getInstances();
+        final Map<String, Integer> instanceCounts = new HashMap<>();
+        for (final Map.Entry<String, Instance> entry : instanceMap.entrySet()) {
+            instanceCounts.put(entry.getValue().getChallengeId(), instanceCounts.getOrDefault(entry.getValue().getChallengeId(), 0) + 1);
+        }
+
         for (final Map.Entry<String, Challenge> challengeEntry : clusterState.getChallenges().entrySet()) {
             long total = 0;
             for (final Pod pod : challengeEntry.getValue().getPods()) {
@@ -34,9 +41,7 @@ public class MemoryAllocatedGauge implements Gauge<Long> {
                 }
             }
 
-            for (final Deployment deployment : clusterState.getDeploymentsOfChallenge(challengeEntry.getKey())) {
-                totalAllocated += total * clusterState.getInstancesForDeployment(deployment.getId()).size();
-            }
+            totalAllocated += total * instanceCounts.getOrDefault(challengeEntry.getKey(), 0);
         }
 
         return totalAllocated;

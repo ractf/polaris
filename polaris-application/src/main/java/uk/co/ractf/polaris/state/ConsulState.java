@@ -6,9 +6,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.kv.Operation;
+import com.orbitz.consul.model.kv.Value;
 import com.orbitz.consul.model.kv.Verb;
 import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.model.session.Session;
+import com.orbitz.consul.option.QueryOptions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -41,22 +43,18 @@ public class ConsulState implements ClusterState {
     @Override
     public Map<String, Challenge> getChallenges() {
         final Map<String, Challenge> challengeMap = new HashMap<>();
-        final List<String> challengePaths = consul.keyValueClient().getKeys(ConsulPath.challenges());
-
-        for (final String challengePath : challengePaths) {
-            final Optional<String> challengeData = consul.keyValueClient().getValueAsString(challengePath);
-            if (challengeData.isPresent()) {
+        for (final Value challengeData : consul.keyValueClient().getValues(ConsulPath.challenges())) {
+            if (challengeData.getValueAsString().isPresent()) {
                 try {
-                    final Challenge challenge = Challenge.parse(challengeData.get(), Challenge.class);
+                    final Challenge challenge = Challenge.parse(challengeData.getValueAsString().get(), Challenge.class);
                     if (!challenge.getId().isBlank()) {
                         challengeMap.put(challenge.getId(), challenge);
                     }
                 } catch (final JsonProcessingException exception) {
-                    log.error("Error deserializing challenge " + challengePath, exception);
+                    log.error("Error deserializing challenge " + challengeData.getKey(), exception);
                 }
             }
         }
-
         return challengeMap;
     }
 
@@ -114,22 +112,18 @@ public class ConsulState implements ClusterState {
     @Override
     public Map<String, Deployment> getDeployments() {
         final Map<String, Deployment> deploymentMap = new HashMap<>();
-        final List<String> deploymentPaths = consul.keyValueClient().getKeys(ConsulPath.deployments());
-
-        for (final String deploymentPath : deploymentPaths) {
-            final Optional<String> deploymentData = consul.keyValueClient().getValueAsString(deploymentPath);
-            if (deploymentData.isPresent()) {
+        for (final Value deploymentData : consul.keyValueClient().getValues(ConsulPath.deployments())) {
+            if (deploymentData.getValueAsString().isPresent()) {
                 try {
-                    final Deployment deployment = Deployment.parse(deploymentData.get(), Deployment.class);
+                    final Deployment deployment = Deployment.parse(deploymentData.getValueAsString().get(), Deployment.class);
                     if (!deployment.getId().isBlank()) {
                         deploymentMap.put(deployment.getId(), deployment);
                     }
                 } catch (final JsonProcessingException exception) {
-                    log.error("Error deserializing deployment " + deploymentPath, exception);
+                    log.error("Error deserializing deployment " + deploymentData.getKey(), exception);
                 }
             }
         }
-
         return deploymentMap;
     }
 
@@ -169,22 +163,18 @@ public class ConsulState implements ClusterState {
     @Override
     public Map<String, NodeInfo> getNodes() {
         final Map<String, NodeInfo> nodeMap = new HashMap<>();
-        final List<String> nodePaths = consul.keyValueClient().getKeys(ConsulPath.nodes());
-
-        for (final String nodePath : nodePaths) {
-            final Optional<String> nodeData = consul.keyValueClient().getValueAsString(nodePath);
-            if (nodeData.isPresent()) {
+        for (final Value nodeData : consul.keyValueClient().getValues(ConsulPath.nodes())) {
+            if (nodeData.getValueAsString().isPresent()) {
                 try {
-                    final NodeInfo node = NodeInfo.parse(nodeData.get(), NodeInfo.class);
+                    final NodeInfo node = NodeInfo.parse(nodeData.getValueAsString().get(), NodeInfo.class);
                     if (!node.getId().isBlank()) {
                         nodeMap.put(node.getId(), node);
                     }
                 } catch (final JsonProcessingException exception) {
-                    log.error("Error deserializing node " + nodePath, exception);
+                    log.error("Error deserializing node " + nodeData.getKey(), exception);
                 }
             }
         }
-
         return nodeMap;
     }
 
@@ -226,20 +216,12 @@ public class ConsulState implements ClusterState {
 
     @NotNull
     @Override
-    public List<Instance> getInstancesForDeployment(final String deployment) {
+    public List<Instance> getInstancesForDeployment(final String deploymentId) {
         final List<Instance> instances = new ArrayList<>();
-        final List<String> instancePaths = consul.keyValueClient().getKeys(ConsulPath.instances());
-        for (final String instancePath : instancePaths) {
-            final Optional<String> instanceData = consul.keyValueClient().getValueAsString(instancePath);
-            if (instanceData.isPresent()) {
-                try {
-                    final Instance instance = Instance.parse(instanceData.get(), Instance.class);
-                    if (instance.getDeploymentId().equals(deployment)) {
-                        instances.add(instance);
-                    }
-                } catch (final JsonProcessingException exception) {
-                    log.error("Error deserializing instance " + instancePath, exception);
-                }
+        final Map<String, Instance> instanceMap = getInstances();
+        for (final Instance instance : instanceMap.values()) {
+            if (instance.getDeploymentId().equals(deploymentId)) {
+                instances.add(instance);
             }
         }
         return instances;
@@ -300,20 +282,45 @@ public class ConsulState implements ClusterState {
     @Override
     public Map<String, Instance> getInstancesOnNode(final String node) {
         final Map<String, Instance> instances = new HashMap<>();
-        final List<String> instancePaths = consul.keyValueClient().getKeys(ConsulPath.instances());
-        for (final String instancePath : instancePaths) {
-            final Optional<String> instanceData = consul.keyValueClient().getValueAsString(instancePath);
-            if (instanceData.isPresent()) {
-                try {
-                    final Instance instance = Instance.parse(instanceData.get(), Instance.class);
-                    if (instance.getNodeId().equals(node)) {
-                        instances.put(instance.getId(), instance);
-                    }
-                } catch (final JsonProcessingException exception) {
-                    log.error("Error deserializing instance " + instancePath, exception);
-                }
+        final Map<String, Instance> instanceMap = getInstances();
+        for (final Map.Entry<String, Instance> entry : instanceMap.entrySet()) {
+            if (entry.getValue().getNodeId().equals(node)) {
+                instances.put(entry.getKey(), entry.getValue());
             }
         }
         return instances;
+    }
+
+    @Override
+    public List<String> getInstanceIds() {
+        return consul.keyValueClient().getKeys(ConsulPath.instances());
+    }
+
+    @Override
+    public List<String> getDeploymentIds() {
+        return consul.keyValueClient().getKeys(ConsulPath.deployments());
+    }
+
+    @Override
+    public List<String> getChallengeIds() {
+        return consul.keyValueClient().getKeys(ConsulPath.challenges());
+    }
+
+    @Override
+    public Map<String, Instance> getInstances() {
+        final Map<String, Instance> instanceMap = new HashMap<>();
+        for (final Value instanceData : consul.keyValueClient().getValues(ConsulPath.instances())) {
+            if (instanceData.getValueAsString().isPresent()) {
+                try {
+                    final Instance deployment = Instance.parse(instanceData.getValueAsString().get(), Instance.class);
+                    if (!deployment.getId().isBlank()) {
+                        instanceMap.put(deployment.getId(), deployment);
+                    }
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing instance " + instanceData.getKey(), exception);
+                }
+            }
+        }
+        return instanceMap;
     }
 }
