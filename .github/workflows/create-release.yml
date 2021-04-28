@@ -59,6 +59,8 @@ jobs:
       - name: Create Sentry release
         if: steps.semver_change.outputs.changed == 'true'
         uses: getsentry/action-release@v1
+        with:
+          version: ${{ steps.semver.outputs.semver }}
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
