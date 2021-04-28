@@ -15,6 +15,6 @@ public class DeploymentsGauge implements Gauge<Integer> {
 
     @Override
     public Integer getValue() {
-        return clusterState.getDeployments().size();
+        return clusterState.getDeploymentIds().size();
     }
 }
