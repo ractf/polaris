@@ -37,6 +37,7 @@ server:
       port: 9091
 logging:
   appenders:
+    - type: console
     - type: sentry
       threshold: ERROR
       dsn: https://ef686f9ba8854204a87aff7d5381f7c8@o104250.ingest.sentry.io/5734531
