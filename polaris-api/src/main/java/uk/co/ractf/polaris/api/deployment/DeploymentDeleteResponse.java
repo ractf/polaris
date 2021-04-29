@@ -1,10 +1,12 @@
 package uk.co.ractf.polaris.api.deployment;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 import java.util.Objects;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DeploymentDeleteResponse extends JsonRepresentable {
 
     public enum Status {

@@ -8,6 +8,7 @@ import uk.co.ractf.polaris.api.node.PortAllocations;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -24,7 +25,7 @@ public class PortAllocator {
         this.portAllocations = portAllocations;
     }
 
-    private int generatePort(final int min, final int max, final Set<Integer> ports) {
+    private int generatePort(final int min, final int max, final List<Integer> ports) {
         int port;
         do {
             port = ThreadLocalRandom.current().nextInt(min, max);

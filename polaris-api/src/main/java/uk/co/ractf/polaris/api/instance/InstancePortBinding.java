@@ -69,11 +69,12 @@ public class InstancePortBinding extends JsonRepresentable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final InstancePortBinding that = (InstancePortBinding) o;
-        return advertise == that.advertise && Objects.equals(port, that.port) && Objects.equals(ip, that.ip);
+        return advertise == that.advertise && Objects.equals(port, that.port) && Objects.equals(ip, that.ip) &&
+                Objects.equals(internalPort, that.internalPort);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(port, ip, advertise);
+        return Objects.hash(port, ip, advertise, internalPort);
     }
 }

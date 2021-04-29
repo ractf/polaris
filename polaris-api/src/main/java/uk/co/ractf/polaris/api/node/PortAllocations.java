@@ -4,29 +4,26 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PortAllocations extends JsonRepresentable {
 
-    private final Set<Integer> tcp;
-    private final Set<Integer> udp;
+    private final List<Integer> tcp;
+    private final List<Integer> udp;
 
     public PortAllocations(
-            @JsonProperty("tcp") final Set<Integer> tcp,
-            @JsonProperty("udp") final Set<Integer> udp) {
+            @JsonProperty("tcp") final List<Integer> tcp,
+            @JsonProperty("udp") final List<Integer> udp) {
         this.tcp = tcp;
         this.udp = udp;
     }
 
-    public Set<Integer> getTcp() {
+    public List<Integer> getTcp() {
         return tcp;
     }
 
-    public Set<Integer> getUdp() {
+    public List<Integer> getUdp() {
         return udp;
     }
 
@@ -44,7 +41,7 @@ public class PortAllocations extends JsonRepresentable {
     }
 
     public static PortAllocations empty() {
-        return new PortAllocations(new HashSet<>(), new HashSet<>());
+        return new PortAllocations(new ArrayList<>(), new ArrayList<>());
     }
 
 }
