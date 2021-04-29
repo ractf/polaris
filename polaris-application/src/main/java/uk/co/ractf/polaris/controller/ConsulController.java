@@ -22,8 +22,7 @@ public class ConsulController implements Controller, Managed {
     private final Set<Service> services;
 
     @Inject
-    public ConsulController(final ControllerConfiguration config,
-                            @ControllerServices final Set<Service> services,
+    public ConsulController(@ControllerServices final Set<Service> services,
                             final ClusterState clusterState) {
         this.instanceAllocator = new EphemeralInstanceAllocator(clusterState);
         this.services = services;
