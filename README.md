@@ -60,7 +60,8 @@
     <a href="https://github.com/ractf/polaris/actions/workflows/build-cli-jar.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-cli-jar.yml/badge.svg></a>
     <a href="https://github.com/ractf/polaris/actions/workflows/build-cli-nativeimage.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-cli-nativeimage.yml/badge.svg></a>
     <a href="https://github.com/ractf/polaris/actions/workflows/build-apiclient-javadoc.yml"><img src=https://github.com/ractf/polaris/actions/workflows/build-apiclient-javadoc.yml/badge.svg></a>
-<a href="https://github.com/ractf/polaris/actions/workflows/test-apiclient.yml"><img src=https://github.com/ractf/polaris/actions/workflows/test-apiclient.yml/badge.svg></a>
+    <a href="https://github.com/ractf/polaris/actions/workflows/test-apiclient.yml"><img src=https://github.com/ractf/polaris/actions/workflows/test-apiclient.yml/badge.svg></a>
+    <a href="https://codecov.io/gh/ractf/polaris"><img src="https://codecov.io/gh/ractf/polaris/branch/main/graph/badge.svg?token=ARH6KTIEP0"/></a>
 </div>
 
 ## Table of Contents
