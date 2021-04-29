@@ -6,6 +6,10 @@ allprojects {
     group = 'uk.co.ractf'
     version = '0.0.41'
 
+    repositories {
+        maven { url "https://repo1.maven.org/maven2/" }
+    }
+
     compileJava {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -31,7 +35,7 @@ task codeCoverageReport(type: JacocoReport) {
     reports {
         xml.enabled true
         xml.destination file("${buildDir}/reports/jacoco/report.xml")
-        html.enabled false
+        html.enabled true
         csv.enabled false
     }
 }
