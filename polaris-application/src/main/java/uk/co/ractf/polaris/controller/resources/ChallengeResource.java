@@ -6,9 +6,9 @@ import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.ractf.polaris.api.challenge.Challenge;
-import uk.co.ractf.polaris.api.challenge.ChallengeDeleteResponse;
-import uk.co.ractf.polaris.api.challenge.ChallengeSubmitResponse;
+import uk.co.ractf.polaris.api.task.Challenge;
+import uk.co.ractf.polaris.api.task.ChallengeDeleteResponse;
+import uk.co.ractf.polaris.api.task.ChallengeSubmitResponse;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.state.ClusterState;
 

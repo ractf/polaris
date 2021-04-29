@@ -4,7 +4,7 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
@@ -38,7 +38,7 @@ public class DeploymentScaleReconciliationServiceTest {
                 new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), new ArrayList<>(),
                 new ResourceQuota(512L, 0L, 1000L), "always", new ArrayList<>(),
                 new ArrayList<>(), new ArrayList<>(), 5, new HashSet<>(), new HashMap<>());
-        final Challenge challenge = new Challenge("test", Collections.singletonList(container));
+        final Challenge challenge = new Challenge("test", Collections.singletonList(container), replication, allocation);
         final Deployment deployment = new Deployment("test", "test", new StaticReplication("static", 15),
                 new Allocation("team", 500, 500));
         instance = new Instance("test", "test", "test", "test", new ArrayList<>(), new HashMap<>());

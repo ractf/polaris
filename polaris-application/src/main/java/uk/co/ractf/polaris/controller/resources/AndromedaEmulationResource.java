@@ -8,7 +8,7 @@ import uk.co.ractf.polaris.api.andromeda.AndromedaChallenge;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallengeSubmitResponse;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstanceRequest;
-import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
@@ -65,7 +65,7 @@ public class AndromedaEmulationResource {
                 new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(),
                 new ArrayList<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), 5, Collections.singleton(portMapping), new HashMap<>());
-        final Challenge polarisChallenge = new Challenge(challenge.getName(), Collections.singletonList(pod));
+        final Challenge polarisChallenge = new Challenge(challenge.getName(), Collections.singletonList(pod), replication, allocation);
         //configuration.setRegistryUsername(challenge.getRegistryAuth().getUsername());
         //configuration.setRegistryPassword(challenge.getRegistryAuth().getPassword());
         clusterState.setChallenge(polarisChallenge);
