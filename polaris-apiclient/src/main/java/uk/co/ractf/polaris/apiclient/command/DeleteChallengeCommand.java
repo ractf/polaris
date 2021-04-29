@@ -1,6 +1,6 @@
 package uk.co.ractf.polaris.apiclient.command;
 
-import uk.co.ractf.polaris.api.challenge.ChallengeDeleteResponse;
+import uk.co.ractf.polaris.api.task.ChallengeDeleteResponse;
 import uk.co.ractf.polaris.apiclient.AbstractCommand;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 

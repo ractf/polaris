@@ -1,7 +1,7 @@
 package uk.co.ractf.polaris.apiclient.command;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 import uk.co.ractf.polaris.apiclient.AbstractCommand;
 

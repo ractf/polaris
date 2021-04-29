@@ -1,7 +1,7 @@
 package uk.co.ractf.polaris.apiclient.command;
 
-import uk.co.ractf.polaris.api.challenge.Challenge;
-import uk.co.ractf.polaris.api.challenge.ChallengeSubmitResponse;
+import uk.co.ractf.polaris.api.task.Challenge;
+import uk.co.ractf.polaris.api.task.ChallengeSubmitResponse;
 import uk.co.ractf.polaris.apiclient.AbstractCommand;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 

@@ -9,7 +9,7 @@ import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.node.Node;

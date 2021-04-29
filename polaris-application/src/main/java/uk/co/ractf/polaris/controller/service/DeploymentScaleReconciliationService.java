@@ -7,7 +7,7 @@ import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
-import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;

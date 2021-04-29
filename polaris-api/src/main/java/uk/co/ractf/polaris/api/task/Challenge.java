@@ -1,9 +1,10 @@
-package uk.co.ractf.polaris.api.challenge;
+package uk.co.ractf.polaris.api.task;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
-import uk.co.ractf.polaris.api.common.JsonRepresentable;
+import uk.co.ractf.polaris.api.deployment.Allocation;
+import uk.co.ractf.polaris.api.deployment.Replication;
 import uk.co.ractf.polaris.api.pod.Pod;
 
 import java.util.List;
@@ -20,21 +21,31 @@ import java.util.Objects;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Challenge extends JsonRepresentable {
+public class Challenge extends ServiceTask {
 
     private final String id;
     private final List<Pod> pods;
+    private final Replication replication;
+    private final Allocation allocation;
 
     /**
      * Create a challenge
-     *
-     * @param id   the id of the challenge
+     *  @param id   the id of the challenge
      * @param pods the pods making up the challenge
+     * @param replication the replication detail
+     * @param allocation the instance allocation rules
      */
     @Contract(pure = true)
-    public Challenge(@JsonProperty("id") final String id, @JsonProperty("pods") final List<Pod> pods) {
+    public Challenge(
+            @JsonProperty("id") final String id,
+            @JsonProperty("pods") final List<Pod> pods,
+            @JsonProperty("replication") final Replication replication,
+            @JsonProperty("allocation") final Allocation allocation) {
+        super(id);
         this.id = id;
         this.pods = pods;
+        this.replication = replication;
+        this.allocation = allocation;
     }
 
     public String getId() {
@@ -43,6 +54,14 @@ public class Challenge extends JsonRepresentable {
 
     public List<Pod> getPods() {
         return pods;
+    }
+
+    public Replication getReplication() {
+        return replication;
+    }
+
+    public Allocation getAllocation() {
+        return allocation;
     }
 
     /**
