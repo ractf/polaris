@@ -24,7 +24,7 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run Gradle tests
-        run: ./gradlew test
+        run: ./gradlew codeCoverageReport
       - name: Upload to CodeCov
         uses: codecov/codecov-action@v1
         with:
