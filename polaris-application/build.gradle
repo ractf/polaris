@@ -19,7 +19,6 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 apply plugin: 'nebula.ospackage'
 apply plugin: 'com.palantir.git-version'
-apply plugin: 'jacoco'
 
 mainClassName = 'uk.co.ractf.polaris.Main'
 
