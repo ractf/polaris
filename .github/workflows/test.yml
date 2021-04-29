@@ -1,4 +1,4 @@
-name: Test Polaris API Client
+name: Test Polaris
 
 on: push
 
@@ -24,4 +24,10 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Run Gradle tests
-        run: ./gradlew polaris-apiclient:test
+        run: ./gradlew test
+      - name: Upload to CodeCov
+        uses: codecov/codecov-action@v1
+        with:
+          files: ./build/reports/jacoco/report.xml
+          fail_ci_if_error: true
+          verbose: true
