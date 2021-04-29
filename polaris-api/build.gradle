@@ -1,5 +1,3 @@
-apply plugin: 'jacoco'
-
 repositories {
     mavenCentral()
 }
