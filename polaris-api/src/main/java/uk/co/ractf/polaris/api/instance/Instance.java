@@ -3,7 +3,7 @@ package uk.co.ractf.polaris.api.instance;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
-import uk.co.ractf.polaris.api.challenge.Challenge;
+import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.random.RandomEnv;
 
