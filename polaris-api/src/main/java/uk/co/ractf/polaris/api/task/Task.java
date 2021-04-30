@@ -2,9 +2,15 @@ package uk.co.ractf.polaris.api.task;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Challenge.class, name = "challenge"),
+})
 public abstract class Task extends JsonRepresentable {
 
     private final TaskId id;
