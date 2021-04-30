@@ -7,16 +7,22 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Task extends JsonRepresentable {
 
-    private final String id;
+    private final TaskId id;
+    private final Integer version;
     private final TaskType taskType;
 
-    public Task(final String id, final TaskType taskType) {
+    public Task(final TaskId id, final Integer version, final TaskType taskType) {
         this.id = id;
+        this.version = version;
         this.taskType = taskType;
     }
 
-    public String getId() {
+    public TaskId getId() {
         return id;
+    }
+
+    public Integer getVersion() {
+        return version;
     }
 
     @JsonIgnore
