@@ -7,8 +7,11 @@ import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
+import uk.co.ractf.polaris.api.task.Task;
+import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.node.Node;
 
+import javax.management.monitor.StringMonitor;
 import java.util.List;
 import java.util.Map;
 
@@ -183,5 +186,13 @@ public interface ClusterState {
     List<String> getChallengeIds();
 
     Map<String, Instance> getInstances();
+
+    Map<TaskId, Task> getTasks();
+
+    Task getTask(final TaskId id);
+
+    void setTask(final Task task);
+
+    void deleteTask(final TaskId id);
 
 }
