@@ -18,6 +18,8 @@ import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
+import uk.co.ractf.polaris.api.task.Task;
+import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.util.ConsulPath;
 
 import java.util.*;
@@ -46,8 +48,8 @@ public class ConsulState implements ClusterState {
             if (challengeData.getValueAsString().isPresent()) {
                 try {
                     final Challenge challenge = Challenge.parse(challengeData.getValueAsString().get(), Challenge.class);
-                    if (!challenge.getId().isBlank()) {
-                        challengeMap.put(challenge.getId(), challenge);
+                    if (!challenge.getId().toString().isBlank()) {
+                        challengeMap.put(challenge.getId().toString(), challenge);
                     }
                 } catch (final JsonProcessingException exception) {
                     log.error("Error deserializing challenge " + challengeData.getKey(), exception);
@@ -91,10 +93,10 @@ public class ConsulState implements ClusterState {
 
     @Override
     public void setChallenge(final Challenge challenge) {
-        Preconditions.checkArgument(!challenge.getId().isBlank(), "Challenge id cannot be blank.");
+        Preconditions.checkArgument(!challenge.getId().toString().isBlank(), "Challenge id cannot be blank.");
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
-                        .key(ConsulPath.challenge(challenge.getId()))
+                        .key(ConsulPath.challenge(challenge.getId().toString()))
                         .value(challenge.toJsonString())
                         .build());
     }
@@ -321,5 +323,50 @@ public class ConsulState implements ClusterState {
             }
         }
         return instanceMap;
+    }
+
+    @Override
+    public Map<TaskId, Task> getTasks() {
+        final Map<TaskId, Task> taskMap = new HashMap<>();
+        for (final Value taskData : consul.keyValueClient().getValues(ConsulPath.tasks())) {
+            if (taskData.getValueAsString().isPresent()) {
+                try {
+                    final Task task = Task.parse(taskData.getValueAsString().get(), Task.class);
+                    taskMap.put(task.getId(), task);
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing task " + taskData.getKey(), exception);
+                }
+            }
+        }
+        return taskMap;
+    }
+
+    @Override
+    public Task getTask(final TaskId id) {
+        final Optional<String> taskData = consul.keyValueClient().getValueAsString(ConsulPath.task(id));
+        if (taskData.isPresent()) {
+            try {
+                return Task.parse(taskData.get(), Task.class);
+            } catch (final JsonProcessingException exception) {
+                log.error("Error deserializing task " + id, exception);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setTask(final Task task) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.SET)
+                        .key(ConsulPath.task(task.getId()))
+                        .build());
+    }
+
+    @Override
+    public void deleteTask(final TaskId id) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.DELETE)
+                        .key(ConsulPath.task(id))
+                        .build());
     }
 }

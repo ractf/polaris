@@ -23,7 +23,7 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Challenge extends ServiceTask {
 
-    private final String id;
+    private final TaskId id;
     private final List<Pod> pods;
     private final Replication replication;
     private final Allocation allocation;
@@ -37,19 +37,16 @@ public class Challenge extends ServiceTask {
      */
     @Contract(pure = true)
     public Challenge(
-            @JsonProperty("id") final String id,
+            @JsonProperty("id") final TaskId id,
+            @JsonProperty("version") final Integer version,
             @JsonProperty("pods") final List<Pod> pods,
             @JsonProperty("replication") final Replication replication,
             @JsonProperty("allocation") final Allocation allocation) {
-        super(id);
+        super(id, version);
         this.id = id;
         this.pods = pods;
         this.replication = replication;
         this.allocation = allocation;
-    }
-
-    public String getId() {
-        return id;
     }
 
     public List<Pod> getPods() {
