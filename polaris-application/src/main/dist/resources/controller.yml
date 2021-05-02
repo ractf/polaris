@@ -8,9 +8,11 @@ maxPort: 65535
 singleUserUsername: polaris
 singleUserPassword: polaris
 singleUserRoles:
-  - CHALLENGE_GET
-  - CHALLENGE_SUBMIT
-  - CHALLENGE_DELETE
+  - TASK_GET
+  - TASK_ADD
+  - TASK_DELETE
+  - NAMESPACE_polaris
+  - ALL_NAMESPACES
   - DEPLOYMENT_GET
   - DEPLOYMENT_CREATE
   - DEPLOYMENT_UPDATE
