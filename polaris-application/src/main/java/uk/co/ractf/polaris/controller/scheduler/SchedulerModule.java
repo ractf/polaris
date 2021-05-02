@@ -1,14 +1,17 @@
 package uk.co.ractf.polaris.controller.scheduler;
 
-import com.google.inject.multibindings.Multibinder;
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
-import uk.co.ractf.polaris.node.NodeConfiguration;
+import uk.co.ractf.polaris.controller.ControllerConfiguration;
+import uk.co.ractf.polaris.controller.scheduler.clusterpredicate.ClusterPredicatePluginModule;
+import uk.co.ractf.polaris.controller.scheduler.filter.FilterPluginModule;
+import uk.co.ractf.polaris.controller.scheduler.score.ScorePluginModule;
 
-public class SchedulerModule extends DropwizardAwareModule<NodeConfiguration> {
+public class SchedulerModule extends DropwizardAwareModule<ControllerConfiguration> {
 
     @Override
     protected void configure() {
-        final var schedulerBinder = Multibinder.newSetBinder(binder(), OldScheduler.class);
-        schedulerBinder.addBinding().to(RoundRobinScheduler.class);
+        install(new ClusterPredicatePluginModule());
+        install(new FilterPluginModule());
+        install(new ScorePluginModule());
     }
 }
