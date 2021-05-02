@@ -10,8 +10,8 @@ public class ControllerServiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        final Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class, ControllerServices.class);
-        serviceBinder.addBinding().to(DeploymentScaleReconciliationService.class);
+        final var serviceBinder = Multibinder.newSetBinder(binder(), Service.class, ControllerServices.class);
+        serviceBinder.addBinding().to(TaskScaleReconciliationService.class);
     }
 
 }

@@ -52,17 +52,17 @@ public class InstanceResource {
     public Map<String, Instance> getInstances(
             @QueryParam("hostfilter") @DefaultValue("") final String hostFilter,
             @QueryParam("challengefilter") @DefaultValue("") final String challengeFilter) {
-        final Map<String, NodeInfo> hosts = clusterState.getNodes();
+        final var hosts = clusterState.getNodes();
         final Map<String, Instance> instances = new HashMap<>();
 
-        final Pattern challengePattern = Pattern.compile(challengeFilter);
-        final Pattern hostPattern = Pattern.compile(hostFilter);
+        final var challengePattern = Pattern.compile(challengeFilter);
+        final var hostPattern = Pattern.compile(hostFilter);
 
-        for (final Map.Entry<String, NodeInfo> hostEntry : hosts.entrySet()) {
+        for (final var hostEntry : hosts.entrySet()) {
             if (hostPattern.matcher(hostEntry.getKey()).find()) {
-                final Map<String, Instance> hostInstances = clusterState.getInstancesOnNode(hostEntry.getKey());
-                for (final Map.Entry<String, Instance> entry : hostInstances.entrySet()) {
-                    if (challengePattern.matcher(entry.getValue().getChallengeId()).find()) {
+                final var hostInstances = clusterState.getInstancesOnNode(hostEntry.getKey());
+                for (final var entry : hostInstances.entrySet()) {
+                    if (challengePattern.matcher(entry.getValue().getTaskId().toString()).find()) {
                         instances.put(entry.getKey(), entry.getValue());
                     }
                 }

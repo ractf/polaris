@@ -10,7 +10,6 @@ import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstanceRequest;
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Allocation;
-import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
@@ -18,6 +17,7 @@ import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
+import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.controller.ControllerConfiguration;
 import uk.co.ractf.polaris.state.ClusterState;
@@ -39,13 +39,11 @@ public class AndromedaEmulationResource {
 
     private final Controller controller;
     private final ClusterState clusterState;
-    private final ControllerConfiguration configuration;
 
     @Inject
-    public AndromedaEmulationResource(final Controller controller, final ClusterState clusterState, final ControllerConfiguration configuration) {
+    public AndromedaEmulationResource(final Controller controller, final ClusterState clusterState) {
         this.controller = controller;
         this.clusterState = clusterState;
-        this.configuration = configuration;
     }
 
     @POST
@@ -56,23 +54,19 @@ public class AndromedaEmulationResource {
     @Operation(summary = "Submit Andromeda Challenge", tags = {"Andromeda"},
             description = "Submits a challenges in a format compatible with Andromeda, to be converted to a Polaris challenge and deployment")
     public Response submitChallenge(final AndromedaChallenge challenge) {
-        final ResourceQuota resourceQuota = new ResourceQuota(
-                (long) challenge.getResources().getMemory(),
-                0L,
+        final var resourceQuota = new ResourceQuota((long) challenge.getResources().getMemory(), 0L,
                 (long) (Double.parseDouble(challenge.getResources().getCpus()) * 1_000_000_000));
-        final PortMapping portMapping = new PortMapping(challenge.getPort(), "tcp", true);
-        final Pod pod = new Container("container", challenge.getName(), challenge.getImage(), "",
+        final var portMapping = new PortMapping(challenge.getPort(), "tcp", true);
+        final var pod = new Container("container", challenge.getName(), challenge.getImage(), "",
                 new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(),
                 new ArrayList<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
-                new ArrayList<>(), 5, Collections.singleton(portMapping), new HashMap<>());
-        final Challenge polarisChallenge = new Challenge(challenge.getName(), Collections.singletonList(pod), replication, allocation);
-        //configuration.setRegistryUsername(challenge.getRegistryAuth().getUsername());
-        //configuration.setRegistryPassword(challenge.getRegistryAuth().getPassword());
-        clusterState.setChallenge(polarisChallenge);
-        final Deployment deployment = new Deployment(challenge.getName(), challenge.getName(),
-                new StaticReplication("static", challenge.getReplicas()),
+                new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>());
+
+        final var polarisChallenge = new Challenge(new TaskId(challenge.getName()), 0,
+                Collections.singletonList(pod), new StaticReplication("static", challenge.getReplicas()),
                 new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE));
-        clusterState.setDeployment(deployment);
+
+        clusterState.setTask(polarisChallenge);
         return Response.status(200).entity(new AndromedaChallengeSubmitResponse(challenge.getName())).build();
     }
 
@@ -83,11 +77,11 @@ public class AndromedaEmulationResource {
     @Operation(summary = "Request Instance Allocation", tags = {"Andromeda"},
             description = "Requests an instance allocation from polaris in andromda's format")
     public Response getInstance(final AndromedaInstanceRequest request) {
-        if (clusterState.getChallenge(request.getJob()) == null) {
+        if (clusterState.getTask(new TaskId(request.getJob())) == null) {
             return Response.status(404).build();
         }
         final Instance instance = controller.getInstanceAllocator().allocate(
-                new InstanceRequest(request.getJob(), request.getUser(), ""));
+                new InstanceRequest(new TaskId(request.getJob()), request.getUser(), ""));
         return Response.status(200).entity(
                 new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
                         Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]))).build();
@@ -101,11 +95,11 @@ public class AndromedaEmulationResource {
     @Operation(summary = "Request Instance Reset", tags = {"Andromeda"},
             description = "Reset an instance allocation from polaris in andromda's format")
     public AndromedaInstance resetInstance(final AndromedaInstanceRequest request) {
-        if (clusterState.getChallenge(request.getJob()) == null) {
+        if (clusterState.getTask(new TaskId(request.getJob())) == null) {
             Response.status(404).build();
         }
         final Instance instance = controller.getInstanceAllocator().requestNewAllocation(
-                new InstanceRequest(request.getJob(), request.getUser(), ""));
+                new InstanceRequest(new TaskId(request.getJob()), request.getUser(), ""));
         return new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
                 Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]));
     }

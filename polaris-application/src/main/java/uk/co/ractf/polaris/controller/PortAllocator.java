@@ -33,15 +33,15 @@ public class PortAllocator {
         return port;
     }
 
-    public Map<PortMapping, PortBinding> allocate(final Set<PortMapping> portMappings) {
+    public Map<PortMapping, PortBinding> allocate(final List<PortMapping> portMappings) {
         final Map<PortMapping, PortBinding> portBindings = new HashMap<>();
-        int lastTcpPort = generatePort(min, max, portAllocations.getTcp());
-        int lastUdpPort = portAllocations.getUdp().contains(lastTcpPort) ? generatePort(min, max, portAllocations.getUdp()) : lastTcpPort;
+        var lastTcpPort = generatePort(min, max, portAllocations.getTcp());
+        var lastUdpPort = portAllocations.getUdp().contains(lastTcpPort) ? generatePort(min, max, portAllocations.getUdp()) : lastTcpPort;
 
-        for (final PortMapping portMapping : portMappings) {
-            final boolean tcp = "tcp".equals(portMapping.getProtocol());
-            final int port = tcp ? lastTcpPort : lastUdpPort;
-            final InternetProtocol protocol = tcp ? InternetProtocol.TCP : InternetProtocol.UDP;
+        for (final var portMapping : portMappings) {
+            final var tcp = "tcp".equals(portMapping.getProtocol());
+            final var port = tcp ? lastTcpPort : lastUdpPort;
+            final var protocol = tcp ? InternetProtocol.TCP : InternetProtocol.UDP;
             portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", port + "/" + protocol.toString()),
                     new ExposedPort(portMapping.getPort(), protocol)));
 

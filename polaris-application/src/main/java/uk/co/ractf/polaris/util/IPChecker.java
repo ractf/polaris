@@ -28,11 +28,11 @@ public class IPChecker {
     }
 
     public static String getExternalIP() {
-        for (final String ipServer : IP_SERVERS) {
+        for (final var ipServer : IP_SERVERS) {
             try {
-                final URL url = new URL(ipServer);
-                try (final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), Charsets.UTF_8))) {
-                    final String line = bufferedReader.readLine();
+                final var url = new URL(ipServer);
+                try (final var bufferedReader = new BufferedReader(new InputStreamReader(url.openStream(), Charsets.UTF_8))) {
+                    final var line = bufferedReader.readLine();
                     if (InetAddresses.isInetAddress(line)) {
                         return line;
                     }

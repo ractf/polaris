@@ -1,6 +1,5 @@
 package uk.co.ractf.polaris.apiclient.command;
 
-import uk.co.ractf.polaris.api.deployment.DeploymentDeleteResponse;
 import uk.co.ractf.polaris.apiclient.AbstractCommand;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 

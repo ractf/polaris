@@ -17,7 +17,7 @@ public class CpuTotalGauge implements Gauge<Double> {
     @Override
     public Double getValue() {
         double total = 0;
-        for (final Map.Entry<String, NodeInfo> entry : clusterState.getNodes().entrySet()) {
+        for (final var entry : clusterState.getNodes().entrySet()) {
             total += entry.getValue().getProcessors();
         }
 

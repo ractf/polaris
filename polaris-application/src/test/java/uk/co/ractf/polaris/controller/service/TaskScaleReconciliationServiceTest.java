@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Allocation;
-import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
@@ -23,7 +22,7 @@ import java.util.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class DeploymentScaleReconciliationServiceTest {
+public class TaskScaleReconciliationServiceTest {
 
     private final Scheduler scheduler = mock(Scheduler.class);
     private final Controller controller = mock(Controller.class);
@@ -41,7 +40,7 @@ public class DeploymentScaleReconciliationServiceTest {
         final Challenge challenge = new Challenge("test", Collections.singletonList(container), replication, allocation);
         final Deployment deployment = new Deployment("test", "test", new StaticReplication("static", 15),
                 new Allocation("team", 500, 500));
-        instance = new Instance("test", "test", "test", "test", new ArrayList<>(), new HashMap<>());
+        instance = new Instance("test", "test", "test", taskId, "test", new ArrayList<>(), new HashMap<>());
 
         config.setMinPort(0);
         config.setMaxPort(65535);
@@ -51,7 +50,7 @@ public class DeploymentScaleReconciliationServiceTest {
         when(clusterState.getChallengeFromDeployment(deployment.getId())).thenReturn(challenge);
         when(clusterState.lockDeployment(any())).thenReturn(true);
         when(clusterState.unlockDeployment(any())).thenReturn(true);
-        when(scheduler.scheduleChallenge(any(Challenge.class), anyCollection())).thenReturn(node);
+        when(scheduler.scheduleTask(any(Challenge.class), anyCollection())).thenReturn(node);
         final PortAllocations portAllocations = PortAllocations.empty();
         when(node.getPortAllocations()).thenReturn(portAllocations);
     }
@@ -59,7 +58,7 @@ public class DeploymentScaleReconciliationServiceTest {
     @Test
     public void testScaleUp() {
         when(clusterState.getInstancesForDeployment(any())).thenReturn(Collections.emptyList());
-        final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(clusterState, scheduler, config);
+        final TaskScaleReconciliationService service = new TaskScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
         verify(clusterState, times(15)).setInstance(any(Instance.class));
     }
@@ -67,7 +66,7 @@ public class DeploymentScaleReconciliationServiceTest {
     @Test
     public void testScaleDown() {
         when(clusterState.getInstancesForDeployment(any())).thenReturn(Collections.nCopies(20, instance));
-        final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(clusterState, scheduler, config);
+        final TaskScaleReconciliationService service = new TaskScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
         verify(clusterState, times(5)).deleteInstance(any());
     }
@@ -76,7 +75,7 @@ public class DeploymentScaleReconciliationServiceTest {
     public void testFailedToObtainLock() {
         when(clusterState.lockDeployment(any())).thenReturn(false);
         when(clusterState.unlockDeployment(any())).thenReturn(false);
-        final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(clusterState, scheduler, config);
+        final TaskScaleReconciliationService service = new TaskScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
         verifyNoInteractions(node);
     }
@@ -84,7 +83,7 @@ public class DeploymentScaleReconciliationServiceTest {
     @Test
     public void testExceptionThrown() {
         when(clusterState.lockDeployment(any())).thenThrow(new RuntimeException());
-        final DeploymentScaleReconciliationService service = new DeploymentScaleReconciliationService(clusterState, scheduler, config);
+        final TaskScaleReconciliationService service = new TaskScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
         verifyNoInteractions(node);
     }

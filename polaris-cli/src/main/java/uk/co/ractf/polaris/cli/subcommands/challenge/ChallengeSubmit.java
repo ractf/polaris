@@ -2,7 +2,6 @@ package uk.co.ractf.polaris.cli.subcommands.challenge;
 
 import picocli.CommandLine;
 import uk.co.ractf.polaris.api.task.Challenge;
-import uk.co.ractf.polaris.api.task.ChallengeSubmitResponse;
 import uk.co.ractf.polaris.apiclient.APIClient;
 import uk.co.ractf.polaris.cli.Subcommand;
 

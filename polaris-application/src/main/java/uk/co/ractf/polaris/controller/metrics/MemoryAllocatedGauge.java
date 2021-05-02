@@ -6,6 +6,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.ResourceLimited;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
+import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.HashMap;
@@ -22,21 +23,21 @@ public class MemoryAllocatedGauge implements Gauge<Long> {
     @Override
     public Long getValue() {
         long totalAllocated = 0;
-        final Map<String, Instance> instanceMap = clusterState.getInstances();
-        final Map<String, Integer> instanceCounts = new HashMap<>();
-        for (final Map.Entry<String, Instance> entry : instanceMap.entrySet()) {
-            instanceCounts.put(entry.getValue().getChallengeId(), instanceCounts.getOrDefault(entry.getValue().getChallengeId(), 0) + 1);
+        final var instanceMap = clusterState.getInstances();
+        final var instanceCounts = new HashMap<TaskId, Integer>();
+        for (final var entry : instanceMap.entrySet()) {
+            instanceCounts.put(entry.getValue().getTaskId(), instanceCounts.getOrDefault(entry.getValue().getTaskId(), 0) + 1);
         }
 
-        for (final Map.Entry<String, Challenge> challengeEntry : clusterState.getChallenges().entrySet()) {
+        for (final var challengeEntry : clusterState.getTasks().entrySet()) {
             long total = 0;
-            for (final Pod pod : challengeEntry.getValue().getPods()) {
+            for (final var pod : challengeEntry.getValue().getPods()) {
                 if (pod instanceof ResourceLimited) {
-                    final ResourceQuota resourceQuota = ((ResourceLimited) pod).getResourceQuota();
+                    final var resourceQuota = ((ResourceLimited) pod).getResourceQuota();
                     if (resourceQuota == null) {
                         continue;
                     }
-                    final long mem = resourceQuota.getMemory() == null ? 0 : resourceQuota.getMemory();
+                    final var mem = resourceQuota.getMemory() == null ? 0 : resourceQuota.getMemory();
                     total += mem;
                 }
             }

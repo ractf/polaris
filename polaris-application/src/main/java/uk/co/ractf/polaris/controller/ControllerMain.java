@@ -69,14 +69,14 @@ public class ControllerMain extends Application<ControllerConfiguration> {
         environment.metrics().registerAll(new GarbageCollectorMetricSet());
         environment.metrics().registerAll(new MemoryUsageGaugeSet());
 
-        final OpenAPI openAPI = new OpenAPI();
-        final Info info = new Info()
+        final var openAPI = new OpenAPI();
+        final var info = new Info()
                 .title("RACTF Polaris")
                 .description("RACTF Polaris Controller API")
                 .contact(new Contact().email("admins@ractf.co.uk"));
 
         openAPI.info(info);
-        final SwaggerConfiguration openAPIConfig = new SwaggerConfiguration()
+        final var openAPIConfig = new SwaggerConfiguration()
                 .openAPI(openAPI)
                 .prettyPrint(true)
                 .resourcePackages(Stream.of("uk.co.ractf.polaris.controller.resources")

@@ -77,4 +77,8 @@ public class ConsulPath {
         return path(TASKS, id.toString());
     }
 
+    public static String taskLock(final TaskId id) {
+        return path(TASKS, id.toString(), "lock");
+    }
+
 }

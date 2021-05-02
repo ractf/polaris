@@ -1,5 +1,7 @@
 package uk.co.ractf.polaris.controller.instanceallocation;
 
+import uk.co.ractf.polaris.api.task.TaskId;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
