@@ -342,6 +342,24 @@ public class ConsulState implements ClusterState {
     }
 
     @Override
+    public Map<TaskId, Task> getTasks(final String namespace) {
+        final Map<TaskId, Task> taskMap = new HashMap<>();
+        for (final Value taskData : consul.keyValueClient().getValues(ConsulPath.tasks())) {
+            if (taskData.getValueAsString().isPresent()) {
+                try {
+                    final Task task = Task.parse(taskData.getValueAsString().get(), Task.class);
+                    if (task.getId().getNamespace().equals(namespace)) {
+                        taskMap.put(task.getId(), task);
+                    }
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing task " + taskData.getKey(), exception);
+                }
+            }
+        }
+        return taskMap;
+    }
+
+    @Override
     public Task getTask(final TaskId id) {
         final Optional<String> taskData = consul.keyValueClient().getValueAsString(ConsulPath.task(id));
         if (taskData.isPresent()) {

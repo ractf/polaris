@@ -189,6 +189,8 @@ public interface ClusterState {
 
     Map<TaskId, Task> getTasks();
 
+    Map<TaskId, Task> getTasks(final String namespace);
+
     Task getTask(final TaskId id);
 
     void setTask(final Task task);
