@@ -1,13 +1,8 @@
 package uk.co.ractf.polaris.node;
 
 import com.github.dockerjava.api.model.AuthConfig;
-import com.github.dockerjava.api.model.PortBinding;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
-import uk.co.ractf.polaris.api.pod.PortMapping;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * The interface used for interacting with hosts

@@ -7,7 +7,8 @@ import com.google.inject.multibindings.Multibinder;
 public class RunnerModule extends AbstractModule {
     @Override
     protected void configure() {
-        final Multibinder<Runner<?>> runnerBinder = Multibinder.newSetBinder(binder(), new TypeLiteral<>() {});
+        final Multibinder<Runner<?>> runnerBinder = Multibinder.newSetBinder(binder(), new TypeLiteral<>() {
+        });
         runnerBinder.addBinding().to(DockerRunner.class);
     }
 }

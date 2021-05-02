@@ -10,7 +10,6 @@ import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.node.PortAllocations;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.node.NodeConfiguration;
-import uk.co.ractf.polaris.state.ClusterState;
 import uk.co.ractf.polaris.util.IPChecker;
 
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.net.InetAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 

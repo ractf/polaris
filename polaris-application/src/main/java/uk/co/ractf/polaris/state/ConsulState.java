@@ -5,7 +5,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.kv.Operation;
-import com.orbitz.consul.model.kv.Value;
 import com.orbitz.consul.model.kv.Verb;
 import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.model.session.Session;
@@ -19,7 +18,10 @@ import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.util.ConsulPath;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Singleton
