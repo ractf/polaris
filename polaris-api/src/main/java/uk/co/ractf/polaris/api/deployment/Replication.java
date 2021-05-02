@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
- * Represents the strategy that a {@link Deployment} should be replicated with.
+ * Represents the strategy that a {@link Task} should be replicated with.
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", include = JsonTypeInfo.As.EXISTING_PROPERTY, visible = true)
 @JsonSubTypes({

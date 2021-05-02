@@ -30,14 +30,14 @@ public class ConsulController implements Controller, Managed {
 
     @Override
     public void start() {
-        for (final Service service : services) {
+        for (final var service : services) {
             service.startAsync();
         }
     }
 
     @Override
     public void stop() {
-        for (final Service service : services) {
+        for (final var service : services) {
             service.stopAsync();
         }
     }

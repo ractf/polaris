@@ -3,8 +3,6 @@ package uk.co.ractf.polaris.api;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.task.Challenge;
-import uk.co.ractf.polaris.api.task.ChallengeDeleteResponse;
-import uk.co.ractf.polaris.api.task.ChallengeSubmitResponse;
 import uk.co.ractf.polaris.api.pod.Pod;
 
 import java.util.Collections;

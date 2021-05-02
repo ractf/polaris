@@ -21,7 +21,7 @@ public class GarbageCollectionService extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() throws Exception {
-        for (final Runner<?> runner : runners) {
+        for (final var runner : runners) {
             runner.garbageCollect();
         }
     }

@@ -3,12 +3,16 @@ package uk.co.ractf.polaris.controller.instanceallocation;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import org.jetbrains.annotations.Nullable;
 import uk.co.ractf.polaris.api.deployment.Allocation;
-import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
+import uk.co.ractf.polaris.api.task.Challenge;
+import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.state.ClusterState;
 
+import javax.ws.rs.WebApplicationException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EphemeralInstanceAllocator implements InstanceAllocator {
 
     private final ClusterState clusterState;
-    private final Map<String, StickyInstances> stickyInstances = new ConcurrentHashMap<>();
+    private final Map<TaskId, StickyInstances> stickyInstances = new ConcurrentHashMap<>();
     private final Multimap<String, String> instanceUsers = Multimaps.synchronizedSetMultimap(HashMultimap.create());
     private final Multimap<String, String> instanceTeams = Multimaps.synchronizedSetMultimap(HashMultimap.create());
     private final Multimap<String, String> teamAvoids = Multimaps.synchronizedSetMultimap(HashMultimap.create());
@@ -29,87 +33,65 @@ public class EphemeralInstanceAllocator implements InstanceAllocator {
 
     @Override
     public Instance allocate(final InstanceRequest request) {
-        final StickyInstances sticky = stickyInstances.computeIfAbsent(request.getChallenge(), x -> new EphemeralStickyInstances());
-        if (sticky.getUser(request.getUser()) != null) {
-            final Instance instance = clusterState.getInstance(sticky.getUser(request.getUser()));
-            if (instance != null) {
-                return instance;
-            }
-        }
-        if (sticky.getTeam(request.getTeam()) != null) {
-            final Instance instance = clusterState.getInstance(sticky.getTeam(request.getUser()));
-            if (instance != null) {
-                return instance;
-            }
+        final var sticky = stickyInstances.computeIfAbsent(request.getTaskId(), x -> new EphemeralStickyInstances());
+        final var stickyInstance = getStickyInstance(request, sticky);
+        if (stickyInstance != null) {
+            return stickyInstance;
         }
 
-        final List<Deployment> deployments = clusterState.getDeploymentsOfChallenge(request.getChallenge());
-        double bestInstanceScore = -1;
-        Instance bestInstance = null;
-        String bestInstanceSticky = null;
-        for (final Deployment deployment : deployments) {
-            final Allocation allocation = deployment.getAllocation();
-            for (final Instance instance : clusterState.getInstancesForDeployment(deployment.getId())) {
-                if (instanceUsers.get(instance.getId()).size() >= allocation.getUserLimit() ||
-                        instanceTeams.get(instance.getId()).size() >= allocation.getTeamLimit() ||
-                        userAvoids.get(request.getUser()).contains(instance.getId()) ||
-                        teamAvoids.get(request.getTeam()).contains(instance.getId())) {
-                    continue;
-                }
-                final double userScore = (double) instanceUsers.get(instance.getId()).size() / allocation.getUserLimit();
-                final double teamScore = (double) instanceTeams.get(instance.getId()).size() / allocation.getTeamLimit();
-                final double instanceScore = userScore * teamScore;
-                if (instanceScore > bestInstanceScore) {
-                    bestInstanceScore = instanceScore;
-                    bestInstance = instance;
-                    bestInstanceSticky = allocation.getSticky();
-                }
+        final var challenge = (Challenge) clusterState.getTask(request.getTaskId());
+        var instances = new ArrayList<>(clusterState.getInstancesOfTask(request.getTaskId()).values());
+        final var possibleInstances = new ArrayList<Instance>();
+
+        //TODO: reimplement allocation logic
+        for (final var instance : instances) {
+            if (userAvoids.get(request.getUser()).contains(instance.getId()) ||
+                    teamAvoids.get(request.getTeam()).contains(instance.getId())) {
+                continue;
             }
+            possibleInstances.add(instance);
+        }
+        if (!possibleInstances.isEmpty()) {
+            instances = possibleInstances;
+        } else {
+            userAvoids.removeAll(request.getUser());
+            teamAvoids.removeAll(request.getTeam());
         }
 
-        if (bestInstance == null) {
-            int avoided = 0;
-            int instanceCount = 0;
-            for (final Deployment deployment : deployments) {
-                for (final Instance instance : clusterState.getInstancesForDeployment(deployment.getId())) {
-                    if (userAvoids.get(request.getUser()).contains(instance.getId()) ||
-                            teamAvoids.get(request.getTeam()).contains(instance.getId())) {
-                        avoided++;
-                    }
-                    instanceCount++;
-                }
-            }
-            if (avoided > instanceCount * 0.5) {
-                userAvoids.removeAll(request.getUser());
-                teamAvoids.removeAll(request.getTeam());
-            }
-            //TODO: notify admins
-            Collections.shuffle(deployments);
-            final List<Instance> instances = clusterState.getInstancesForDeployment(deployments.get(0).getId());
-            Collections.shuffle(instances);
-            return instances.get(0);
+        Collections.shuffle(instances);
+        final var instance = instances.get(0);
+
+        if ("user".equals(challenge.getAllocation().getSticky())) {
+            stickyInstances.get(request.getTaskId()).setUser(instance.getId(), request.getUser());
+        } else if ("team".equals(challenge.getAllocation().getSticky())) {
+            stickyInstances.get(request.getTaskId()).setTeam(instance.getId(), request.getTeam());
         }
 
-        if ("user".equals(bestInstanceSticky)) {
-            stickyInstances.get(request.getChallenge()).setUser(bestInstance.getId(), request.getUser());
-        } else if ("team".equals(bestInstanceSticky)) {
-            stickyInstances.get(request.getChallenge()).setTeam(bestInstance.getId(), request.getTeam());
-        }
-
-        return bestInstance;
+        return instance;
     }
 
     @Override
     public Instance requestNewAllocation(final InstanceRequest request) {
-        if (stickyInstances.get(request.getChallenge()).getTeam(request.getTeam()) != null) {
-            teamAvoids.put(request.getTeam(), stickyInstances.get(request.getChallenge()).getTeam(request.getTeam()));
-            stickyInstances.get(request.getChallenge()).clearTeam(request.getTeam());
+        if (stickyInstances.get(request.getTaskId()).getTeam(request.getTeam()) != null) {
+            teamAvoids.put(request.getTeam(), stickyInstances.get(request.getTaskId()).getTeam(request.getTeam()));
+            stickyInstances.get(request.getTaskId()).clearTeam(request.getTeam());
         }
-        if (stickyInstances.get(request.getChallenge()).getUser(request.getUser()) != null) {
-            userAvoids.put(request.getUser(), stickyInstances.get(request.getChallenge()).getUser(request.getUser()));
-            stickyInstances.get(request.getChallenge()).clearUser(request.getUser());
+        if (stickyInstances.get(request.getTaskId()).getUser(request.getUser()) != null) {
+            userAvoids.put(request.getUser(), stickyInstances.get(request.getTaskId()).getUser(request.getUser()));
+            stickyInstances.get(request.getTaskId()).clearUser(request.getUser());
         }
         return allocate(request);
+    }
+
+    @Nullable
+    private Instance getStickyInstance(final InstanceRequest request, final StickyInstances sticky) {
+        if (sticky.getUser(request.getUser()) != null && clusterState.instanceExists(sticky.getUser(request.getUser()))) {
+            return clusterState.getInstance(sticky.getUser(request.getUser()));
+        }
+        if (sticky.getTeam(request.getTeam()) != null && clusterState.instanceExists(sticky.getTeam(request.getUser()))) {
+            return clusterState.getInstance(sticky.getTeam(request.getUser()));
+        }
+        return null;
     }
 
 }

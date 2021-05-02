@@ -17,7 +17,7 @@ public class MemoryTotalGauge implements Gauge<Long> {
     @Override
     public Long getValue() {
         long total = 0;
-        for (final Map.Entry<String, NodeInfo> entry : clusterState.getNodes().entrySet()) {
+        for (final var entry : clusterState.getNodes().entrySet()) {
             total += entry.getValue().getTotalMemory();
         }
 

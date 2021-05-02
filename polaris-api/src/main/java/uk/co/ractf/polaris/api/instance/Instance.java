@@ -3,11 +3,14 @@ package uk.co.ractf.polaris.api.instance;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
-import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.random.RandomEnv;
+import uk.co.ractf.polaris.api.task.Challenge;
+import uk.co.ractf.polaris.api.task.TaskId;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Represents an instance of a {@link Challenge} currently scheduled on Polaris
@@ -25,8 +28,7 @@ import java.util.*;
 public class Instance extends JsonRepresentable {
 
     private final String id;
-    private final String deploymentId;
-    private final String challengeId;
+    private final TaskId taskId;
     private final String hostId;
     private final List<InstancePortBinding> portBindings;
     private final Map<String, String> randomEnv;
@@ -34,21 +36,18 @@ public class Instance extends JsonRepresentable {
     /**
      * The
      *
-     * @param id           the id of the instance
-     * @param deploymentId the id of the deployment it belongs to
-     * @param challengeId  the id of the challenge it belongs to
-     * @param hostId       the id of the host its scheduled on
+     * @param id     the id of the instance
+     * @param taskId the id of the task
+     * @param hostId the id of the host its scheduled on
      */
     @Contract(pure = true)
     public Instance(@JsonProperty("id") final String id,
-                    @JsonProperty("deployment") final String deploymentId,
-                    @JsonProperty("challenge") final String challengeId,
+                    @JsonProperty("taskId") final TaskId taskId,
                     @JsonProperty("host") final String hostId,
                     @JsonProperty("ports") final List<InstancePortBinding> portBindings,
                     @JsonProperty("randomEnv") final Map<String, String> randomEnv) {
         this.id = id;
-        this.deploymentId = deploymentId;
-        this.challengeId = challengeId;
+        this.taskId = taskId;
         this.hostId = hostId;
         this.portBindings = portBindings;
         this.randomEnv = randomEnv;
@@ -59,14 +58,9 @@ public class Instance extends JsonRepresentable {
         return id;
     }
 
-    @JsonProperty("deployment")
-    public String getDeploymentId() {
-        return deploymentId;
-    }
-
-    @JsonProperty("challenge")
-    public String getChallengeId() {
-        return challengeId;
+    @JsonProperty("taskId")
+    public TaskId getTaskId() {
+        return taskId;
     }
 
     @JsonProperty("host")
@@ -100,13 +94,15 @@ public class Instance extends JsonRepresentable {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Instance)) return false;
         final Instance instance = (Instance) o;
-        return Objects.equals(id, instance.id) && Objects.equals(deploymentId, instance.deploymentId) && Objects.equals(challengeId, instance.challengeId) && Objects.equals(hostId, instance.hostId) && Objects.equals(portBindings, instance.portBindings) && Objects.equals(randomEnv, instance.randomEnv);
+        return Objects.equals(id, instance.id) && Objects.equals(taskId, instance.taskId) &&
+                Objects.equals(hostId, instance.hostId) && Objects.equals(portBindings, instance.portBindings) &&
+                Objects.equals(randomEnv, instance.randomEnv);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, deploymentId, challengeId, hostId, portBindings, randomEnv);
+        return Objects.hash(id, taskId, hostId, portBindings, randomEnv);
     }
 }

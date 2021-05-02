@@ -24,8 +24,6 @@ import java.util.Objects;
 public class Challenge extends ServiceTask {
 
     private final TaskId id;
-    private final List<Pod> pods;
-    private final Replication replication;
     private final Allocation allocation;
 
     /**
@@ -42,52 +40,25 @@ public class Challenge extends ServiceTask {
             @JsonProperty("pods") final List<Pod> pods,
             @JsonProperty("replication") final Replication replication,
             @JsonProperty("allocation") final Allocation allocation) {
-        super(id, version);
+        super(id, version, replication, pods);
         this.id = id;
-        this.pods = pods;
-        this.replication = replication;
         this.allocation = allocation;
-    }
-
-    public List<Pod> getPods() {
-        return pods;
-    }
-
-    public Replication getReplication() {
-        return replication;
     }
 
     public Allocation getAllocation() {
         return allocation;
     }
 
-    /**
-     * Gets a {@link Pod} from this challenge that has a given id
-     *
-     * @param id the id of the pod
-     * @return the pod
-     */
-    @JsonIgnoreProperties
-    public Pod getPod(final String id) {
-        for (final Pod pod : pods) {
-            if (pod.getId().equals(id)) {
-                return pod;
-            }
-        }
-
-        return null;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Challenge)) return false;
         final Challenge challenge = (Challenge) o;
-        return Objects.equals(id, challenge.id) && Objects.equals(pods, challenge.pods);
+        return Objects.equals(id, challenge.id) && Objects.equals(allocation, challenge.allocation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, pods);
+        return Objects.hash(id, allocation);
     }
 }

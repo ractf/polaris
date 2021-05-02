@@ -16,8 +16,8 @@ public class TcpPortsAllocatedGauge implements Gauge<Integer> {
 
     @Override
     public Integer getValue() {
-        int total = 0;
-        for (final Map.Entry<String, NodeInfo> entry : clusterState.getNodes().entrySet()) {
+        var total = 0;
+        for (final var entry : clusterState.getNodes().entrySet()) {
             if (entry.getValue().getPortAllocations() == null) {
                 continue;
             }

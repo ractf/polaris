@@ -9,7 +9,7 @@ public class PolarisSentryClientFactory extends DefaultSentryClientFactory {
 
     @Override
     public SentryClient createSentryClient(final Dsn dsn) {
-        final SentryClient sentryClient = super.createSentryClient(dsn);
+        final var sentryClient = super.createSentryClient(dsn);
         sentryClient.setRelease(PolarisVersion.VERSION);
         return sentryClient;
     }

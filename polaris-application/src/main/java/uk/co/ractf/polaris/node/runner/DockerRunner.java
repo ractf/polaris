@@ -1,19 +1,15 @@
 package uk.co.ractf.polaris.node.runner;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.CreateContainerCmd;
-import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.PullImageResultCallback;
-import com.github.dockerjava.api.command.StartContainerCmd;
 import com.github.dockerjava.api.model.*;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
-import uk.co.ractf.polaris.api.instance.InstancePortBinding;
 import uk.co.ractf.polaris.api.pod.Container;
+import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.state.ClusterState;
 
@@ -47,7 +43,7 @@ public class DockerRunner implements Runner<Container> {
 
     private Capability[] createCapabilityArray(final List<String> capabilities) {
         final List<Capability> list = new ArrayList<>();
-        for (final String cap : capabilities) {
+        for (final var cap : capabilities) {
             list.add(Capability.valueOf(cap));
         }
         return list.toArray(new Capability[0]);
@@ -61,23 +57,22 @@ public class DockerRunner implements Runner<Container> {
         try {
             log.info("starting {}", instance.getId());
             startingContainers.add(container.getId() + instance.getId());
-            final Map<String, String> labels = container.getLabels();
+            final var labels = container.getLabels();
             labels.put("polaris", container.getId());
             labels.put("polaris-instance", instance.getId());
-            labels.put("polaris-deployment", instance.getDeploymentId());
-            labels.put("polaris-challenge", instance.getChallengeId());
+            labels.put("polaris-task", instance.getTaskId().toString());
             labels.put("polaris-pod", container.getId());
 
-            final List<InstancePortBinding> instancePortBindings = instance.getPortBindings();
+            final var instancePortBindings = instance.getPortBindings();
             final List<PortBinding> portBindings = new ArrayList<>();
-            for (final InstancePortBinding instancePortBinding : instancePortBindings) {
+            for (final var instancePortBinding : instancePortBindings) {
                 portBindings.add(new PortBinding(new Ports.Binding("0.0.0.0", instancePortBinding.getInternalPort()),
                         ExposedPort.parse(instancePortBinding.getPort())));
             }
 
-            CreateContainerCmd createContainerCmd = dockerClient.createContainerCmd(container.getImage());
+            var createContainerCmd = dockerClient.createContainerCmd(container.getImage());
             createContainerCmd = createContainerCmd
-                    .withHostName(container.getId() + "-" + instance.getDeploymentId() + "-" + instance.getId().split("-")[0])
+                    .withHostName(container.getId() + "-" + instance.getTaskId().toString() + "-" + instance.getId().split("-")[0])
                     .withEnv(container.getFullEnv())
                     .withLabels(labels)
                     .withPortSpecs()
@@ -95,8 +90,8 @@ public class DockerRunner implements Runner<Container> {
                 createContainerCmd = createContainerCmd.withCmd(container.getEntrypoint());
             }
 
-            final CreateContainerResponse createContainerResponse = createContainerCmd.exec();
-            final StartContainerCmd startContainerCmd = dockerClient.startContainerCmd(createContainerResponse.getId());
+            final var createContainerResponse = createContainerCmd.exec();
+            final var startContainerCmd = dockerClient.startContainerCmd(createContainerResponse.getId());
             startContainerCmd.exec();
             startingContainers.remove(container.getId() + instance.getId());
 
@@ -113,7 +108,7 @@ public class DockerRunner implements Runner<Container> {
         final Map<String, String> filter = new HashMap<>();
         filter.put("polaris-pod", pod.getId());
         filter.put("polaris-instance", instance.getId());
-        for (final com.github.dockerjava.api.model.Container container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
+        for (final var container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
             dockerClient.stopContainerCmd(container.getId()).withTimeout(pod.getTerminationTimeout()).exec();
         }
     }
@@ -130,7 +125,7 @@ public class DockerRunner implements Runner<Container> {
         final Map<String, String> filter = new HashMap<>();
         filter.put("polaris-pod", pod.getId());
         filter.put("polaris-instance", instance.getId());
-        for (final com.github.dockerjava.api.model.Container container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
+        for (final var container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
             dockerClient.restartContainerCmd(container.getId()).withtTimeout(pod.getTerminationTimeout()).exec();
         }
     }
@@ -155,7 +150,7 @@ public class DockerRunner implements Runner<Container> {
         }
         try {
             downloadingImages.add(pod.getImage());
-            String tag = "latest";
+            var tag = "latest";
             if (pod.getImage().replaceAll("http(s?):", "").contains(":")) {
                 tag = pod.getImage().split(":")[1];
             }
@@ -169,8 +164,8 @@ public class DockerRunner implements Runner<Container> {
 
     @Override
     public void garbageCollect() {
-        final List<com.github.dockerjava.api.model.Container> containers = dockerClient.listContainersCmd().withShowAll(Boolean.TRUE).exec();
-        for (final com.github.dockerjava.api.model.Container container : containers) {
+        final var containers = dockerClient.listContainersCmd().withShowAll(Boolean.TRUE).exec();
+        for (final var container : containers) {
             if ("exited".equals(container.getState()) && container.getLabels().containsKey("polaris")) {
                 dockerClient.removeContainerCmd(container.getId()).withRemoveVolumes(Boolean.TRUE).withForce(Boolean.TRUE).exec();
                 log.info("Garbage collected container: " + container.getId());
@@ -180,14 +175,14 @@ public class DockerRunner implements Runner<Container> {
 
     @Override
     public void killOrphans() {
-        for (final com.github.dockerjava.api.model.Container container :
+        for (final var container :
                 dockerClient.listContainersCmd().withLabelFilter(Collections.singletonList("polaris")).exec()) {
-            final String podId = container.getLabels().get("polaris");
-            final String instanceId = container.getLabels().get("polaris-instance");
-            final String challengeId = container.getLabels().get("polaris-challenge");
+            final var podId = container.getLabels().get("polaris");
+            final var instanceId = container.getLabels().get("polaris-instance");
+            final var taskId = container.getLabels().get("polaris-task");
 
             if (!state.getInstancesOnNode(node.getId()).containsKey(instanceId)) {
-                final Challenge challenge = state.getChallenge(challengeId);
+                final var challenge = state.getTask(new TaskId(taskId));
                 if (dyingContainers.contains(container.getId())) {
                     continue;
                 }

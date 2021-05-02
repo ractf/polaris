@@ -29,19 +29,16 @@ public class HostInfoSyncService extends AbstractScheduledService {
 
     private final Node node;
     private final NodeConfiguration nodeConfiguration;
-    private final ClusterState clusterState;
 
     @Inject
-    public HostInfoSyncService(final Node node, final NodeConfiguration nodeConfiguration,
-                               final ClusterState clusterState) {
+    public HostInfoSyncService(final Node node, final NodeConfiguration nodeConfiguration) {
         this.node = node;
         this.nodeConfiguration = nodeConfiguration;
-        this.clusterState = clusterState;
     }
 
     private String runCommand(final String command) {
         try {
-            final Process process = Runtime.getRuntime().exec(command);
+            final var process = Runtime.getRuntime().exec(command);
             return CharStreams.toString(new InputStreamReader(process.getInputStream(), Charsets.UTF_8));
         } catch (final IOException exception) {
             throw new IllegalStateException("Failed to run command", exception);
@@ -53,9 +50,9 @@ public class HostInfoSyncService extends AbstractScheduledService {
         try {
             final Map<String, String> labels = new HashMap<>();
             labels.put("aslr", Files.readString(Path.of("/proc/sys/kernel/randomize_va_space")));
-            final OperatingSystemMXBean operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
-            final NodeInfo previousNodeInfo = node.getNodeInfo();
-            final NodeInfo nodeInfo = new NodeInfo(
+            final var operatingSystemMXBean = (OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
+            final var previousNodeInfo = node.getNodeInfo();
+            final var nodeInfo = new NodeInfo(
                     node.getId(),
                     IPChecker.getExternalIP(),
                     InetAddress.getLocalHost().getHostName(),

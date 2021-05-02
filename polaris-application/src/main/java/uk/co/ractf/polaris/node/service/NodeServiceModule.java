@@ -10,7 +10,7 @@ public class NodeServiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        final Multibinder<Service> serviceBinder = Multibinder.newSetBinder(binder(), Service.class, NodeServices.class);
+        final var serviceBinder = Multibinder.newSetBinder(binder(), Service.class, NodeServices.class);
         serviceBinder.addBinding().to(GarbageCollectionService.class);
         serviceBinder.addBinding().to(HostInfoSyncService.class);
         serviceBinder.addBinding().to(InstanceReconciliationService.class);

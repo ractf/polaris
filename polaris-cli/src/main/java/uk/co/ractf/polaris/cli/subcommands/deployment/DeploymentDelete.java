@@ -1,7 +1,6 @@
 package uk.co.ractf.polaris.cli.subcommands.deployment;
 
 import picocli.CommandLine;
-import uk.co.ractf.polaris.api.deployment.DeploymentDeleteResponse;
 import uk.co.ractf.polaris.apiclient.APIClient;
 import uk.co.ractf.polaris.cli.Subcommand;
 
