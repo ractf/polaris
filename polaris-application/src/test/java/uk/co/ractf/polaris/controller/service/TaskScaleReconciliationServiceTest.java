@@ -4,7 +4,6 @@ import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
@@ -12,6 +11,7 @@ import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.node.PortAllocations;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
+import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.controller.Controller;
@@ -19,7 +19,10 @@ import uk.co.ractf.polaris.controller.ControllerConfiguration;
 import uk.co.ractf.polaris.controller.scheduler.Scheduler;
 import uk.co.ractf.polaris.state.ClusterState;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 

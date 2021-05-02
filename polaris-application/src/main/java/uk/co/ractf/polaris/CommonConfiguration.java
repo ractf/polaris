@@ -72,12 +72,12 @@ public class CommonConfiguration extends Configuration {
         return minPort;
     }
 
-    public int getMaxPort() {
-        return maxPort;
-    }
-
     public void setMinPort(final int minPort) {
         this.minPort = minPort;
+    }
+
+    public int getMaxPort() {
+        return maxPort;
     }
 
     public void setMaxPort(final int maxPort) {

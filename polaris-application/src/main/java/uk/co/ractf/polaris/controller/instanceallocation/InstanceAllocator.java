@@ -1,9 +1,9 @@
 package uk.co.ractf.polaris.controller.instanceallocation;
 
-import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
+import uk.co.ractf.polaris.api.task.Challenge;
 
 /**
  * The interface used to get {@link Instance} allocations for a user/team and request new allocations

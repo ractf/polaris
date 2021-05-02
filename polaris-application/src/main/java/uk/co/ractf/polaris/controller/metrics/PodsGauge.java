@@ -1,10 +1,7 @@
 package uk.co.ractf.polaris.controller.metrics;
 
 import com.codahale.metrics.Gauge;
-import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.state.ClusterState;
-
-import java.util.Map;
 
 public class PodsGauge implements Gauge<Integer> {
 
