@@ -83,15 +83,6 @@ processResources {
     }
 }
 
-task processSources(type: Sync) {
-    from sourceSets.main.java.srcDirs
-    inputs.property 'version', version
-    filter ReplaceTokens, tokens: [version: version]
-    into "$buildDir/src"
-}
-
-compileJava.source = processSources.outputs
-
 buildRpm {
     packageName = 'polaris'
     def details = versionDetails(prefix: 'rc@')
