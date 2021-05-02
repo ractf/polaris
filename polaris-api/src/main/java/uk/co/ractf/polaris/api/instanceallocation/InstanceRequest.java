@@ -23,27 +23,27 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceRequest extends JsonRepresentable {
 
-    private final TaskId challenge;
+    private final TaskId taskId;
     private final String user;
     private final String team;
 
     /**
-     * @param challenge the challenge id
+     * @param taskId the challenge id
      * @param user      the user id
      * @param team      the team id
      */
     @Contract(pure = true)
     public InstanceRequest(
-            @JsonProperty("challenge") final TaskId challenge,
+            @JsonProperty("challenge") final TaskId taskId,
             @JsonProperty("user") final String user,
             @JsonProperty("team") final String team) {
-        this.challenge = challenge;
+        this.taskId = taskId;
         this.user = user;
         this.team = team;
     }
 
     public TaskId getTaskId() {
-        return challenge;
+        return taskId;
     }
 
     public String getUser() {
@@ -59,11 +59,11 @@ public class InstanceRequest extends JsonRepresentable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final InstanceRequest that = (InstanceRequest) o;
-        return Objects.equals(challenge, that.challenge) && Objects.equals(user, that.user) && Objects.equals(team, that.team);
+        return Objects.equals(taskId, that.taskId) && Objects.equals(user, that.user) && Objects.equals(team, that.team);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(challenge, user, team);
+        return Objects.hash(taskId, user, team);
     }
 }

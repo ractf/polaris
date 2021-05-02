@@ -9,6 +9,7 @@ import uk.co.ractf.polaris.api.deployment.Replication;
 import uk.co.ractf.polaris.api.pod.Pod;
 
 import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
@@ -67,5 +68,18 @@ public abstract class Task extends JsonRepresentable {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Task)) return false;
+        final Task task = (Task) o;
+        return Objects.equals(id, task.id) && Objects.equals(version, task.version) && taskType == task.taskType && Objects.equals(replication, task.replication) && Objects.equals(pods, task.pods);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, version, taskType, replication, pods);
     }
 }
