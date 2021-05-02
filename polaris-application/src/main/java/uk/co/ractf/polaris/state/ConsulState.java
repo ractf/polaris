@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.state;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Names;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.kv.Operation;
 import com.orbitz.consul.model.kv.Verb;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.namespace.Namespace;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.api.task.TaskId;
@@ -255,5 +257,51 @@ public class ConsulState implements ClusterState {
     @Override
     public boolean unlockTask(final Task task) {
         return consul.keyValueClient().releaseLock(ConsulPath.taskLock(task.getId()), sessionId);
+    }
+
+    @Override
+    public Map<String, Namespace> getNamespaces() {
+        final Map<String, Namespace> namespaceMap = new HashMap<>();
+        for (final var namespaceData : consul.keyValueClient().getValues(ConsulPath.namespaces())) {
+            if (namespaceData.getValueAsString().isPresent()) {
+                try {
+                    final var namespace = Namespace.parse(namespaceData.getValueAsString().get(), Namespace.class);
+                    namespaceMap.put(namespace.getName(), namespace);
+                } catch (final JsonProcessingException e) {
+                    log.error("Error deserializing namespace " + namespaceData.getKey(), e);
+                }
+            }
+        }
+        return namespaceMap;
+    }
+
+    @Override
+    public Namespace getNamespace(final String id) {
+        final var namespaceData = consul.keyValueClient().getValueAsString(ConsulPath.namespace(id));
+        if (namespaceData.isPresent()) {
+            try {
+                return Namespace.parse(namespaceData.get(), Namespace.class);
+            } catch (final JsonProcessingException e) {
+                log.error("Error deserializing namespace " + id, e);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setNamespace(final Namespace namespace) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.SET)
+                        .key(ConsulPath.namespace(namespace.getName()))
+                        .value(namespace.toJsonString())
+                        .build());
+    }
+
+    @Override
+    public void deleteNamespace(final String id) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.DELETE)
+                        .key(id)
+                        .build());
     }
 }

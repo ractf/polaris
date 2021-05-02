@@ -23,13 +23,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class HostInfoSyncService extends AbstractScheduledService {
+public class NodeInfoSyncService extends AbstractScheduledService {
 
     private final Node node;
     private final NodeConfiguration nodeConfiguration;
 
     @Inject
-    public HostInfoSyncService(final Node node, final NodeConfiguration nodeConfiguration) {
+    public NodeInfoSyncService(final Node node, final NodeConfiguration nodeConfiguration) {
         this.node = node;
         this.nodeConfiguration = nodeConfiguration;
     }
@@ -64,7 +64,11 @@ public class HostInfoSyncService extends AbstractScheduledService {
                     operatingSystemMXBean.getFreePhysicalMemorySize(),
                     operatingSystemMXBean.getTotalSwapSpaceSize(),
                     operatingSystemMXBean.getFreeSwapSpaceSize(),
-                    labels, previousNodeInfo != null ? previousNodeInfo.getPortAllocations() : PortAllocations.empty());
+                    labels,
+                    previousNodeInfo != null ? previousNodeInfo.getPortAllocations() : PortAllocations.empty(),
+                    node.getPodImages(),
+                    node.getRunners(),
+                    previousNodeInfo == null || previousNodeInfo.isSchedulable());
 
             node.setNodeInfo(nodeInfo);
         } catch (final Exception e) {

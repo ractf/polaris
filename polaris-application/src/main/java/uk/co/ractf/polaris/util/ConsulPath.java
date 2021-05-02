@@ -12,6 +12,7 @@ public class ConsulPath {
     private static final String INSTANCES = "polaris/instances";
     private static final String INSTANCE_ALLOCATION = "polaris/instanceallocation";
     private static final String TASKS = "polaris/tasks";
+    private static final String NAMESPACES = "polaris/namespaces";
 
     public static String path(final String... parts) {
         final StringJoiner stringJoiner = new StringJoiner("/");
@@ -79,6 +80,14 @@ public class ConsulPath {
 
     public static String taskLock(final TaskId id) {
         return path(TASKS, id.toString(), "lock");
+    }
+
+    public static String namespaces() {
+        return NAMESPACES;
+    }
+
+    public static String namespace(final String id) {
+        return path(NAMESPACES, id);
     }
 
 }
