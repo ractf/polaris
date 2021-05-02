@@ -96,8 +96,10 @@ public class TaskResource {
         if (!context.isUserInRole("NAMESPACE_" + task.getId().getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new TaskSubmitResponse(TaskSubmitResponse.Status.FORBIDDEN_NAMESPACE, task.getId())).build();
+        } else if (clusterState.getNamespace(task.getId().getNamespace()) == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(new TaskSubmitResponse(TaskSubmitResponse.Status.BAD_NAMESPACE, task.getId())).build();
         }
-        //TODO: validate namespace exists
 
         if (clusterState.getTask(task.getId()) != null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -105,7 +107,8 @@ public class TaskResource {
         }
 
         clusterState.setTask(task);
-        return Response.ok(new TaskSubmitResponse(TaskSubmitResponse.Status.OK, task.getId())).build();
+        return Response.status(Response.Status.CREATED)
+                .entity(new TaskSubmitResponse(TaskSubmitResponse.Status.OK, task.getId())).build();
     }
 
     @PUT

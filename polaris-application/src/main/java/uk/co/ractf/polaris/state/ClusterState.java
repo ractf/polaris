@@ -4,6 +4,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.namespace.Namespace;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.api.task.TaskId;
@@ -96,5 +97,13 @@ public interface ClusterState {
 
     @CanIgnoreReturnValue
     boolean unlockTask(final Task task);
+
+    Map<String, Namespace> getNamespaces();
+
+    Namespace getNamespace(final String id);
+
+    void setNamespace(final Namespace namespace);
+
+    void deleteNamespace(final String id);
 
 }

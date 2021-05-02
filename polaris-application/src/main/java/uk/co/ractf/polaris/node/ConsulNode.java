@@ -14,10 +14,9 @@ import uk.co.ractf.polaris.node.runner.Runner;
 import uk.co.ractf.polaris.node.service.NodeServices;
 import uk.co.ractf.polaris.state.ClusterState;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Singleton
 public class ConsulNode implements Node, Managed {
@@ -87,6 +86,20 @@ public class ConsulNode implements Node, Managed {
     @Override
     public AuthConfig getAuthConfig() {
         return null;
+    }
+
+    @Override
+    public List<String> getPodImages() {
+        final List<String> images = new ArrayList<>();
+        for (final var runner : runners.values()) {
+            images.addAll(runner.getImages());
+        }
+        return images;
+    }
+
+    @Override
+    public List<String> getRunners() {
+        return runners.values().stream().map(Runner::getName).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")

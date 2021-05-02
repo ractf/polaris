@@ -12,7 +12,7 @@ public class NodeServiceModule extends AbstractModule {
     protected void configure() {
         final var serviceBinder = Multibinder.newSetBinder(binder(), Service.class, NodeServices.class);
         serviceBinder.addBinding().to(GarbageCollectionService.class);
-        serviceBinder.addBinding().to(HostInfoSyncService.class);
+        serviceBinder.addBinding().to(NodeInfoSyncService.class);
         serviceBinder.addBinding().to(InstanceReconciliationService.class);
         serviceBinder.addBinding().to(OrphanKillerService.class);
     }
