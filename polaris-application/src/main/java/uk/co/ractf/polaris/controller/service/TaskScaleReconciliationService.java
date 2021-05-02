@@ -48,6 +48,12 @@ public class TaskScaleReconciliationService extends AbstractScheduledService {
             final var tasks = clusterState.getTasks();
             log.trace("Starting task scale reconciliation tick");
 
+            final var nodes = clusterState.getNodes().values();
+            if (nodes.size() == 0) {
+                log.debug("No nodes detected, skipping reconciliation");
+                return;
+            }
+
             for (final Task task : tasks.values()) {
                 log.debug("Attempting to reconcile deployment {}", task.getId());
                 if (!clusterState.lockTask(task)) {
@@ -63,7 +69,7 @@ public class TaskScaleReconciliationService extends AbstractScheduledService {
                 if (scaleAmount > 0) {
                     log.info("Scheduling instances: {} of {}", scaleAmount, task.getId());
                     for (var i = 0; i < scaleAmount; i++) {
-                        final var node = scheduler.scheduleTask(task, clusterState.getNodes().values());
+                        final var node = scheduler.scheduleTask(task, nodes);
                         log.info("Scheduled instance of {} onto {}", task.getId(), node.getId());
 
                         final var instance = createInstance(task, node);
@@ -72,7 +78,7 @@ public class TaskScaleReconciliationService extends AbstractScheduledService {
                     }
                 } else {
                     for (var i = 0; i > scaleAmount; i--) {
-                        final var instance = scheduler.descheduleInstance(task, clusterState.getNodes().values(), instances);
+                        final var instance = scheduler.descheduleInstance(task, nodes, instances);
                         clusterState.deleteInstance(instance);
                     }
                 }
