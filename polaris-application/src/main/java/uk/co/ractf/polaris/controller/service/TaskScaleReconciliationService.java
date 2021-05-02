@@ -16,6 +16,7 @@ import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.controller.ControllerConfiguration;
 import uk.co.ractf.polaris.controller.PortAllocator;
 import uk.co.ractf.polaris.controller.replication.ReplicationController;
+import uk.co.ractf.polaris.controller.scheduler.OldScheduler;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.ArrayList;
@@ -30,12 +31,12 @@ public class TaskScaleReconciliationService extends AbstractScheduledService {
     private static final Logger log = LoggerFactory.getLogger(TaskScaleReconciliationService.class);
 
     private final ClusterState clusterState;
-    private final uk.co.ractf.polaris.controller.scheduler.Scheduler scheduler;
+    private final OldScheduler scheduler;
     private final ControllerConfiguration config;
 
     @Inject
     public TaskScaleReconciliationService(final ClusterState controller,
-                                          final uk.co.ractf.polaris.controller.scheduler.Scheduler scheduler,
+                                          final OldScheduler scheduler,
                                           final ControllerConfiguration config) {
         this.clusterState = controller;
         this.scheduler = scheduler;
@@ -54,7 +55,7 @@ public class TaskScaleReconciliationService extends AbstractScheduledService {
                 return;
             }
 
-            for (final Task task : tasks.values()) {
+            for (final var task : tasks.values()) {
                 log.debug("Attempting to reconcile deployment {}", task.getId());
                 if (!clusterState.lockTask(task)) {
                     log.debug("Could not obtain lock for {}", task.getId());

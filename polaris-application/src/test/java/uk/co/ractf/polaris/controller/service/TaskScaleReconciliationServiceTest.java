@@ -16,7 +16,7 @@ import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.controller.ControllerConfiguration;
-import uk.co.ractf.polaris.controller.scheduler.Scheduler;
+import uk.co.ractf.polaris.controller.scheduler.OldScheduler;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class TaskScaleReconciliationServiceTest {
 
-    private final Scheduler scheduler = mock(Scheduler.class);
+    private final OldScheduler scheduler = mock(OldScheduler.class);
     private final Controller controller = mock(Controller.class);
     private final NodeInfo node = mock(NodeInfo.class);
     private final ControllerConfiguration config = new ControllerConfiguration();
