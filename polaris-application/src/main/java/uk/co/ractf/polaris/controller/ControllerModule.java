@@ -7,8 +7,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.Duration;
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
-import uk.co.ractf.polaris.controller.scheduler.RoundRobinScheduler;
-import uk.co.ractf.polaris.controller.scheduler.Scheduler;
+import uk.co.ractf.polaris.controller.scheduler.SchedulerModule;
 import uk.co.ractf.polaris.controller.service.ControllerServiceModule;
 import uk.co.ractf.polaris.state.ClusterState;
 import uk.co.ractf.polaris.state.ConsulState;
@@ -33,12 +32,11 @@ public class ControllerModule extends DropwizardAwareModule<ControllerConfigurat
                 .build());
         bind(Consul.class).toInstance(configuration().getConsulFactory().build());
 
-        bind(Scheduler.class).to(RoundRobinScheduler.class);
         bind(Controller.class).to(ConsulController.class).in(Singleton.class);
         bind(MetricRegistry.class).toInstance(bootstrap.getMetricRegistry());
         bind(ClusterState.class).to(ConsulState.class);
 
+        install(new SchedulerModule());
         install(new ControllerServiceModule());
-
     }
 }

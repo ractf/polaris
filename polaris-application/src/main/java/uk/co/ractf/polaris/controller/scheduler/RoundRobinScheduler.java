@@ -7,7 +7,7 @@ import uk.co.ractf.polaris.api.task.Task;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RoundRobinScheduler implements Scheduler {
+public class RoundRobinScheduler implements OldScheduler {
 
     private final AtomicInteger counter = new AtomicInteger();
 
