@@ -4,17 +4,14 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import org.jetbrains.annotations.Nullable;
-import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.state.ClusterState;
 
-import javax.ws.rs.WebApplicationException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
