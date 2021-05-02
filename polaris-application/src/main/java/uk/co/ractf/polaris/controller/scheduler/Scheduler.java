@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.controller.scheduler;
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
+import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.node.Node;
 
 import java.util.Collection;
@@ -19,7 +20,7 @@ public interface Scheduler {
      * @param nodes     the hosts
      * @return the host it should be scheduled on
      */
-    NodeInfo scheduleChallenge(final Challenge challenge, final Collection<NodeInfo> nodes);
+    NodeInfo scheduleTask(final Task task, final Collection<NodeInfo> nodes);
 
     /**
      * Returns the best {@link Instance} to be descheduled out of the current set
@@ -29,6 +30,6 @@ public interface Scheduler {
      * @param instances the instance
      * @return the instance to deschedule
      */
-    Instance descheduleInstance(final Challenge challenge, final Collection<NodeInfo> nodes, final Collection<Instance> instances);
+    Instance descheduleInstance(final Task task, final Collection<NodeInfo> nodes, final Collection<Instance> instances);
 
 }

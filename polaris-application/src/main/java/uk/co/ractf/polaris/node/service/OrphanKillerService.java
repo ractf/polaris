@@ -25,7 +25,7 @@ public class OrphanKillerService extends AbstractScheduledService {
     @Override
     protected void runOneIteration() {
         if (configuration.isKillOrphans()) {
-            for (final Runner<?> runner : runners) {
+            for (final var runner : runners) {
                 CompletableFuture.runAsync(runner::killOrphans);
             }
         }

@@ -6,6 +6,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.api.pod.ResourceLimited;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
+import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.HashMap;
@@ -22,17 +23,13 @@ public class CpuAllocatedGauge implements Gauge<Double> {
     @Override
     public Double getValue() {
         double totalAllocated = 0;
-        final Map<String, Instance> instanceMap = clusterState.getInstances();
-        final Map<String, Integer> instanceCounts = new HashMap<>();
-        for (final Map.Entry<String, Instance> entry : instanceMap.entrySet()) {
-            instanceCounts.put(entry.getValue().getChallengeId(), instanceCounts.getOrDefault(entry.getValue().getChallengeId(), 0) + 1);
-        }
+        final var instanceCounts = clusterState.getInstanceCounts();
 
-        for (final Map.Entry<String, Challenge> challengeEntry : clusterState.getChallenges().entrySet()) {
+        for (final var challengeEntry : clusterState.getTasks().entrySet()) {
             double total = 0;
-            for (final Pod pod : challengeEntry.getValue().getPods()) {
+            for (final var pod : challengeEntry.getValue().getPods()) {
                 if (pod instanceof ResourceLimited) {
-                    final ResourceQuota resourceQuota = ((ResourceLimited) pod).getResourceQuota();
+                    final var resourceQuota = ((ResourceLimited) pod).getResourceQuota();
                     if (resourceQuota == null) {
                         continue;
                     }

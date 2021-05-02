@@ -48,9 +48,9 @@ public class NodeResource {
             description = "Gets a list of hosts currently registered and info about them")
     public Map<String, NodeInfo> listHostInfo(@QueryParam("filter") @DefaultValue("") final String filter) {
         final Map<String, NodeInfo> hostInfoList = new HashMap<>();
-        final Pattern pattern = Pattern.compile(filter);
+        final var pattern = Pattern.compile(filter);
 
-        for (final NodeInfo node : clusterState.getNodes().values()) {
+        for (final var node : clusterState.getNodes().values()) {
             if (pattern.matcher(filter).find()) {
                 hostInfoList.put(node.getId(), node);
             }
@@ -72,7 +72,7 @@ public class NodeResource {
     @Operation(summary = "Get Host", tags = {"Host"},
             description = "Gets a host by id")
     public NodeInfo getHostInfo(@PathParam("id") final String id) {
-        final NodeInfo node = clusterState.getNode(id);
+        final var node = clusterState.getNode(id);
         if (node == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }

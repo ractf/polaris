@@ -10,9 +10,9 @@ public class PolarisVersion {
     public static final String VERSION;
 
     static {
-        final InputStream in = PolarisVersion.class.getResourceAsStream("/version.txt");
-        String version = "?";
-        try(final BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+        final var in = PolarisVersion.class.getResourceAsStream("/version.txt");
+        var version = "?";
+        try(final var reader = new BufferedReader(new InputStreamReader(in))) {
             version = reader.readLine();
         } catch (final IOException e) {
             e.printStackTrace();

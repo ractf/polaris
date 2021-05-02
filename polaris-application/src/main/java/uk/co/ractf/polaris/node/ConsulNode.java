@@ -11,6 +11,7 @@ import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.pod.Pod;
+import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.node.runner.Runner;
 import uk.co.ractf.polaris.node.service.NodeServices;
 import uk.co.ractf.polaris.state.ClusterState;
@@ -32,8 +33,8 @@ public class ConsulNode implements Node, Managed {
     private final ClusterState clusterState;
 
     @Inject
-    public ConsulNode(final NodeConfiguration configuration, final Set<Runner<?>> runnerSet,
-                      @NodeServices final Set<Service> services, final ClusterState clusterState) {
+    public ConsulNode(final Set<Runner<?>> runnerSet, @NodeServices final Set<Service> services,
+                      final ClusterState clusterState) {
         this.clusterState = clusterState;
         this.id = "node"; //TODO
         this.runnerSet = runnerSet;
@@ -42,17 +43,17 @@ public class ConsulNode implements Node, Managed {
 
     @Override
     public void start() {
-        for (final Runner<?> runner : runnerSet) {
+        for (final var runner : runnerSet) {
             this.runners.put(runner.getType(), runner);
         }
-        for (final Service service : services) {
+        for (final var service : services) {
             service.startAsync();
         }
     }
 
     @Override
     public void stop() {
-        for (final Service service : services) {
+        for (final var service : services) {
             service.stopAsync();
         }
     }
@@ -74,12 +75,13 @@ public class ConsulNode implements Node, Managed {
 
     @Override
     public void restartInstance(final Instance instance) {
-        final Challenge challenge = clusterState.getChallenge(instance.getChallengeId());
-        if (challenge == null) {
-            throw new IllegalStateException("Instance " + instance.getId() + " is of challenge " +
-                    instance.getChallengeId() + " which does not exist in the state");
+
+        final var task = clusterState.getTask(instance.getTaskId());
+        if (task == null) {
+            throw new IllegalStateException("Instance " + instance.getId() + " is of task " +
+                    instance.getTaskId().toString() + " which does not exist in the state");
         }
-        for (final Pod pod : challenge.getPods()) {
+        for (final var pod : task.getPods()) {
             CompletableFuture.runAsync(() -> getRunner(pod).restartPod(pod, instance));
         }
     }

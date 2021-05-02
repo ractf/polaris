@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
+import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.node.NodeConfiguration;
 import uk.co.ractf.polaris.node.runner.Runner;
@@ -53,7 +54,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
 
     @Override
     protected void startUp() throws Exception {
-        for (final Runner<?> runner : runnerSet) {
+        for (final var runner : runnerSet) {
             this.runners.put(runner.getType(), runner);
         }
         super.startUp();
@@ -67,13 +68,15 @@ public class InstanceReconciliationService extends AbstractScheduledService {
     @Override
     protected void runOneIteration() {
         try {
-            for (final Map.Entry<String, Instance> entry : state.getInstancesOnNode(node.getId()).entrySet()) {
-                final Instance instance = entry.getValue();
-                final Challenge challenge = state.getChallengeFromDeployment(instance.getDeploymentId());
-                if (challenge == null) {
+            final var tasks = state.getTasks();
+            for (final var entry : state.getInstancesOnNode(node.getId()).entrySet()) {
+                final var instance = entry.getValue();
+                final var task = tasks.get(entry.getValue().getTaskId());
+                if (task == null) {
                     continue;
                 }
-                for (final Pod pod : challenge.getPods()) {
+
+                for (final var pod : task.getPods()) {
                     if (recentlyStartedInstances.getIfPresent(pod.getId() + instance.getId()) != null) {
                         continue;
                     }

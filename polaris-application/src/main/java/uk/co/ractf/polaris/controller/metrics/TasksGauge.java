@@ -4,17 +4,17 @@ import com.codahale.metrics.Gauge;
 import com.google.inject.Inject;
 import uk.co.ractf.polaris.state.ClusterState;
 
-public class ChallengesGauge implements Gauge<Integer> {
+public class TasksGauge implements Gauge<Integer> {
 
     private final ClusterState clusterState;
 
     @Inject
-    public ChallengesGauge(final ClusterState clusterState) {
+    public TasksGauge(final ClusterState clusterState) {
         this.clusterState = clusterState;
     }
 
     @Override
     public Integer getValue() {
-        return clusterState.getChallengeIds().size();
+        return clusterState.getTaskIds().size();
     }
 }

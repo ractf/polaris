@@ -93,7 +93,7 @@ import java.util.*;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Container extends PodWithPorts implements ResourceLimited {
+public class Container extends Pod implements ResourceLimited, PodWithPorts {
 
     private final String image;
     private final String repo;
@@ -109,6 +109,7 @@ public class Container extends PodWithPorts implements ResourceLimited {
     private final List<String> capAdd;
     private final List<HealthCheck> healthChecks;
     private final Integer terminationTimeout;
+    private final List<PortMapping> ports;
     private final Map<String, String> metadata;
 
     private final Map<String, String> generatedRandomEnv = new HashMap<>();
@@ -152,9 +153,9 @@ public class Container extends PodWithPorts implements ResourceLimited {
             @JsonProperty("capAdd") final List<String> capAdd,
             @JsonProperty("healthChecks") final List<HealthCheck> healthChecks,
             @JsonProperty("terminationTimeout") final Integer terminationTimeout,
-            @JsonProperty("ports") final Set<PortMapping> portMappings,
+            @JsonProperty("ports") final List<PortMapping> portMappings,
             @JsonProperty("metadata") final Map<String, String> metadata) {
-        super(type, id, portMappings);
+        super(type, id);
         this.image = image;
         this.repo = repo;
         this.entrypoint = entrypoint;
@@ -169,6 +170,7 @@ public class Container extends PodWithPorts implements ResourceLimited {
         this.capAdd = capAdd;
         this.healthChecks = healthChecks;
         this.terminationTimeout = terminationTimeout;
+        this.ports = portMappings;
         this.metadata = metadata;
     }
 
@@ -230,6 +232,11 @@ public class Container extends PodWithPorts implements ResourceLimited {
 
     public Map<String, String> getMetadata() {
         return metadata;
+    }
+
+    @Override
+    public List<PortMapping> getPorts() {
+        return ports;
     }
 
     private void generateRandomEnvIfEmpty() {

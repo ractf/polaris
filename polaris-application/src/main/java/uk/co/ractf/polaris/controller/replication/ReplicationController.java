@@ -1,16 +1,16 @@
 package uk.co.ractf.polaris.controller.replication;
 
 import org.jetbrains.annotations.Contract;
-import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.deployment.Replication;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.List;
 
 /**
- * This interface is used to control how a {@link Deployment} should replicate its {@link Instance}s.
+ * This interface is used to control how a {@link Task} should replicate its {@link Instance}s.
  */
 public interface ReplicationController {
 

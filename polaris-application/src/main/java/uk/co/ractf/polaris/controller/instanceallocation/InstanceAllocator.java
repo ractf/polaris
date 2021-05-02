@@ -2,7 +2,6 @@ package uk.co.ractf.polaris.controller.instanceallocation;
 
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.deployment.Allocation;
-import uk.co.ractf.polaris.api.deployment.Deployment;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 
@@ -12,9 +11,9 @@ import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 public interface InstanceAllocator {
 
     /**
-     * Allocate an {@link Instance} to a user based on the {@link Allocation} rules defined in the {@link Challenge}'s
-     * {@link Deployment}, this should return the same instance if called multiple times with the same {@link InstanceRequest},
-     * unless a call to {@link #requestNewAllocation(InstanceRequest)} has been made, in which case the instance returned
+     * Allocate an {@link Instance} to a user based on the {@link Allocation} rules defined in the {@link Challenge},
+     * this should return the same instance if called multiple times with the same {@link InstanceRequest}, unless
+     * a call to {@link #requestNewAllocation(InstanceRequest)} has been made, in which case the instance returned
      * from here will be avoided where possible.
      *
      * @param request the instance request

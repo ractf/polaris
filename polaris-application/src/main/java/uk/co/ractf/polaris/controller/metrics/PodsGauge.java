@@ -16,8 +16,8 @@ public class PodsGauge implements Gauge<Integer> {
 
     @Override
     public Integer getValue() {
-        int total = 0;
-        for (final Map.Entry<String, Challenge> entry : clusterState.getChallenges().entrySet()) {
+        var total = 0;
+        for (final var entry : clusterState.getTasks().entrySet()) {
             total += entry.getValue().getPods().size();
         }
 

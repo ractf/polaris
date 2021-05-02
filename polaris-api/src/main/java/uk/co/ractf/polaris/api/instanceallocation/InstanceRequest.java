@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.task.TaskId;
 
 import java.util.Objects;
 
@@ -22,7 +23,7 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class InstanceRequest extends JsonRepresentable {
 
-    private final String challenge;
+    private final TaskId challenge;
     private final String user;
     private final String team;
 
@@ -33,7 +34,7 @@ public class InstanceRequest extends JsonRepresentable {
      */
     @Contract(pure = true)
     public InstanceRequest(
-            @JsonProperty("challenge") final String challenge,
+            @JsonProperty("challenge") final TaskId challenge,
             @JsonProperty("user") final String user,
             @JsonProperty("team") final String team) {
         this.challenge = challenge;
@@ -41,7 +42,7 @@ public class InstanceRequest extends JsonRepresentable {
         this.team = team;
     }
 
-    public String getChallenge() {
+    public TaskId getTaskId() {
         return challenge;
     }
 

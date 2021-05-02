@@ -20,8 +20,7 @@ public class PolarisMetricSet implements MetricSet {
     @Override
     public Map<String, Metric> getMetrics() {
         final Map<String, Metric> metrics = new HashMap<>();
-        metrics.put("challenges.count", new ChallengesGauge(clusterState));
-        metrics.put("deployments.count", new DeploymentsGauge(clusterState));
+        metrics.put("tasks.count", new TasksGauge(clusterState));
         metrics.put("hosts.count", new HostsGauge(clusterState));
         metrics.put("instances.count", new InstancesGauge(clusterState));
         metrics.put("pods.count", new PodsGauge(clusterState));
