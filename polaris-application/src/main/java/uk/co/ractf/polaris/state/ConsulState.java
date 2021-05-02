@@ -235,6 +235,7 @@ public class ConsulState implements ClusterState {
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.task(task.getId()))
+                        .value(task.toJsonString())
                         .build());
     }
 
