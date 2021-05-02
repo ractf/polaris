@@ -1,7 +1,6 @@
 {
   "id": "39b8db8f-c071-4aeb-aee3-147c4219688b",
-  "deployment": "exampleDeployment1",
-  "challenge": "hello-world",
+  "taskId": "polaris:test",
   "host": "embedded",
   "ports": [],
   "randomEnv": {}

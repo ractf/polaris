@@ -1,4 +1,15 @@
 {
-  "id": "example",
-  "pods": []
+  "id": "polaris:example",
+  "type": "challenge",
+  "version": 1,
+  "pods": [],
+  "replication": {
+    "type": "static",
+    "amount": 20
+  },
+  "allocation": {
+    "sticky": "user",
+    "userLimit": 3,
+    "teamLimit": 3
+  }
 }

@@ -23,7 +23,6 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Challenge extends ServiceTask {
 
-    private final TaskId id;
     private final Allocation allocation;
 
     /**
@@ -41,7 +40,6 @@ public class Challenge extends ServiceTask {
             @JsonProperty("replication") final Replication replication,
             @JsonProperty("allocation") final Allocation allocation) {
         super(id, version, replication, pods);
-        this.id = id;
         this.allocation = allocation;
     }
 
@@ -53,12 +51,13 @@ public class Challenge extends ServiceTask {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof Challenge)) return false;
+        if (!super.equals(o)) return false;
         final Challenge challenge = (Challenge) o;
-        return Objects.equals(id, challenge.id) && Objects.equals(allocation, challenge.allocation);
+        return Objects.equals(allocation, challenge.allocation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, allocation);
+        return Objects.hash(super.hashCode(), allocation);
     }
 }

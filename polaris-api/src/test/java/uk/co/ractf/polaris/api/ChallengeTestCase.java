@@ -2,8 +2,10 @@ package uk.co.ractf.polaris.api;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
+import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.pod.Pod;
+import uk.co.ractf.polaris.api.task.TaskId;
 
 import java.util.Collections;
 
@@ -22,28 +24,8 @@ public class ChallengeTestCase {
     }
 
     @Test
-    public void testChallengeDeleteResponse() {
-        validateObject(ChallengeDeleteResponse.class, fixture("fixtures/challenge/deleteresponse.json"));
-    }
-
-    @Test
-    public void testChallengeSubmitResponse() {
-        validateObject(ChallengeSubmitResponse.class, fixture("fixtures/challenge/submitresponse.json"));
-    }
-
-    @Test
     public void testChallengeIgnoreProperties() {
         validateObjectIgnoreProperties(Challenge.class, fixture("fixtures/challenge/challenge.json"));
-    }
-
-    @Test
-    public void testChallengeDeleteResponseIgnoreProperties() {
-        validateObjectIgnoreProperties(ChallengeDeleteResponse.class, fixture("fixtures/challenge/deleteresponse.json"));
-    }
-
-    @Test
-    public void testChallengeSubmitResponseIgnoreProperties() {
-        validateObjectIgnoreProperties(ChallengeSubmitResponse.class, fixture("fixtures/challenge/submitresponse.json"));
     }
 
     @Test
@@ -52,28 +34,18 @@ public class ChallengeTestCase {
     }
 
     @Test
-    public void testChallengeDeleteResponseEquals() {
-        EqualsVerifier.simple().forClass(ChallengeDeleteResponse.class).verify();
-    }
-
-    @Test
-    public void testChallengeSubmitResponseEquals() {
-        EqualsVerifier.simple().forClass(ChallengeSubmitResponse.class).verify();
-    }
-
-    @Test
     public void testGetPodById() {
-        final Pod pod = mock(Pod.class);
+        final var pod = mock(Pod.class);
         when(pod.getId()).thenReturn("test");
-        final Challenge challenge = new Challenge("test", Collections.singletonList(pod), replication, allocation);
+        final var challenge = new Challenge(new TaskId("test"), 0, Collections.singletonList(pod), null, null);
         assertThat(challenge.getPod("test")).isEqualTo(pod);
     }
 
     @Test
     public void testGetPodByIdReturnsNull() {
-        final Pod pod = mock(Pod.class);
+        final var pod = mock(Pod.class);
         when(pod.getId()).thenReturn("test");
-        final Challenge challenge = new Challenge("test", Collections.singletonList(pod), replication, allocation);
+        final var challenge = new Challenge(new TaskId("test"), 0, Collections.singletonList(pod), null, null);
         assertThat(challenge.getPod("test2")).isNull();
     }
 
