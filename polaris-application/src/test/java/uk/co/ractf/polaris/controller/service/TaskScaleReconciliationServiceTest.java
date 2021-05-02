@@ -12,6 +12,8 @@ import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.node.PortAllocations;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
+import uk.co.ractf.polaris.api.task.Task;
+import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.controller.ControllerConfiguration;
 import uk.co.ractf.polaris.controller.scheduler.Scheduler;
@@ -33,57 +35,63 @@ public class TaskScaleReconciliationServiceTest {
 
     @BeforeEach
     public void setup() {
-        final Container container = new Container("container", "test", "", "", new ArrayList<>(),
+        final var container = new Container("container", "test", "", "", new ArrayList<>(),
                 new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), new ArrayList<>(),
                 new ResourceQuota(512L, 0L, 1000L), "always", new ArrayList<>(),
-                new ArrayList<>(), new ArrayList<>(), 5, new HashSet<>(), new HashMap<>());
-        final Challenge challenge = new Challenge("test", Collections.singletonList(container), replication, allocation);
-        final Deployment deployment = new Deployment("test", "test", new StaticReplication("static", 15),
-                new Allocation("team", 500, 500));
-        instance = new Instance("test", "test", "test", taskId, "test", new ArrayList<>(), new HashMap<>());
+                new ArrayList<>(), new ArrayList<>(), 5, new ArrayList<>(), new HashMap<>());
+
+        final var taskId = new TaskId("test", "test");
+        final var task = new Challenge(taskId, 0, Collections.singletonList(container),
+                new StaticReplication("static", 15), new Allocation("team", 500, 500));
+        instance = new Instance("test", taskId, "test", new ArrayList<>(), new HashMap<>());
 
         config.setMinPort(0);
         config.setMaxPort(65535);
 
-        when(clusterState.getDeployments()).thenReturn(Map.of("test", deployment));
+        when(clusterState.getTasks()).thenReturn(Map.of(taskId, task));
         when(clusterState.getNodes()).thenReturn(Map.of("test", node));
-        when(clusterState.getChallengeFromDeployment(deployment.getId())).thenReturn(challenge);
-        when(clusterState.lockDeployment(any())).thenReturn(true);
-        when(clusterState.unlockDeployment(any())).thenReturn(true);
-        when(scheduler.scheduleTask(any(Challenge.class), anyCollection())).thenReturn(node);
-        final PortAllocations portAllocations = PortAllocations.empty();
+        when(clusterState.lockTask(any())).thenReturn(true);
+        when(clusterState.unlockTask(any())).thenReturn(true);
+        when(scheduler.scheduleTask(any(Task.class), anyCollection())).thenReturn(node);
+
+        final var portAllocations = PortAllocations.empty();
         when(node.getPortAllocations()).thenReturn(portAllocations);
     }
 
     @Test
     public void testScaleUp() {
-        when(clusterState.getInstancesForDeployment(any())).thenReturn(Collections.emptyList());
-        final TaskScaleReconciliationService service = new TaskScaleReconciliationService(clusterState, scheduler, config);
+        when(clusterState.getInstancesOfTask(any())).thenReturn(new HashMap<>());
+        final var service = new TaskScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
         verify(clusterState, times(15)).setInstance(any(Instance.class));
     }
 
     @Test
     public void testScaleDown() {
-        when(clusterState.getInstancesForDeployment(any())).thenReturn(Collections.nCopies(20, instance));
-        final TaskScaleReconciliationService service = new TaskScaleReconciliationService(clusterState, scheduler, config);
+        final var instances = new HashMap<String, Instance>();
+        for (var i = 0; i < 20; i++) {
+            instances.put(String.valueOf(i), instance);
+        }
+        when(clusterState.getInstancesOfTask(any())).thenReturn(instances);
+
+        final var service = new TaskScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
         verify(clusterState, times(5)).deleteInstance(any());
     }
 
     @Test
     public void testFailedToObtainLock() {
-        when(clusterState.lockDeployment(any())).thenReturn(false);
-        when(clusterState.unlockDeployment(any())).thenReturn(false);
-        final TaskScaleReconciliationService service = new TaskScaleReconciliationService(clusterState, scheduler, config);
+        when(clusterState.lockTask(any())).thenReturn(false);
+        when(clusterState.unlockTask(any())).thenReturn(false);
+        final var service = new TaskScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
         verifyNoInteractions(node);
     }
 
     @Test
     public void testExceptionThrown() {
-        when(clusterState.lockDeployment(any())).thenThrow(new RuntimeException());
-        final TaskScaleReconciliationService service = new TaskScaleReconciliationService(clusterState, scheduler, config);
+        when(clusterState.lockTask(any())).thenThrow(new RuntimeException());
+        final var service = new TaskScaleReconciliationService(clusterState, scheduler, config);
         service.runOneIteration();
         verifyNoInteractions(node);
     }
