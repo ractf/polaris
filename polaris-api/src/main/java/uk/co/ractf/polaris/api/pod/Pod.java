@@ -1,9 +1,6 @@
 package uk.co.ractf.polaris.api.pod;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.*;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**
@@ -36,5 +33,7 @@ public abstract class Pod extends JsonRepresentable {
     public String getId() {
         return id;
     }
+
+    public abstract boolean canUseRunner(final String runner);
 
 }

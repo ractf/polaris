@@ -16,6 +16,7 @@ import uk.co.ractf.polaris.state.ClusterState;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.stream.Collectors;
 
 /**
  * An implementation of {@link Runner} that is capable of running docker {@link Container}s through the docker-java {@link DockerClient}
@@ -204,6 +205,16 @@ public class DockerRunner implements Runner<Container> {
     @Override
     public Class<Container> getType() {
         return Container.class;
+    }
+
+    @Override
+    public String getName() {
+        return "docker";
+    }
+
+    @Override
+    public List<String> getImages() {
+        return dockerClient.listImagesCmd().exec().stream().map(Image::getId).collect(Collectors.toList());
     }
 
 }

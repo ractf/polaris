@@ -291,4 +291,9 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts {
                 restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, getPorts(), metadata,
                 generatedRandomEnv, getType(), getId());
     }
+
+    @Override
+    public boolean canUseRunner(final String runner) {
+        return "docker".equals(runner);
+    }
 }

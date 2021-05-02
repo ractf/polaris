@@ -4,6 +4,8 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.controller.Controller;
 
+import java.util.List;
+
 /**
  * Provides the interface to manage execution of a subclass of {@link Pod}
  *
@@ -84,5 +86,19 @@ public interface Runner<T extends Pod> {
      * @return the class of T
      */
     Class<T> getType();
+
+    /**
+     * Gets the name of the runner.
+     *
+     * @return name
+     */
+    String getName();
+
+    /**
+     * Returns the images that can be used by this runner and are stored locally on the node.
+     *
+     * @return the locally stored images
+     */
+    List<String> getImages();
 
 }
