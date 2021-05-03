@@ -44,7 +44,7 @@ public class ControllerMain extends Application<ControllerConfiguration> {
         });
 
         bootstrap.addBundle(GuiceBundle.builder()
-                .modules(new ControllerModule(bootstrap))
+                .modules(new ControllerModule())
                 //dropwizard-guicey's autoconfig will instantiate *all* implementations of controller and host if we let it see them
                 .enableAutoConfig(
                         "uk.co.ractf.polaris.consul",
