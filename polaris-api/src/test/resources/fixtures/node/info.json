@@ -18,5 +18,8 @@
   "portAllocations": {
     "tcp": [2],
     "udp": []
-  }
+  },
+  "podImages": [],
+  "runners": [],
+  "schedulable": true
 }
