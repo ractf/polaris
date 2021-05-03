@@ -48,4 +48,9 @@ public class PolarisAPIClient implements APIClient {
     public TaskDeleteCommand deleteTask(final String taskId) {
         return new TaskDeleteCommand(transport, taskId);
     }
+
+    @Override
+    public NamespaceListCommand listNamespaces() {
+        return new NamespaceListCommand(transport);
+    }
 }
