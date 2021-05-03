@@ -3,7 +3,7 @@ package uk.co.ractf.polaris.controller.scheduler;
 import uk.co.ractf.polaris.api.task.Task;
 
 /**
- * A {@link Scheduler} {@link Plugin} that checks that a {@link Task} can actually run on the polaris cluster. Scheduling
+ * A {@link SchedulingAlgorithm} {@link Plugin} that checks that a {@link Task} can actually run on the polaris cluster. Scheduling
  * will fail if any of these plugins return false.
  */
 public interface ClusterPredicatePlugin extends Plugin {

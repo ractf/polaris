@@ -12,7 +12,7 @@ import uk.co.ractf.polaris.state.ClusterState;
 import java.util.*;
 
 /**
- * The default implementation of {@link Scheduler}. The scheduler places {@link Task}s onto nodes by running a series of
+ * The default implementation of {@link SchedulingAlgorithm}. The scheduler places {@link Task}s onto nodes by running a series of
  * {@link Plugin}s to filter and score the nodes to find the best place to run instances of the task.
  *
  * This is done in the following stages:
@@ -22,9 +22,9 @@ import java.util.*;
  *
  * In the future, this might be extended to include things such as evicting lower priority tasks.
  */
-public class GenericScheduler implements Scheduler {
+public class GenericSchedulingAlgorithm implements SchedulingAlgorithm {
 
-    private static final Logger log = LoggerFactory.getLogger(GenericScheduler.class);
+    private static final Logger log = LoggerFactory.getLogger(GenericSchedulingAlgorithm.class);
 
     private final ClusterState clusterState;
     private final List<ClusterPredicatePlugin> clusterPredicatePlugins;
@@ -32,8 +32,8 @@ public class GenericScheduler implements Scheduler {
     private final List<ScorePlugin> scorePlugins;
 
     @Inject
-    public GenericScheduler(final ClusterState clusterState, final List<ClusterPredicatePlugin> clusterPredicatePlugins,
-                            final List<FilterPlugin> filterPlugins, final List<ScorePlugin> scorePlugins) {
+    public GenericSchedulingAlgorithm(final ClusterState clusterState, final List<ClusterPredicatePlugin> clusterPredicatePlugins,
+                                      final List<FilterPlugin> filterPlugins, final List<ScorePlugin> scorePlugins) {
         this.clusterState = clusterState;
         this.clusterPredicatePlugins = clusterPredicatePlugins;
         this.filterPlugins = filterPlugins;
