@@ -24,4 +24,6 @@ public interface APIClient {
 
     TaskDeleteCommand deleteTask(final String taskId);
 
+    NamespaceListCommand listNamespaces();
+
 }
