@@ -8,7 +8,6 @@ public class LeastResourceUsage implements ScorePlugin {
 
     @Override
     public double score(final Task task, final NodeInfo nodeInfo) {
-
         return (1 - ((float)nodeInfo.getFreeMemory() / nodeInfo.getTotalMemory())) *
                 (1 - ((float)(nodeInfo.getProcessors() - nodeInfo.getCpuLoad()) / nodeInfo.getProcessors()));
     }
