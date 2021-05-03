@@ -4,7 +4,7 @@ import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.task.Task;
 
 /**
- * A {@link Scheduler} {@link Plugin} that scores how well a {@link Task} can run on a given {@link NodeInfo}.
+ * A {@link SchedulingAlgorithm} {@link Plugin} that scores how well a {@link Task} can run on a given {@link NodeInfo}.
  */
 public interface ScorePlugin {
 
