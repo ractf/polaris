@@ -7,6 +7,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.Duration;
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
+import uk.co.ractf.polaris.controller.metrics.PolarisMetricSetRegistrationService;
 import uk.co.ractf.polaris.controller.scheduler.SchedulerModule;
 import uk.co.ractf.polaris.controller.service.ControllerServiceModule;
 import uk.co.ractf.polaris.state.ClusterState;
@@ -16,12 +17,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 @ExcludeFromGeneratedTestReport
 public class ControllerModule extends DropwizardAwareModule<ControllerConfiguration> {
-
-    private final Bootstrap<ControllerConfiguration> bootstrap;
-
-    public ControllerModule(final Bootstrap<ControllerConfiguration> bootstrap) {
-        this.bootstrap = bootstrap;
-    }
 
     @Override
     public void configure() {
@@ -33,8 +28,8 @@ public class ControllerModule extends DropwizardAwareModule<ControllerConfigurat
         bind(Consul.class).toInstance(configuration().getConsulFactory().build());
 
         bind(Controller.class).to(ConsulController.class).in(Singleton.class);
-        bind(MetricRegistry.class).toInstance(bootstrap.getMetricRegistry());
-        bind(ClusterState.class).to(ConsulState.class);
+        bind(MetricRegistry.class).toInstance(bootstrap().getMetricRegistry());
+        bind(PolarisMetricSetRegistrationService.class).asEagerSingleton();
 
         install(new SchedulerModule());
         install(new ControllerServiceModule());
