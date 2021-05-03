@@ -11,6 +11,8 @@ public interface APIClient {
         return new PolarisAPIClient(apiRoot, username, password);
     }
 
+    PingCommand ping();
+
     TaskCreateCommand createTask(final Task task);
 
     TaskUpdateCommand updateTask(final Task task);
