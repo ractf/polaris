@@ -15,12 +15,12 @@ import java.util.*;
 /**
  * The default implementation of {@link SchedulingAlgorithm}. The scheduler places {@link Task}s onto nodes by running a series of
  * {@link Plugin}s to filter and score the nodes to find the best place to run instances of the task.
- *
+ * <p>
  * This is done in the following stages:
- *  - Checking the cluster meets the conditions required to run the task
- *  - Filtering which nodes can run the task
- *  - Scoring the nodes
- *
+ * - Checking the cluster meets the conditions required to run the task
+ * - Filtering which nodes can run the task
+ * - Scoring the nodes
+ * <p>
  * In the future, this might be extended to include things such as evicting lower priority tasks.
  */
 @Singleton

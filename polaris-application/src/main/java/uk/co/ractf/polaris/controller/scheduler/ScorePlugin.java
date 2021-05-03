@@ -12,7 +12,7 @@ public interface ScorePlugin {
      * Scores how well a {@link Task} can run on a given {@link NodeInfo}. The returned double has no bounds but should
      * be normalised across all nodes to be between 0 and 1.
      *
-     * @param task the task
+     * @param task     the task
      * @param nodeInfo the node to score
      * @return the score
      */
