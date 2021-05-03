@@ -10,5 +10,6 @@ public class ScorePluginModule extends DropwizardAwareModule<ControllerConfigura
     @Override
     protected void configure() {
         final var multibinder = Multibinder.newSetBinder(binder(), ScorePlugin.class);
+        multibinder.addBinding().to(LeastResourceUsage.class);
     }
 }
