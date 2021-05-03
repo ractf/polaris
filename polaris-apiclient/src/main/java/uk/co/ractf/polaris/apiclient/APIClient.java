@@ -11,4 +11,6 @@ public interface APIClient {
 
     TaskCreateCommand createTask(final Task task);
 
+    TaskUpdateCommand updateTask(final Task task);
+
 }
