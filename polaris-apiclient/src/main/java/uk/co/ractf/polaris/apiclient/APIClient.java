@@ -20,4 +20,8 @@ public interface APIClient {
 
     TaskGetCommand getTask(final String taskId);
 
+    TaskDeleteCommand deleteTask(final TaskId taskId);
+
+    TaskDeleteCommand deleteTask(final String taskId);
+
 }

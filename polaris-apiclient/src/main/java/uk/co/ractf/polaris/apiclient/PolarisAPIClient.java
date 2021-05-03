@@ -2,10 +2,7 @@ package uk.co.ractf.polaris.apiclient;
 
 import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.api.task.TaskId;
-import uk.co.ractf.polaris.apiclient.command.TaskCreateCommand;
-import uk.co.ractf.polaris.apiclient.command.TaskGetCommand;
-import uk.co.ractf.polaris.apiclient.command.TaskListCommand;
-import uk.co.ractf.polaris.apiclient.command.TaskUpdateCommand;
+import uk.co.ractf.polaris.apiclient.command.*;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 import uk.co.ractf.polaris.apiclient.transport.HttpClientTransport;
 
@@ -40,5 +37,15 @@ public class PolarisAPIClient implements APIClient {
     @Override
     public TaskGetCommand getTask(final String taskId) {
         return new TaskGetCommand(transport, taskId);
+    }
+
+    @Override
+    public TaskDeleteCommand deleteTask(final TaskId taskId) {
+        return new TaskDeleteCommand(transport, taskId);
+    }
+
+    @Override
+    public TaskDeleteCommand deleteTask(final String taskId) {
+        return new TaskDeleteCommand(transport, taskId);
     }
 }
