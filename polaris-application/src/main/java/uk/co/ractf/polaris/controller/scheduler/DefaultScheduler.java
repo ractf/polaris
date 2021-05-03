@@ -45,7 +45,7 @@ public class DefaultScheduler implements Scheduler, Managed {
     }
 
     @Override
-    public void start() throws Exception {
+    public void start() {
         final var timers = metricRegistry.getTimers(MetricFilter.startsWith("polaris.scheduler"));
         timers.keySet().forEach(System.out::println);
         nodeSelectionLatency = timers.get("polaris.scheduler.latency.nodeselection");

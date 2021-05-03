@@ -10,5 +10,6 @@ public class InstanceDecoratorPluginModule extends DropwizardAwareModule<Control
     @Override
     protected void configure() {
         final var multibinder = Multibinder.newSetBinder(binder(), InstanceDecoratorPlugin.class);
+        multibinder.addBinding().to(PortBinding.class);
     }
 }
