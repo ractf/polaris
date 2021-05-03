@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.controller.replication.ReplicationController;
 import uk.co.ractf.polaris.state.ClusterState;

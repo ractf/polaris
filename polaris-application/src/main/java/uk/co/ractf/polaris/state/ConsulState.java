@@ -3,7 +3,6 @@ package uk.co.ractf.polaris.state;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Names;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.model.kv.Operation;
 import com.orbitz.consul.model.kv.Verb;
