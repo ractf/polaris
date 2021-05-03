@@ -27,10 +27,12 @@ public class Challenge extends ServiceTask {
 
     /**
      * Create a challenge
-     *  @param id   the id of the challenge
-     * @param pods the pods making up the challenge
+     *
+     * @param id          the id of the challenge
+     * @param version     version of the challenge
+     * @param pods        the pods making up the challenge
      * @param replication the replication detail
-     * @param allocation the instance allocation rules
+     * @param allocation  the instance allocation rules
      */
     @Contract(pure = true)
     public Challenge(
