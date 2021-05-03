@@ -1,6 +1,7 @@
 package uk.co.ractf.polaris.state;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.inject.ImplementedBy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.co.ractf.polaris.api.instance.Instance;
@@ -13,6 +14,7 @@ import uk.co.ractf.polaris.node.Node;
 import java.util.List;
 import java.util.Map;
 
+@ImplementedBy(ConsulState.class)
 public interface ClusterState {
 
     /**

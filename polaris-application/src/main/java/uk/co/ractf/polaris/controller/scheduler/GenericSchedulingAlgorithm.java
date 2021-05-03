@@ -29,13 +29,14 @@ public class GenericSchedulingAlgorithm implements SchedulingAlgorithm {
     private static final Logger log = LoggerFactory.getLogger(GenericSchedulingAlgorithm.class);
 
     private final ClusterState clusterState;
-    private final List<ClusterPredicatePlugin> clusterPredicatePlugins;
-    private final List<FilterPlugin> filterPlugins;
-    private final List<ScorePlugin> scorePlugins;
+    private final Set<ClusterPredicatePlugin> clusterPredicatePlugins;
+    private final Set<FilterPlugin> filterPlugins;
+    private final Set<ScorePlugin> scorePlugins;
 
     @Inject
-    public GenericSchedulingAlgorithm(final ClusterState clusterState, final List<ClusterPredicatePlugin> clusterPredicatePlugins,
-                                      final List<FilterPlugin> filterPlugins, final List<ScorePlugin> scorePlugins) {
+    public GenericSchedulingAlgorithm(final ClusterState clusterState,
+                                      final Set<ClusterPredicatePlugin> clusterPredicatePlugins,
+                                      final Set<FilterPlugin> filterPlugins, final Set<ScorePlugin> scorePlugins) {
         this.clusterState = clusterState;
         this.clusterPredicatePlugins = clusterPredicatePlugins;
         this.filterPlugins = filterPlugins;

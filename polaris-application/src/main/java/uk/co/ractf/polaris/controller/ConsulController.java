@@ -31,6 +31,7 @@ public class ConsulController implements Controller, Managed {
     @Override
     public void start() {
         for (final var service : services) {
+            System.out.println(service.getClass().getName());
             service.startAsync();
         }
     }
