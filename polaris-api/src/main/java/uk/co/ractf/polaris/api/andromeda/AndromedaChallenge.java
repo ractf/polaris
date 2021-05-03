@@ -7,7 +7,7 @@ import java.util.Objects;
 
 /**
  * Represents a challenge that can be submitted via the Andromeda emulation resource. This will be converted to a
- * {@link uk.co.ractf.polaris.api.task.Challenge} and a {@link uk.co.ractf.polaris.api.deployment.Deployment}
+ * {@link uk.co.ractf.polaris.api.task.Challenge}
  * {
  * "name": "fffff",
  * "port": 80,
