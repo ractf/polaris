@@ -22,12 +22,8 @@
   "labels": {
     "key": "value"
   },
-  "affinity": [
-    "aslr"
-  ],
-  "antiaffinity": [
-    "ARM"
-  ],
+  "affinity": {},
+  "antiaffinity": {},
   "resourceQuota": {
     "memory": 536870912,
     "swap": 0,
