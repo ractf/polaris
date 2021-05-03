@@ -1,6 +1,7 @@
 package uk.co.ractf.polaris.controller.scheduler;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import java.util.*;
  *
  * In the future, this might be extended to include things such as evicting lower priority tasks.
  */
+@Singleton
 public class GenericSchedulingAlgorithm implements SchedulingAlgorithm {
 
     private static final Logger log = LoggerFactory.getLogger(GenericSchedulingAlgorithm.class);
@@ -57,7 +59,7 @@ public class GenericSchedulingAlgorithm implements SchedulingAlgorithm {
 
         final var node = getHighestScoringNode(possibleNodes, pluginScores);
 
-        return new ScheduleResult(node.getId(), true, possibleNodes.size() + resolvableNodes.size(),
+        return new ScheduleResult(node, true, possibleNodes.size() + resolvableNodes.size(),
                 possibleNodes.size(), Collections.emptyList());
     }
 
@@ -68,8 +70,7 @@ public class GenericSchedulingAlgorithm implements SchedulingAlgorithm {
             scores.put(node, total);
         }
 
-        final var node = Collections.max(scores.entrySet(), Comparator.comparingDouble(Map.Entry::getValue)).getKey();
-        return node;
+        return Collections.max(scores.entrySet(), Comparator.comparingDouble(Map.Entry::getValue)).getKey();
     }
 
     private void normaliseScores(final List<NodeInfo> possibleNodes, final Map<NodeInfo, Map<ScorePlugin, Double>> pluginScores) {
@@ -125,7 +126,7 @@ public class GenericSchedulingAlgorithm implements SchedulingAlgorithm {
             final var result = plugin.canSchedule(task);
             if (!result.isPossible()) {
                 log.debug("Failed to schedule task {} because {}", task.getId(), result.getReason());
-                return new ScheduleResult("", false, 0, 0, result.getReason());
+                return new ScheduleResult(null, false, 0, 0, result.getReason());
             }
         }
         return null;

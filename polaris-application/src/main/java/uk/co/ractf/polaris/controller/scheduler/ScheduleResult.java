@@ -1,5 +1,7 @@
 package uk.co.ractf.polaris.controller.scheduler;
 
+import uk.co.ractf.polaris.api.node.NodeInfo;
+
 import java.util.List;
 
 /**
@@ -7,13 +9,13 @@ import java.util.List;
  */
 public class ScheduleResult {
 
-    private final String node;
+    private final NodeInfo node;
     private final boolean successful;
     private final int evaluatedNodes;
     private final int eligibleNodes;
     private final List<String> failureReason;
 
-    public ScheduleResult(final String node, final boolean successful, final int evaluatedNodes, final int eligibleNodes,
+    public ScheduleResult(final NodeInfo node, final boolean successful, final int evaluatedNodes, final int eligibleNodes,
                           final List<String> failureReason) {
         this.node = node;
         this.successful = successful;
@@ -22,7 +24,7 @@ public class ScheduleResult {
         this.failureReason = failureReason;
     }
 
-    public String getNode() {
+    public NodeInfo getNode() {
         return node;
     }
 

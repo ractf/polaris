@@ -1,7 +1,9 @@
 package uk.co.ractf.polaris.controller.metrics;
 
+import com.codahale.metrics.Meter;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricSet;
+import com.codahale.metrics.Timer;
 import com.google.inject.Inject;
 import uk.co.ractf.polaris.state.ClusterState;
 
@@ -36,6 +38,12 @@ public class PolarisMetricSet implements MetricSet {
         metrics.put("resources.ports.all.allocated", new PortsAllocatedGauge(clusterState));
         metrics.put("resources.ports.tcp.allocated", new TcpPortsAllocatedGauge(clusterState));
         metrics.put("resources.ports.udp.allocated", new UdpPortsAllocatedGauge(clusterState));
+
+        metrics.put("scheduler.latency.nodeselection", new Timer());
+        metrics.put("scheduler.latency.total", new Timer());
+        metrics.put("scheduler.fail", new Meter());
+        metrics.put("scheduler.success", new Meter());
+        metrics.put("scheduler.attempts", new Meter());
 
         return metrics;
     }
