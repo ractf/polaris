@@ -25,8 +25,8 @@ public class HttpClientTransport implements APIClientTransport {
     }
 
     private String join(final String... parts) {
-        final StringBuilder stringBuilder = new StringBuilder();
-        for (final String part : parts) {
+        final var stringBuilder = new StringBuilder();
+        for (final var part : parts) {
             stringBuilder.append(part.replaceAll("/*$|^/*", ""));
             stringBuilder.append("/");
         }
@@ -54,7 +54,7 @@ public class HttpClientTransport implements APIClientTransport {
     }
 
     private String request(final String route, final String method) {
-        final HttpRequest httpRequest = HttpRequest.newBuilder()
+        final var httpRequest = HttpRequest.newBuilder()
                 .uri(getAPIRoute(route))
                 .method(method, HttpRequest.BodyPublishers.noBody())
                 .header("Authorization", authHeader)
@@ -75,14 +75,14 @@ public class HttpClientTransport implements APIClientTransport {
         } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        final HttpRequest httpRequest = HttpRequest.newBuilder()
+        final var httpRequest = HttpRequest.newBuilder()
                 .uri(getAPIRoute(route))
                 .method(method, HttpRequest.BodyPublishers.ofString(bodyText))
                 .header("Content-Type", "application/json")
                 .header("Authorization", authHeader)
                 .build();
         try {
-            final HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            final var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
             return response.body();
         } catch (final IOException | InterruptedException e) {
             throw new RuntimeException(e);
