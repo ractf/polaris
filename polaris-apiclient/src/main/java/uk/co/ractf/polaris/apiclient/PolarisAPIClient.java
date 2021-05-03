@@ -16,6 +16,11 @@ public class PolarisAPIClient implements APIClient {
     }
 
     @Override
+    public PingCommand ping() {
+        return new PingCommand(transport);
+    }
+
+    @Override
     public TaskCreateCommand createTask(final Task task) {
         return new TaskCreateCommand(transport, task);
     }
