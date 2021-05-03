@@ -33,12 +33,13 @@ public class Instance extends JsonRepresentable {
     private final List<InstancePortBinding> portBindings;
     private final Map<String, String> randomEnv;
 
+
     /**
-     * The
-     *
-     * @param id     the id of the instance
-     * @param taskId the id of the task
-     * @param hostId the id of the host its scheduled on
+     * @param id id of the instance
+     * @param taskId the task id
+     * @param hostId the node id
+     * @param portBindings which ports should be bound
+     * @param randomEnv the random env vars
      */
     @Contract(pure = true)
     public Instance(@JsonProperty("id") final String id,

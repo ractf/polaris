@@ -1,4 +1,4 @@
 /**
- * Package containing API definitions related to {@link uk.co.ractf.polaris.api.deployment.Deployment}
+ * Package containing API definitions related to deployments
  */
 package uk.co.ractf.polaris.api.deployment;

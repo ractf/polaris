@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
+import uk.co.ractf.polaris.api.task.Task;
 
 /**
  * Represents the strategy that a {@link Task} should be replicated with.
