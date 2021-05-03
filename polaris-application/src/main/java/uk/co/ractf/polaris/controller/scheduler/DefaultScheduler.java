@@ -66,11 +66,16 @@ public class DefaultScheduler implements Scheduler {
         final var node = scheduleResult.getNode();
         var instance = new Instance(UUID.randomUUID().toString(), task.getId(), node.getId(), new ArrayList<>(), new HashMap<>());
         for (final var plugin : instanceDecoratorPlugins) {
-            instance = plugin.decorate(instance);
+            instance = plugin.decorate(instance, task, node);
         }
         clusterState.setInstance(instance);
 
         totalLatency.update(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
         successMeter.mark();
+    }
+
+    @Override
+    public void deschedule(final Task task) {
+
     }
 }
