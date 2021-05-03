@@ -8,6 +8,7 @@ import uk.co.ractf.polaris.controller.scheduler.FilterResult;
 import java.util.Collections;
 
 public class NodeIsSchedulable implements FilterPlugin {
+
     @Override
     public FilterResult filter(final Task task, final NodeInfo nodeInfo) {
         if (!nodeInfo.isSchedulable()) {

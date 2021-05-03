@@ -8,6 +8,7 @@ import uk.co.ractf.polaris.controller.scheduler.FilterResult;
 import java.util.Collections;
 
 public class NodeHasRunner implements FilterPlugin {
+
     @Override
     public FilterResult filter(final Task task, final NodeInfo nodeInfo) {
         for (final var pod : task.getPods()) {
