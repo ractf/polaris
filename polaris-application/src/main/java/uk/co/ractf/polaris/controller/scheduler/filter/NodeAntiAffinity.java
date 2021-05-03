@@ -28,6 +28,6 @@ public class NodeAntiAffinity implements FilterPlugin {
 
     @Override
     public String getName() {
-        return "NodeAffinity";
+        return "NodeAntiAffinity";
     }
 }
