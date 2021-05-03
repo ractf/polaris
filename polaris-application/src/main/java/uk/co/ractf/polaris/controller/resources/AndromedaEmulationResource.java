@@ -56,8 +56,8 @@ public class AndromedaEmulationResource {
                 (long) (Double.parseDouble(challenge.getResources().getCpus()) * 1_000_000_000));
         final var portMapping = new PortMapping(challenge.getPort(), "tcp", true);
         final var pod = new Container("container", challenge.getName(), challenge.getImage(), "",
-                new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(),
-                new ArrayList<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
+                new HashMap<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>());
 
         final var polarisChallenge = new Challenge(new TaskId(challenge.getName()), 0,
