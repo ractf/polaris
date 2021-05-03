@@ -56,6 +56,11 @@ public class PolarisAPIClient implements APIClient {
     }
 
     @Override
+    public NamespaceUpdateCommand updateNamespace(final Namespace namespace) {
+        return new NamespaceUpdateCommand(transport, namespace);
+    }
+
+    @Override
     public NamespaceListCommand listNamespaces() {
         return new NamespaceListCommand(transport);
     }

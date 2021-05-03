@@ -27,6 +27,8 @@ public interface APIClient {
 
     NamespaceCreateCommand createNamespace(final Namespace namespace);
 
+    NamespaceUpdateCommand updateNamespace(final Namespace namespace);
+
     NamespaceListCommand listNamespaces();
 
     NamespaceGetCommand getNamespace(final String id);
