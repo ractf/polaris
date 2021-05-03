@@ -39,7 +39,7 @@ public class TaskScaleReconciliationServiceTest {
     @BeforeEach
     public void setup() {
         final var container = new Container("container", "test", "", "", new ArrayList<>(),
-                new HashMap<>(), new HashMap<>(), new HashMap<>(), new ArrayList<>(), new ArrayList<>(),
+                new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
                 new ResourceQuota(512L, 0L, 1000L), "always", new ArrayList<>(),
                 new ArrayList<>(), new ArrayList<>(), 5, new ArrayList<>(), new HashMap<>());
 
