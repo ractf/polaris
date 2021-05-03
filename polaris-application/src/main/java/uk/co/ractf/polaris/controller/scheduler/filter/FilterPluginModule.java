@@ -13,6 +13,7 @@ public class FilterPluginModule extends DropwizardAwareModule<ControllerConfigur
         multibinder.addBinding().to(NodeHasRunner.class);
         multibinder.addBinding().to(NodeIsSchedulable.class);
         multibinder.addBinding().to(NodeAffinity.class);
+        multibinder.addBinding().to(NodeAntiAffinity.class);
     }
 
 }
