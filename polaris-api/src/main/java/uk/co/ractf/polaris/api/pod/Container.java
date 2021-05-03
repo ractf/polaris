@@ -93,7 +93,7 @@ import java.util.*;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Container extends Pod implements ResourceLimited, PodWithPorts {
+public class Container extends Pod implements ResourceLimited, PodWithPorts, PodWithAffinity {
 
     private final String image;
     private final String repo;
@@ -101,8 +101,8 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts {
     private final Map<String, String> env;
     private final Map<String, RandomEnv> randomEnv;
     private final Map<String, String> labels;
-    private final List<String> affinity;
-    private final List<String> antiaffinity;
+    private final Map<String, String> affinity;
+    private final Map<String, String> antiaffinity;
     private final ResourceQuota resourceQuota;
     private final String restartPolicy;
     private final List<String> capDrop;
@@ -145,8 +145,8 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts {
             @JsonProperty("env") final Map<String, String> env,
             @JsonProperty("randomEnv") final Map<String, RandomEnv> randomEnv,
             @JsonProperty("labels") final Map<String, String> labels,
-            @JsonProperty("affinity") final List<String> affinity,
-            @JsonProperty("antiaffinity") final List<String> antiaffinity,
+            @JsonProperty("affinity") final Map<String, String> affinity,
+            @JsonProperty("antiaffinity") final Map<String, String> antiaffinity,
             @JsonProperty("resourceQuota") final ResourceQuota resourceQuota,
             @JsonProperty("restartPolicy") final String restartPolicy,
             @JsonProperty("capDrop") final List<String> capDrop,
@@ -198,14 +198,17 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts {
         return labels;
     }
 
-    public List<String> getAffinity() {
+    @Override
+    public Map<String, String> getAffinity() {
         return affinity;
     }
 
-    public List<String> getAntiaffinity() {
+    @Override
+    public Map<String, String> getAntiaffinity() {
         return antiaffinity;
     }
 
+    @Override
     public ResourceQuota getResourceQuota() {
         return resourceQuota;
     }
