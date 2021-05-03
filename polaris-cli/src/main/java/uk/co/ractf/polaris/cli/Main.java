@@ -2,8 +2,6 @@ package uk.co.ractf.polaris.cli;
 
 import com.fasterxml.jackson.databind.ext.Java7Handlers;
 import picocli.CommandLine;
-import uk.co.ractf.polaris.cli.subcommands.Challenge;
-import uk.co.ractf.polaris.cli.subcommands.Deployment;
 import uk.co.ractf.polaris.cli.subcommands.Login;
 
 import java.io.OutputStream;
@@ -12,21 +10,19 @@ import java.util.concurrent.Callable;
 
 @CommandLine.Command(
         subcommands = {
-                Login.class,
-                Challenge.class,
-                Deployment.class
+                Login.class
         }
 )
 public class Main implements Callable<Integer> {
 
     public static void main(final String[] args) {
         silenceJackson();
-        final int exitCode = new CommandLine(new Main()).execute(args);
+        final var exitCode = new CommandLine(new Main()).execute(args);
         System.exit(exitCode);
     }
 
     private static void silenceJackson() {
-        final PrintStream syserr = System.err;
+        final var syserr = System.err;
         System.setErr(new PrintStream(new OutputStream() {
             @Override
             public void write(final int b) {
