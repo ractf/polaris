@@ -22,7 +22,6 @@ public class TaskWatchService extends AbstractIdleService {
 
     @Override
     protected void startUp() throws Exception {
-        //this triggers every time the thing changes, with the new set of values
         cache.addListener(newValues -> {
 
         });
