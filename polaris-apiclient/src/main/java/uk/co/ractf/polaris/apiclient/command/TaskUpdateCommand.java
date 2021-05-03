@@ -16,6 +16,6 @@ public class TaskUpdateCommand extends AbstractCommand<TaskUpdateResponse> {
 
     @Override
     public TaskUpdateResponse exec() {
-        return apiClientTransport.post("/tasks/" + task.getId(), task, TaskUpdateResponse.class);
+        return apiClientTransport.post("/tasks", task, TaskUpdateResponse.class);
     }
 }
