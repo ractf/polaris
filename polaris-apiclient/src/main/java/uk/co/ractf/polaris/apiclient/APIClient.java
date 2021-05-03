@@ -29,6 +29,8 @@ public interface APIClient {
 
     NamespaceListCommand listNamespaces();
 
+    NamespaceGetCommand getNamespace(final String id);
+
     NamespaceDeleteCommand deleteNamespace(final String id);
 
 }
