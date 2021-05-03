@@ -61,6 +61,11 @@ public class PolarisAPIClient implements APIClient {
     }
 
     @Override
+    public NamespaceGetCommand getNamespace(final String id) {
+        return new NamespaceGetCommand(transport, id);
+    }
+
+    @Override
     public NamespaceDeleteCommand deleteNamespace(final String id) {
         return new NamespaceDeleteCommand(transport, id);
     }
