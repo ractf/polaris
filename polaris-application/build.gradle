@@ -1,4 +1,5 @@
 import org.apache.tools.ant.filters.ReplaceTokens
+import uk.co.ractf.polaris.GitInfo
 
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -10,15 +11,13 @@ buildscript {
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
-        classpath "com.netflix.nebula:gradle-ospackage-plugin:8.5.1"
-        classpath "com.palantir.gradle.gitversion:gradle-git-version:0.12.3"
+        classpath "com.netflix.nebula:gradle-ospackage-plugin:8.5.6"
     }
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 apply plugin: 'nebula.ospackage'
-apply plugin: 'com.palantir.git-version'
 
 mainClassName = 'uk.co.ractf.polaris.Main'
 
@@ -81,12 +80,12 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         filter ReplaceTokens, tokens: [version: version]
     }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }
 
 buildRpm {
     packageName = 'polaris'
-    def details = versionDetails(prefix: 'rc@')
-    release = details.lastTag
+    release = GitInfo.getGitCommit()
     version = rootProject.version
     arch = 'X86_64'
     os = 'LINUX'
