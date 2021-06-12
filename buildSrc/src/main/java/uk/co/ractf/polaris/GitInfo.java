@@ -1,17 +1,20 @@
 package uk.co.ractf.polaris;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 public class GitInfo {
 
     public static String getGitCommit() {
         try {
-            final var head = Files.readAllLines(Path.of("..", ".git", "HEAD")).get(0).substring(5);
-            return Files.readAllLines(Path.of("..", ".git", head)).get(0).substring(0, 7);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+            final var process = Runtime.getRuntime().exec("git rev-parse HEAD");
+            try(final var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                return reader.readLine();
+            }
+        } catch (final IOException exception) {
+            throw new IllegalStateException("Failed to run command", exception);
         }
     }
 
