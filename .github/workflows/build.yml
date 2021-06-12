@@ -1,4 +1,4 @@
-name: Build Polaris CLI Rpm
+name: Build Polaris Application Jar
 
 on: push
 
@@ -24,9 +24,4 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build with Gradle
-        run: ./gradlew polaris-cli:buildRpm
-
-#      - uses: actions/upload-artifact@v2
-#        with:
-#          name: polaris.rpm
-#          path: polaris-cli/build/distributions/*.rpm
+        run: ./gradlew build
