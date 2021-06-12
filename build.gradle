@@ -43,3 +43,17 @@ task codeCoverageReport(type: JacocoReport) {
 codeCoverageReport.dependsOn {
     subprojects*.test
 }
+
+
+tasks.create(name: 'chmodGitHooks') {
+    Runtime.getRuntime().exec("chmod -R +x .git/hooks/");
+}
+
+task installGitHooks(type: Copy) {
+    from new File(rootProject.rootDir, 'scripts/pre-commit.py')
+    into { new File(rootProject.rootDir, '.git/hooks/') }
+    rename("pre-commit\\.py", "pre-commit")
+}
+
+chmodGitHooks.dependsOn installGitHooks
+clean.dependsOn chmodGitHooks
