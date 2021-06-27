@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.random.RandomEnv;
 import uk.co.ractf.polaris.api.task.Challenge;
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +28,7 @@ import java.util.Objects;
 public class Instance extends JsonRepresentable {
 
     private final String id;
-    private final TaskId taskId;
+    private final NamespacedId namespacedId;
     private final String hostId;
     private final List<InstancePortBinding> portBindings;
     private final Map<String, String> randomEnv;
@@ -36,19 +36,19 @@ public class Instance extends JsonRepresentable {
 
     /**
      * @param id id of the instance
-     * @param taskId the task id
+     * @param namespacedId the task id
      * @param hostId the node id
      * @param portBindings which ports should be bound
      * @param randomEnv the random env vars
      */
     @Contract(pure = true)
     public Instance(@JsonProperty("id") final String id,
-                    @JsonProperty("taskId") final TaskId taskId,
+                    @JsonProperty("taskId") final NamespacedId namespacedId,
                     @JsonProperty("host") final String hostId,
                     @JsonProperty("ports") final List<InstancePortBinding> portBindings,
                     @JsonProperty("randomEnv") final Map<String, String> randomEnv) {
         this.id = id;
-        this.taskId = taskId;
+        this.namespacedId = namespacedId;
         this.hostId = hostId;
         this.portBindings = portBindings;
         this.randomEnv = randomEnv;
@@ -60,8 +60,8 @@ public class Instance extends JsonRepresentable {
     }
 
     @JsonProperty("taskId")
-    public TaskId getTaskId() {
-        return taskId;
+    public NamespacedId getTaskId() {
+        return namespacedId;
     }
 
     @JsonProperty("host")
@@ -97,13 +97,13 @@ public class Instance extends JsonRepresentable {
         if (this == o) return true;
         if (!(o instanceof Instance)) return false;
         final Instance instance = (Instance) o;
-        return Objects.equals(id, instance.id) && Objects.equals(taskId, instance.taskId) &&
+        return Objects.equals(id, instance.id) && Objects.equals(namespacedId, instance.namespacedId) &&
                 Objects.equals(hostId, instance.hostId) && Objects.equals(portBindings, instance.portBindings) &&
                 Objects.equals(randomEnv, instance.randomEnv);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, taskId, hostId, portBindings, randomEnv);
+        return Objects.hash(id, namespacedId, hostId, portBindings, randomEnv);
     }
 }

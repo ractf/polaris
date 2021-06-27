@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 import uk.co.ractf.polaris.api.task.Challenge;
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class EphemeralInstanceAllocator implements InstanceAllocator {
 
     private final ClusterState clusterState;
-    private final Map<TaskId, StickyInstances> stickyInstances = new ConcurrentHashMap<>();
+    private final Map<NamespacedId, StickyInstances> stickyInstances = new ConcurrentHashMap<>();
     private final Multimap<String, String> instanceUsers = Multimaps.synchronizedSetMultimap(HashMultimap.create());
     private final Multimap<String, String> instanceTeams = Multimaps.synchronizedSetMultimap(HashMultimap.create());
     private final Multimap<String, String> teamAvoids = Multimaps.synchronizedSetMultimap(HashMultimap.create());

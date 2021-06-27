@@ -5,6 +5,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.task.*;
 import uk.co.ractf.polaris.state.ClusterState;
 
@@ -35,11 +36,11 @@ public class TaskResource {
     @RolesAllowed("TASK_GET")
     @Operation(summary = "Get Tasks", tags = {"Task"},
             description = "Gets a map of task id to task within a given namespace which can be filtered by type or id regex.")
-    public Map<TaskId, Task> getTasks(@Context final SecurityContext context,
-                                      @QueryParam("namespace") @DefaultValue("") final String namespace,
-                                      @QueryParam("filter") @DefaultValue("") final String filter,
-                                      @QueryParam("type") @DefaultValue("") final String type) {
-        final Map<TaskId, Task> taskMap;
+    public Map<NamespacedId, Task> getTasks(@Context final SecurityContext context,
+                                            @QueryParam("namespace") @DefaultValue("") final String namespace,
+                                            @QueryParam("filter") @DefaultValue("") final String filter,
+                                            @QueryParam("type") @DefaultValue("") final String type) {
+        final Map<NamespacedId, Task> taskMap;
         if (namespace.isEmpty()) {
             if (!context.isUserInRole("ALL_NAMESPACES")) {
                 throw new WebApplicationException(Response.Status.FORBIDDEN);
@@ -57,7 +58,7 @@ public class TaskResource {
         }
 
         final var pattern = Pattern.compile(filter);
-        final var filtered = new HashMap<TaskId, Task>();
+        final var filtered = new HashMap<NamespacedId, Task>();
         for (final var entry : taskMap.entrySet()) {
             var matches = filter.isEmpty() || pattern.matcher(entry.getKey().getId()).find();
             matches &= type.isEmpty() || entry.getValue().getTaskType().name().equalsIgnoreCase(type);
@@ -75,7 +76,7 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_GET")
     @Operation(summary = "Get Task", tags = {"Task"}, description = "Gets a task by given id")
-    public Task getTask(@Context final SecurityContext context, @PathParam("id") final TaskId id) {
+    public Task getTask(@Context final SecurityContext context, @PathParam("id") final NamespacedId id) {
         if (!context.isUserInRole("NAMESPACE_" + id.getNamespace())) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
@@ -137,7 +138,7 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_DELETE")
     @Operation(summary = "Delete Task", tags = {"Task"}, description = "Deletes a task")
-    public Response deleteTask(@Context final SecurityContext context, @PathParam("id") final TaskId id) {
+    public Response deleteTask(@Context final SecurityContext context, @PathParam("id") final NamespacedId id) {
         if (!context.isUserInRole("NAMESPACE_" + id.getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new TaskDeleteResponse(TaskDeleteResponse.Status.FORBIDDEN_NAMESPACE, id)).build();

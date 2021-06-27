@@ -2,7 +2,7 @@ package uk.co.ractf.polaris.controller.metrics;
 
 import com.codahale.metrics.Gauge;
 import uk.co.ractf.polaris.api.pod.ResourceLimited;
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class MemoryAllocatedGauge implements Gauge<Long> {
     public Long getValue() {
         long totalAllocated = 0;
         final var instanceMap = clusterState.getInstances();
-        final var instanceCounts = new HashMap<TaskId, Integer>();
+        final var instanceCounts = new HashMap<NamespacedId, Integer>();
         for (final var entry : instanceMap.entrySet()) {
             instanceCounts.put(entry.getValue().getTaskId(), instanceCounts.getOrDefault(entry.getValue().getTaskId(), 0) + 1);
         }

@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.api.task;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 
 import java.util.Objects;
 
@@ -14,11 +15,11 @@ public class TaskDeleteResponse extends JsonRepresentable {
     }
 
     private final Status status;
-    private final TaskId id;
+    private final NamespacedId id;
 
     public TaskDeleteResponse(
             @JsonProperty("status") final Status status,
-            @JsonProperty("id") final TaskId id) {
+            @JsonProperty("id") final NamespacedId id) {
         this.status = status;
         this.id = id;
     }
@@ -27,7 +28,7 @@ public class TaskDeleteResponse extends JsonRepresentable {
         return status;
     }
 
-    public TaskId getId() {
+    public NamespacedId getId() {
         return id;
     }
 

@@ -12,11 +12,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.ractf.polaris.api.authentication.ContainerRegistryCredentials;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.namespace.Namespace;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.task.Task;
-import uk.co.ractf.polaris.api.task.TaskId;
 import uk.co.ractf.polaris.util.ConsulPath;
 
 import java.util.HashMap;
@@ -133,11 +134,11 @@ public class ConsulState implements ClusterState {
     }
 
     @Override
-    public Map<String, Instance> getInstancesOfTask(final TaskId taskId) {
+    public Map<String, Instance> getInstancesOfTask(final NamespacedId namespacedId) {
         final Map<String, Instance> instances = new HashMap<>();
         final var instanceMap = getInstances();
         for (final var entry : instanceMap.entrySet()) {
-            if (entry.getValue().getTaskId().equals(taskId)) {
+            if (entry.getValue().getTaskId().equals(namespacedId)) {
                 instances.put(entry.getKey(), entry.getValue());
             }
         }
@@ -168,8 +169,8 @@ public class ConsulState implements ClusterState {
     }
 
     @Override
-    public Map<TaskId, Integer> getInstanceCounts() {
-        final Map<TaskId, Integer> instanceCounts = new HashMap<>();
+    public Map<NamespacedId, Integer> getInstanceCounts() {
+        final Map<NamespacedId, Integer> instanceCounts = new HashMap<>();
         final var instanceMap = getInstances();
         for (final var entry : instanceMap.entrySet()) {
             final var current = instanceCounts.getOrDefault(entry.getValue().getTaskId(), 0);
@@ -180,8 +181,8 @@ public class ConsulState implements ClusterState {
     }
 
     @Override
-    public Map<TaskId, Task> getTasks() {
-        final Map<TaskId, Task> taskMap = new HashMap<>();
+    public Map<NamespacedId, Task> getTasks() {
+        final Map<NamespacedId, Task> taskMap = new HashMap<>();
         for (final var taskData : consul.keyValueClient().getValues(ConsulPath.tasks())) {
             if (taskData.getValueAsString().isPresent()) {
                 try {
@@ -196,13 +197,13 @@ public class ConsulState implements ClusterState {
     }
 
     @Override
-    public List<TaskId> getTaskIds() {
-        return consul.keyValueClient().getKeys(ConsulPath.tasks()).stream().map(TaskId::new).collect(Collectors.toList());
+    public List<NamespacedId> getTaskIds() {
+        return consul.keyValueClient().getKeys(ConsulPath.tasks()).stream().map(NamespacedId::new).collect(Collectors.toList());
     }
 
     @Override
-    public Map<TaskId, Task> getTasks(final String namespace) {
-        final Map<TaskId, Task> taskMap = new HashMap<>();
+    public Map<NamespacedId, Task> getTasks(final String namespace) {
+        final Map<NamespacedId, Task> taskMap = new HashMap<>();
         for (final var taskData : consul.keyValueClient().getValues(ConsulPath.tasks())) {
             if (taskData.getValueAsString().isPresent()) {
                 try {
@@ -219,7 +220,7 @@ public class ConsulState implements ClusterState {
     }
 
     @Override
-    public Task getTask(final TaskId id) {
+    public Task getTask(final NamespacedId id) {
         final var taskData = consul.keyValueClient().getValueAsString(ConsulPath.task(id));
         if (taskData.isPresent()) {
             try {
@@ -241,7 +242,7 @@ public class ConsulState implements ClusterState {
     }
 
     @Override
-    public void deleteTask(final TaskId id) {
+    public void deleteTask(final NamespacedId id) {
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.DELETE)
                         .key(ConsulPath.task(id))
@@ -301,6 +302,72 @@ public class ConsulState implements ClusterState {
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.DELETE)
                         .key(id)
+                        .build());
+    }
+
+    @Override
+    public Map<NamespacedId, ContainerRegistryCredentials> getCredentials() {
+        final Map<NamespacedId, ContainerRegistryCredentials> credentialsMap = new HashMap<>();
+        for (final var credentialData : consul.keyValueClient().getValues(ConsulPath.credentials())) {
+            if (credentialData.getValueAsString().isPresent()) {
+                try {
+                    final var credential = ContainerRegistryCredentials.parse(credentialData.getValueAsString().get(), ContainerRegistryCredentials.class);
+                    credentialsMap.put(credential.getId(), credential);
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing credential " + credentialData.getKey(), exception);
+                }
+            }
+        }
+        return credentialsMap;
+    }
+
+    @Override
+    public Map<NamespacedId, ContainerRegistryCredentials> getCredentials(final String namespace) {
+        final Map<NamespacedId, ContainerRegistryCredentials> credentialsMap = new HashMap<>();
+        for (final var credentialData : consul.keyValueClient().getValues(ConsulPath.credentials())) {
+            if (credentialData.getValueAsString().isPresent()) {
+                try {
+                    final var credential = ContainerRegistryCredentials.parse(credentialData.getValueAsString().get(), ContainerRegistryCredentials.class);
+                    if (credential.getId().getNamespace().equals(namespace)) {
+                        credentialsMap.put(credential.getId(), credential);
+                    }
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing credential " + credentialData.getKey(), exception);
+                }
+            }
+        }
+        return credentialsMap;
+    }
+
+    @Override
+    public ContainerRegistryCredentials getCredential(final NamespacedId id) {
+        final var credentialData = consul.keyValueClient().getValue(ConsulPath.credential(id));
+        if (credentialData.isPresent()) {
+            if (credentialData.get().getValueAsString().isPresent()) {
+                try {
+                    return ContainerRegistryCredentials.parse(credentialData.get().getValueAsString().get(), ContainerRegistryCredentials.class);
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing credential " + credentialData.get().getKey(), exception);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setCredential(final ContainerRegistryCredentials credential) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.SET)
+                        .key(ConsulPath.credential(credential.getId()))
+                        .value(credential.toJsonString())
+                        .build());
+    }
+
+    @Override
+    public void deleteCredential(final NamespacedId id) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.DELETE)
+                        .key(ConsulPath.credential(id))
                         .build());
     }
 }

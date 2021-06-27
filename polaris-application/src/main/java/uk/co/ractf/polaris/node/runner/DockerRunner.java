@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Container;
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.state.ClusterState;
 
@@ -183,7 +183,7 @@ public class DockerRunner implements Runner<Container> {
             final var taskId = container.getLabels().get("polaris-task");
 
             if (!state.getInstancesOnNode(node.getId()).containsKey(instanceId)) {
-                final var challenge = state.getTask(new TaskId(taskId));
+                final var challenge = state.getTask(new NamespacedId(taskId));
                 if (dyingContainers.contains(container.getId())) {
                     continue;
                 }
