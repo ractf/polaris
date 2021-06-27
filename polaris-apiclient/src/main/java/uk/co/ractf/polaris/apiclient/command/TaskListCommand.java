@@ -2,15 +2,14 @@ package uk.co.ractf.polaris.apiclient.command;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import uk.co.ractf.polaris.api.task.Task;
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.apiclient.AbstractCommand;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class TaskListCommand extends AbstractCommand<Map<TaskId, Task>> {
+public class TaskListCommand extends AbstractCommand<Map<NamespacedId, Task>> {
 
     private String namespace;
     private String filter;
@@ -36,7 +35,7 @@ public class TaskListCommand extends AbstractCommand<Map<TaskId, Task>> {
     }
 
     @Override
-    public Map<TaskId, Task> exec() {
+    public Map<NamespacedId, Task> exec() {
         final var joiner = new StringJoiner("&");
         if (namespace != null) {
             joiner.add("namespace=" + namespace);

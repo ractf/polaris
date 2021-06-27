@@ -2,10 +2,9 @@ package uk.co.ractf.polaris.api;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
-import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.pod.Pod;
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 
 import java.util.Collections;
 
@@ -37,7 +36,7 @@ public class ChallengeTestCase {
     public void testGetPodById() {
         final var pod = mock(Pod.class);
         when(pod.getId()).thenReturn("test");
-        final var challenge = new Challenge(new TaskId("test"), 0, Collections.singletonList(pod), null, null);
+        final var challenge = new Challenge(new NamespacedId("test"), 0, Collections.singletonList(pod), null, null);
         assertThat(challenge.getPod("test")).isEqualTo(pod);
     }
 
@@ -45,7 +44,7 @@ public class ChallengeTestCase {
     public void testGetPodByIdReturnsNull() {
         final var pod = mock(Pod.class);
         when(pod.getId()).thenReturn("test");
-        final var challenge = new Challenge(new TaskId("test"), 0, Collections.singletonList(pod), null, null);
+        final var challenge = new Challenge(new NamespacedId("test"), 0, Collections.singletonList(pod), null, null);
         assertThat(challenge.getPod("test2")).isNull();
     }
 

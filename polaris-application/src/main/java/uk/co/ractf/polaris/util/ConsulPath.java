@@ -1,6 +1,6 @@
 package uk.co.ractf.polaris.util;
 
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 
 import java.util.StringJoiner;
 
@@ -13,6 +13,7 @@ public class ConsulPath {
     private static final String INSTANCE_ALLOCATION = "polaris/instanceallocation";
     private static final String TASKS = "polaris/tasks";
     private static final String NAMESPACES = "polaris/namespaces";
+    private static final String CREDENTIALS = "polaris/credentials";
 
     public static String path(final String... parts) {
         final StringJoiner stringJoiner = new StringJoiner("/");
@@ -74,11 +75,11 @@ public class ConsulPath {
         return path(TASKS, id);
     }
 
-    public static String task(final TaskId id) {
+    public static String task(final NamespacedId id) {
         return path(TASKS, id.toString());
     }
 
-    public static String taskLock(final TaskId id) {
+    public static String taskLock(final NamespacedId id) {
         return path(TASKS, id.toString(), "lock");
     }
 
@@ -90,4 +91,11 @@ public class ConsulPath {
         return path(NAMESPACES, id);
     }
 
+    public static String credentials() {
+        return CREDENTIALS;
+    }
+
+    public static String credential(final NamespacedId id) {
+        return path(CREDENTIALS, id.toString());
+    }
 }

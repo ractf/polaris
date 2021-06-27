@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 import uk.co.ractf.polaris.api.deployment.Replication;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.pod.Pod;
 
 import java.util.List;
@@ -18,13 +19,13 @@ import java.util.Objects;
 })
 public abstract class Task extends JsonRepresentable {
 
-    private final TaskId id;
+    private final NamespacedId id;
     private final Integer version;
     private final TaskType taskType;
     private final Replication replication;
     private final List<Pod> pods;
 
-    public Task(final TaskId id, final Integer version, final TaskType taskType, final Replication replication, final List<Pod> pods) {
+    public Task(final NamespacedId id, final Integer version, final TaskType taskType, final Replication replication, final List<Pod> pods) {
         this.id = id;
         this.version = version;
         this.taskType = taskType;
@@ -32,7 +33,7 @@ public abstract class Task extends JsonRepresentable {
         this.pods = pods;
     }
 
-    public TaskId getId() {
+    public NamespacedId getId() {
         return id;
     }
 

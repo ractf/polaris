@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.Replication;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.pod.Pod;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class Challenge extends ServiceTask {
      */
     @Contract(pure = true)
     public Challenge(
-            @JsonProperty("id") final TaskId id,
+            @JsonProperty("id") final NamespacedId id,
             @JsonProperty("version") final Integer version,
             @JsonProperty("pods") final List<Pod> pods,
             @JsonProperty("replication") final Replication replication,

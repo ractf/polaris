@@ -16,7 +16,7 @@ import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
 import uk.co.ractf.polaris.api.task.Challenge;
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.state.ClusterState;
 
@@ -60,7 +60,7 @@ public class AndromedaEmulationResource {
                 new HashMap<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>());
 
-        final var polarisChallenge = new Challenge(new TaskId(challenge.getName()), 0,
+        final var polarisChallenge = new Challenge(new NamespacedId(challenge.getName()), 0,
                 Collections.singletonList(pod), new StaticReplication("static", challenge.getReplicas()),
                 new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE));
 
@@ -75,11 +75,11 @@ public class AndromedaEmulationResource {
     @Operation(summary = "Request Instance Allocation", tags = {"Andromeda"},
             description = "Requests an instance allocation from polaris in andromda's format")
     public Response getInstance(final AndromedaInstanceRequest request) {
-        if (clusterState.getTask(new TaskId(request.getJob())) == null) {
+        if (clusterState.getTask(new NamespacedId(request.getJob())) == null) {
             return Response.status(404).build();
         }
         final Instance instance = controller.getInstanceAllocator().allocate(
-                new InstanceRequest(new TaskId(request.getJob()), request.getUser(), ""));
+                new InstanceRequest(new NamespacedId(request.getJob()), request.getUser(), ""));
         return Response.status(200).entity(
                 new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
                         Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]))).build();
@@ -93,11 +93,11 @@ public class AndromedaEmulationResource {
     @Operation(summary = "Request Instance Reset", tags = {"Andromeda"},
             description = "Reset an instance allocation from polaris in andromda's format")
     public AndromedaInstance resetInstance(final AndromedaInstanceRequest request) {
-        if (clusterState.getTask(new TaskId(request.getJob())) == null) {
+        if (clusterState.getTask(new NamespacedId(request.getJob())) == null) {
             Response.status(404).build();
         }
         final Instance instance = controller.getInstanceAllocator().requestNewAllocation(
-                new InstanceRequest(new TaskId(request.getJob()), request.getUser(), ""));
+                new InstanceRequest(new NamespacedId(request.getJob()), request.getUser(), ""));
         return new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
                 Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]));
     }

@@ -2,7 +2,7 @@ package uk.co.ractf.polaris.apiclient;
 
 import uk.co.ractf.polaris.api.namespace.Namespace;
 import uk.co.ractf.polaris.api.task.Task;
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.apiclient.command.*;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 import uk.co.ractf.polaris.apiclient.transport.HttpClientTransport;
@@ -36,8 +36,8 @@ public class PolarisAPIClient implements APIClient {
     }
 
     @Override
-    public TaskGetCommand getTask(final TaskId taskId) {
-        return new TaskGetCommand(transport, taskId);
+    public TaskGetCommand getTask(final NamespacedId namespacedId) {
+        return new TaskGetCommand(transport, namespacedId);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class PolarisAPIClient implements APIClient {
     }
 
     @Override
-    public TaskDeleteCommand deleteTask(final TaskId taskId) {
-        return new TaskDeleteCommand(transport, taskId);
+    public TaskDeleteCommand deleteTask(final NamespacedId namespacedId) {
+        return new TaskDeleteCommand(transport, namespacedId);
     }
 
     @Override

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.task.Challenge;
-import uk.co.ractf.polaris.api.task.TaskId;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.ArrayList;
@@ -30,7 +30,7 @@ public class DefaultTaskScalerTest {
     @Test
     public void testScaleUp() {
         final var scaler = new DefaultTaskScaler(state, scheduler);
-        final var task = new Challenge(new TaskId("test:test"), 1, new ArrayList<>(),
+        final var task = new Challenge(new NamespacedId("test:test"), 1, new ArrayList<>(),
                 new StaticReplication("", 5), null);
         scaler.scaleTask(task);
         verify(scheduler, times(5)).schedule(any());
@@ -45,7 +45,7 @@ public class DefaultTaskScalerTest {
         when(state.getInstancesOfTask(any())).thenReturn(instances);
 
         final var scaler = new DefaultTaskScaler(state, scheduler);
-        final var task = new Challenge(new TaskId("test:test"), 1, new ArrayList<>(),
+        final var task = new Challenge(new NamespacedId("test:test"), 1, new ArrayList<>(),
                 new StaticReplication("", 5), null);
         scaler.scaleTask(task);
         verify(scheduler, times(5)).deschedule(any());
@@ -60,7 +60,7 @@ public class DefaultTaskScalerTest {
         when(state.getInstancesOfTask(any())).thenReturn(instances);
 
         final var scaler = new DefaultTaskScaler(state, scheduler);
-        final var task = new Challenge(new TaskId("test:test"), 1, new ArrayList<>(),
+        final var task = new Challenge(new NamespacedId("test:test"), 1, new ArrayList<>(),
                 new StaticReplication("", 5), null);
         scaler.scaleTask(task);
         verify(scheduler, never()).deschedule(any());
@@ -72,7 +72,7 @@ public class DefaultTaskScalerTest {
         when(state.getInstancesOfTask(any())).thenReturn(new HashMap<>());
 
         final var scaler = new DefaultTaskScaler(state, scheduler);
-        final var task = new Challenge(new TaskId("test:test"), 1, new ArrayList<>(),
+        final var task = new Challenge(new NamespacedId("test:test"), 1, new ArrayList<>(),
                 new StaticReplication("", 5), null);
         scaler.scaleTask(task);
         verify(state).lockTask(any());
@@ -83,7 +83,7 @@ public class DefaultTaskScalerTest {
         when(state.getInstancesOfTask(any())).thenReturn(new HashMap<>());
 
         final var scaler = new DefaultTaskScaler(state, scheduler);
-        final var task = new Challenge(new TaskId("test:test"), 1, new ArrayList<>(),
+        final var task = new Challenge(new NamespacedId("test:test"), 1, new ArrayList<>(),
                 new StaticReplication("", 5), null);
         scaler.scaleTask(task);
         verify(state).unlockTask(any());
@@ -95,7 +95,7 @@ public class DefaultTaskScalerTest {
         when(state.getInstancesOfTask(any())).thenReturn(new HashMap<>());
 
         final var scaler = new DefaultTaskScaler(state, scheduler);
-        final var task = new Challenge(new TaskId("test:test"), 1, new ArrayList<>(),
+        final var task = new Challenge(new NamespacedId("test:test"), 1, new ArrayList<>(),
                 new StaticReplication("", 5), null);
         scaler.scaleTask(task);
         verifyNoInteractions(scheduler);

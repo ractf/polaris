@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.api.task;
+package uk.co.ractf.polaris.api.authentication;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,7 +8,7 @@ import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TaskUpdateResponse extends JsonRepresentable {
+public class CredentialsDeleteResponse extends JsonRepresentable {
 
     public enum Status {
         OK, NOT_FOUND, INVALID, BAD_NAMESPACE, FORBIDDEN_NAMESPACE;
@@ -17,7 +17,7 @@ public class TaskUpdateResponse extends JsonRepresentable {
     private final Status status;
     private final NamespacedId id;
 
-    public TaskUpdateResponse(
+    public CredentialsDeleteResponse(
             @JsonProperty("status") final Status status,
             @JsonProperty("id") final NamespacedId id) {
         this.status = status;
@@ -35,8 +35,8 @@ public class TaskUpdateResponse extends JsonRepresentable {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (!(o instanceof TaskUpdateResponse)) return false;
-        final TaskUpdateResponse that = (TaskUpdateResponse) o;
+        if (!(o instanceof CredentialsDeleteResponse)) return false;
+        final CredentialsDeleteResponse that = (CredentialsDeleteResponse) o;
         return status == that.status && Objects.equals(id, that.id);
     }
 
