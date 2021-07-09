@@ -102,7 +102,6 @@ buildRpm {
 
     requires('systemd')
     requires('java-11-openjdk')
-    requires('docker-ce')
 
     from('src/main/dist/bin') {
         into '/etc/systemd/system'
