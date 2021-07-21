@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.api.authentication;
+package uk.co.ractf.polaris.api.registry.credentials;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
