@@ -17,7 +17,7 @@ public class NamespacedId {
 
     @JsonCreator
     public NamespacedId(final String taskId) {
-        final String[] parts = taskId.split(":");
+        final var parts = taskId.split(":");
         if (parts.length > 2) {
             throw new IllegalArgumentException("Invalid task id: " + taskId);
         } else if (parts.length == 2) {

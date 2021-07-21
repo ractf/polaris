@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.node.runner;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.node.runner.docker.DockerRunner;
 
 import java.util.List;
 
