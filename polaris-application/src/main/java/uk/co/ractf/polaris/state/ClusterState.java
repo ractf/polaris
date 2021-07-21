@@ -4,6 +4,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.inject.ImplementedBy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import uk.co.ractf.polaris.api.authentication.APIToken;
 import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.namespace.Namespace;
@@ -118,5 +119,13 @@ public interface ClusterState {
     void setCredential(final ContainerRegistryCredentials credential);
 
     void deleteCredential(final NamespacedId id);
+
+    Map<String, APIToken> getAPITokens();
+
+    APIToken getAPIToken(final String id);
+
+    void setAPIToken(final APIToken apiToken);
+
+    void deleteAPIToken(final String id);
 
 }
