@@ -94,7 +94,7 @@ import java.util.*;
  * </pre>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Container extends Pod implements ResourceLimited, PodWithPorts, PodWithAffinity {
+public class Container extends Pod implements ResourceLimited, PodWithPorts, PodWithAffinity, AutoUpdatable {
 
     private final String image;
     private final String repo;
@@ -113,12 +113,13 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
     private final Integer terminationTimeout;
     private final List<PortMapping> ports;
     private final Map<String, String> metadata;
+    private final boolean autoUpdate;
 
     private final Map<String, String> generatedRandomEnv = new HashMap<>();
 
     /**
      * Creates a container
-     *  @param type               the type of the pod (container)
+     * @param type               the type of the pod (container)
      * @param id                 the id of the container
      * @param image              the image to use
      * @param repo               the repository id
@@ -137,6 +138,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
      * @param terminationTimeout the timeout to use when the pod is terminated
      * @param portMappings       ports to expose
      * @param metadata           other metadata
+     * @param autoUpdate         if the container should be automatically updated
      */
     public Container(
             @JsonProperty("type") final String type,
@@ -157,7 +159,8 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
             @JsonProperty("healthChecks") final List<HealthCheck> healthChecks,
             @JsonProperty("terminationTimeout") final Integer terminationTimeout,
             @JsonProperty("ports") final List<PortMapping> portMappings,
-            @JsonProperty("metadata") final Map<String, String> metadata) {
+            @JsonProperty("metadata") final Map<String, String> metadata,
+            @JsonProperty("autoUpdate") final boolean autoUpdate) {
         super(type, id);
         this.image = image;
         this.repo = repo;
@@ -176,6 +179,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
         this.terminationTimeout = terminationTimeout;
         this.ports = portMappings;
         this.metadata = metadata;
+        this.autoUpdate = autoUpdate;
     }
 
     public String getImage() {
@@ -250,6 +254,11 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
         return ports;
     }
 
+    @Override
+    public boolean isAutoUpdate() {
+        return autoUpdate;
+    }
+
     private void generateRandomEnvIfEmpty() {
         if (generatedRandomEnv.isEmpty()) {
             for (final Map.Entry<String, RandomEnv> entry : randomEnv.entrySet()) {
@@ -283,6 +292,14 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
         return "docker".equals(runner);
     }
 
+    public String getTag() {
+        var tag = "latest";
+        if (image.replaceAll("http(s?):", "").contains(":")) {
+            tag = image.split(":")[1];
+        }
+        return tag;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -298,13 +315,14 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
                 Objects.equals(capAdd, container.capAdd) && Objects.equals(healthChecks, container.healthChecks) &&
                 Objects.equals(terminationTimeout, container.terminationTimeout) &&
                 Objects.equals(ports, container.ports) && Objects.equals(metadata, container.metadata) &&
-                Objects.equals(getType(), container.getType()) && Objects.equals(getId(), container.getId());
+                Objects.equals(autoUpdate, container.autoUpdate) && Objects.equals(getType(), container.getType()) &&
+                Objects.equals(getId(), container.getId());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(image, repo, repoCredentials, entrypoint, env, randomEnv, labels, affinity, antiaffinity,
                 resourceQuota, restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, ports, metadata,
-                getType(), getId());
+                autoUpdate, getType(), getId());
     }
 }

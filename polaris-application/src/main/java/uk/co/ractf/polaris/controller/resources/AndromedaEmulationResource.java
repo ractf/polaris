@@ -12,7 +12,6 @@ import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstanceRequest;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
-import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.pod.Container;
@@ -75,7 +74,7 @@ public class AndromedaEmulationResource {
         final var pod = new Container("container", challenge.getName(), challenge.getImage(), "",
                 credentials.getId(), new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
                 new HashMap<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
-                new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>());
+                new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>(), true);
 
         final var polarisChallenge = new Challenge(new NamespacedId(namespace, challenge.getName()), 0,
                 Collections.singletonList(pod), new StaticReplication("static", challenge.getReplicas()),

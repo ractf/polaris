@@ -39,6 +39,13 @@ public interface Runner<T extends Pod> {
     void forceUpdatePod(final T pod, final Instance instance);
 
     /**
+     * Update a {@link Pod} if an update is available.
+     *
+     * @param pod      the pod
+     */
+    void updatePod(final T pod);
+
+    /**
      * Restart a specific {@link Instance} of a {@link Pod}
      *
      * @param pod      the pod

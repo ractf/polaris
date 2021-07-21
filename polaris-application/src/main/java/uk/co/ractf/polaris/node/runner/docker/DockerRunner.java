@@ -126,6 +126,30 @@ public class DockerRunner implements Runner<Container> {
     }
 
     @Override
+    public void updatePod(final Container pod) {
+        final var credentials = state.getCredential(pod.getRepoCredentials());
+        final var authConfig = authConfigFactory.createAuthConfig(credentials);
+
+        final Map<String, String> filter = new HashMap<>();
+        filter.put("polaris-pod", pod.getId());
+        //TODO: surely there's a better way to do this
+        try {
+            dockerClient.pullImageCmd(pod.getImage()).withTag(pod.getTag()).withAuthConfig(authConfig).exec(new PullImageResultCallback() {
+                @Override
+                public void onNext(final PullResponseItem item) {
+                    if ("Downloaded newer image".equals(item.getStatus())) {
+                        for (final var container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
+                            dockerClient.restartContainerCmd(container.getId()).withtTimeout(pod.getTerminationTimeout()).exec();
+                        }
+                    }
+                }
+            }).awaitCompletion();
+        } catch (final InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void restartPod(final Container pod, final Instance instance) {
         final Map<String, String> filter = new HashMap<>();
         filter.put("polaris-pod", pod.getId());
