@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.task.*;
+import uk.co.ractf.polaris.security.PolarisSecurityContext;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
@@ -36,18 +37,22 @@ public class TaskResource {
     @RolesAllowed("TASK_GET")
     @Operation(summary = "Get Tasks", tags = {"Task"},
             description = "Gets a map of task id to task within a given namespace which can be filtered by type or id regex.")
-    public Map<NamespacedId, Task> getTasks(@Context final SecurityContext context,
+    public Map<NamespacedId, Task> getTasks(@Context final PolarisSecurityContext context,
                                             @QueryParam("namespace") @DefaultValue("") final String namespace,
                                             @QueryParam("filter") @DefaultValue("") final String filter,
                                             @QueryParam("type") @DefaultValue("") final String type) {
         final Map<NamespacedId, Task> taskMap;
         if (namespace.isEmpty()) {
-            if (!context.isUserInRole("ALL_NAMESPACES")) {
-                throw new WebApplicationException(Response.Status.FORBIDDEN);
+            if (context.isRoot()) {
+                taskMap = clusterState.getTasks();
+            } else {
+                taskMap = new HashMap<>();
+                for (final var namespaceId : context.getNamespaces()) {
+                    taskMap.putAll(clusterState.getTasks(namespaceId));
+                }
             }
-            taskMap = clusterState.getTasks();
         } else {
-            if (!context.isUserInRole("NAMESPACE_" + namespace)) {
+            if (!context.isUserInNamespace(namespace)) {
                 throw new WebApplicationException(Response.Status.FORBIDDEN);
             }
             taskMap = clusterState.getTasks(namespace);
@@ -76,8 +81,8 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_GET")
     @Operation(summary = "Get Task", tags = {"Task"}, description = "Gets a task by given id")
-    public Task getTask(@Context final SecurityContext context, @PathParam("id") final NamespacedId id) {
-        if (!context.isUserInRole("NAMESPACE_" + id.getNamespace())) {
+    public Task getTask(@Context final PolarisSecurityContext context, @PathParam("id") final NamespacedId id) {
+        if (!context.isUserInNamespace(id.getNamespace())) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
 
@@ -93,8 +98,8 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_ADD")
     @Operation(summary = "Add Task", tags = {"Task"}, description = "Adds a task")
-    public Response addTask(@Context final SecurityContext context, @RequestBody final Task task) {
-        if (!context.isUserInRole("NAMESPACE_" + task.getId().getNamespace())) {
+    public Response addTask(@Context final PolarisSecurityContext context, @RequestBody final Task task) {
+        if (!context.isUserInNamespace(task.getId().getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new TaskSubmitResponse(TaskSubmitResponse.Status.FORBIDDEN_NAMESPACE, task.getId())).build();
         } else if (clusterState.getNamespace(task.getId().getNamespace()) == null) {
@@ -117,8 +122,8 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_UPDATE")
     @Operation(summary = "Update Task", tags = {"Task"}, description = "Modifies a task")
-    public Response updateTask(@Context final SecurityContext context, @RequestBody final Task task) {
-        if (!context.isUserInRole("NAMESPACE_" + task.getId().getNamespace())) {
+    public Response updateTask(@Context final PolarisSecurityContext context, @RequestBody final Task task) {
+        if (!context.isUserInNamespace(task.getId().getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new TaskUpdateResponse(TaskUpdateResponse.Status.FORBIDDEN_NAMESPACE, task.getId())).build();
         }
@@ -138,8 +143,8 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_DELETE")
     @Operation(summary = "Delete Task", tags = {"Task"}, description = "Deletes a task")
-    public Response deleteTask(@Context final SecurityContext context, @PathParam("id") final NamespacedId id) {
-        if (!context.isUserInRole("NAMESPACE_" + id.getNamespace())) {
+    public Response deleteTask(@Context final PolarisSecurityContext context, @PathParam("id") final NamespacedId id) {
+        if (!context.isUserInNamespace(id.getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new TaskDeleteResponse(TaskDeleteResponse.Status.FORBIDDEN_NAMESPACE, id)).build();
         }

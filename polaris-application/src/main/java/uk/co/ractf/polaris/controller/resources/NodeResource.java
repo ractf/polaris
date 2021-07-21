@@ -42,7 +42,7 @@ public class NodeResource {
     @GET
     @Timed
     @ExceptionMetered
-    @RolesAllowed("HOST_GET")
+    @RolesAllowed("ROOT")
     @Operation(summary = "Get Hosts", tags = {"Host"},
             description = "Gets a list of hosts currently registered and info about them")
     public Map<String, NodeInfo> listHostInfo(@QueryParam("filter") @DefaultValue("") final String filter) {
@@ -67,7 +67,7 @@ public class NodeResource {
     @Timed
     @Path("/{id}")
     @ExceptionMetered
-    @RolesAllowed("HOST_GET")
+    @RolesAllowed("ROOT")
     @Operation(summary = "Get Host", tags = {"Host"},
             description = "Gets a host by id")
     public NodeInfo getHostInfo(@PathParam("id") final String id) {
