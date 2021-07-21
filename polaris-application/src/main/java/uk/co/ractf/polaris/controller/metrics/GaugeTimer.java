@@ -12,10 +12,6 @@ public class GaugeTimer<T> implements Gauge<T> {
 
     @Override
     public T getValue() {
-        final var start = System.currentTimeMillis();
-        final var value = gauge.getValue();
-        final var end = System.currentTimeMillis();
-        System.out.println("Calling " + gauge.getClass().getSimpleName() + " took " + (end - start) + "ms");
-        return value;
+        return gauge.getValue();
     }
 }

@@ -17,6 +17,11 @@ public class PolarisAuthorizer implements Authorizer<PolarisUser> {
     @Override
     public boolean authorize(final PolarisUser principal, final String role,
                              @Nullable final ContainerRequestContext requestContext) {
+        if (requestContext != null) {
+            requestContext.setSecurityContext(
+                    new PolarisSecurityContext(principal, requestContext.getSecurityContext())
+            );
+        }
         return principal.isRoot() || principal.getApiToken().getRoles().contains(role);
     }
 

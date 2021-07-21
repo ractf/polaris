@@ -9,12 +9,15 @@ import uk.co.ractf.polaris.api.namespace.Namespace;
 import uk.co.ractf.polaris.api.namespace.NamespaceCreateResponse;
 import uk.co.ractf.polaris.api.namespace.NamespaceDeleteResponse;
 import uk.co.ractf.polaris.api.namespace.NamespaceUpdateResponse;
+import uk.co.ractf.polaris.security.PolarisSecurityContext;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
 import java.util.Map;
 
 @Path("/namespaces")
@@ -31,26 +34,35 @@ public class NamespaceResource {
     @GET
     @Timed
     @ExceptionMetered
-    @RolesAllowed("NAMESPACE_ADMIN")
+    @RolesAllowed("NAMESPACE")
     @Operation(summary = "Get Namespaces", tags = {"Namespace"}, description = "Gets a map of namespace id to namespace")
-    public Map<String, Namespace> getNamespaces() {
-        return clusterState.getNamespaces();
+    public Map<String, Namespace> getNamespaces(@Context final PolarisSecurityContext context) {
+        final Map<String, Namespace> namespaceMap = new HashMap<>();
+        for (final var entry : clusterState.getNamespaces().entrySet()) {
+            if (context.isUserInNamespace(entry.getKey())) {
+                namespaceMap.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return namespaceMap;
     }
 
     @GET
     @Path("/{id}")
     @Timed
     @ExceptionMetered
-    @RolesAllowed("NAMESPACE_ADMIN")
+    @RolesAllowed("NAMESPACE")
     @Operation(summary = "Get Namespace", tags = {"Namespace"}, description = "Gets a namespace by id")
-    public Namespace getNamespace(@PathParam("id") final String id) {
-        return clusterState.getNamespace(id);
+    public Response getNamespace(@Context final PolarisSecurityContext context, @PathParam("id") final String id) {
+        if (context.isUserInNamespace(id)) {
+            return Response.ok(clusterState.getNamespace(id)).build();
+        }
+        return Response.status(403).build();
     }
 
     @POST
     @Timed
     @ExceptionMetered
-    @RolesAllowed("NAMESPACE_ADMIN")
+    @RolesAllowed("ROOT")
     @Operation(summary = "Create Namespace", tags = {"Namespace"}, description = "Creates a namespace")
     public Response createNamespace(@RequestBody final Namespace namespace) {
         if (clusterState.getNamespace(namespace.getName()) != null) {
@@ -71,7 +83,7 @@ public class NamespaceResource {
     @Path("/{id}")
     @Timed
     @ExceptionMetered
-    @RolesAllowed("NAMESPACE_ADMIN")
+    @RolesAllowed("ROOT")
     @Operation(summary = "Update Namespace", tags = {"Namespace"}, description = "Updates a namespace")
     public Response updateNamespace(@PathParam("id") final String id, @RequestBody final Namespace namespace) {
         if (clusterState.getNamespace(namespace.getName()) == null) {
@@ -92,7 +104,7 @@ public class NamespaceResource {
     @Path("/{id}")
     @Timed
     @ExceptionMetered
-    @RolesAllowed("NAMESPACE_ADMIN")
+    @RolesAllowed("ROOT")
     @Operation(summary = "Update Namespace", tags = {"Namespace"}, description = "Updates a namespace")
     public Response deleteNamespace(@PathParam("id") final String id) {
         if (clusterState.getNamespace(id) == null) {
