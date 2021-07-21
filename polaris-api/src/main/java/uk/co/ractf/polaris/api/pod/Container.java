@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.healthcheck.HealthCheck;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.random.RandomEnv;
 
 import java.util.*;
@@ -97,6 +98,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
 
     private final String image;
     private final String repo;
+    private final NamespacedId repoCredentials;
     private final List<String> entrypoint;
     private final Map<String, String> env;
     private final Map<String, RandomEnv> randomEnv;
@@ -116,11 +118,11 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
 
     /**
      * Creates a container
-     *
-     * @param type               the type of the pod (container)
+     *  @param type               the type of the pod (container)
      * @param id                 the id of the container
      * @param image              the image to use
      * @param repo               the repository id
+     * @param repoCredentials    the credentials to use for the repository
      * @param entrypoint         the container entrypoint
      * @param env                the environment variables to set
      * @param randomEnv          the randomised environment variables to set
@@ -141,6 +143,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
             @JsonProperty("id") final String id,
             @JsonProperty("image") final String image,
             @JsonProperty("repo") final String repo,
+            @JsonProperty("repoCredentials") final NamespacedId repoCredentials,
             @JsonProperty("entrypoint") final List<String> entrypoint,
             @JsonProperty("env") final Map<String, String> env,
             @JsonProperty("randomEnv") final Map<String, RandomEnv> randomEnv,
@@ -158,6 +161,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
         super(type, id);
         this.image = image;
         this.repo = repo;
+        this.repoCredentials = repoCredentials;
         this.entrypoint = entrypoint;
         this.env = env;
         this.randomEnv = randomEnv;
@@ -180,6 +184,10 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
 
     public String getRepo() {
         return repo;
+    }
+
+    public NamespacedId getRepoCredentials() {
+        return repoCredentials;
     }
 
     public List<String> getEntrypoint() {

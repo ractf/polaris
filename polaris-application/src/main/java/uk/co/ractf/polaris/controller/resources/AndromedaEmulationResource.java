@@ -8,6 +8,7 @@ import uk.co.ractf.polaris.api.andromeda.AndromedaChallenge;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallengeSubmitResponse;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstanceRequest;
+import uk.co.ractf.polaris.api.authentication.StandardRegistryCredentials;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
@@ -56,7 +57,7 @@ public class AndromedaEmulationResource {
                 (long) (Double.parseDouble(challenge.getResources().getCpus()) * 1_000_000_000));
         final var portMapping = new PortMapping(challenge.getPort(), "tcp", true);
         final var pod = new Container("container", challenge.getName(), challenge.getImage(), "",
-                new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
+                null, new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
                 new HashMap<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>());
 

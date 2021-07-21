@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.node.runner;
+package uk.co.ractf.polaris.node.runner.docker;
 
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.PullImageResultCallback;
@@ -11,6 +11,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.node.Node;
+import uk.co.ractf.polaris.node.runner.Runner;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.*;
@@ -29,6 +30,7 @@ public class DockerRunner implements Runner<Container> {
     private final DockerClient dockerClient;
     private final Node node;
     private final ClusterState state;
+    private final AuthConfigFactory authConfigFactory;
 
     private final Set<String> images = new ConcurrentSkipListSet<>();
     private final Set<String> downloadingImages = new ConcurrentSkipListSet<>();
@@ -36,10 +38,12 @@ public class DockerRunner implements Runner<Container> {
     private final Set<String> startingContainers = new ConcurrentSkipListSet<>();
 
     @Inject
-    public DockerRunner(final DockerClient dockerClient, final Node node, final ClusterState state) {
+    public DockerRunner(final DockerClient dockerClient, final Node node, final ClusterState state,
+                        final AuthConfigFactory authConfigFactory) {
         this.dockerClient = dockerClient;
         this.node = node;
         this.state = state;
+        this.authConfigFactory = authConfigFactory;
     }
 
     private Capability[] createCapabilityArray(final List<String> capabilities) {
@@ -155,7 +159,16 @@ public class DockerRunner implements Runner<Container> {
             if (pod.getImage().replaceAll("http(s?):", "").contains(":")) {
                 tag = pod.getImage().split(":")[1];
             }
-            dockerClient.pullImageCmd(pod.getImage()).withTag(tag).withAuthConfig(node.getAuthConfig()).exec(new PullImageResultCallback()).awaitCompletion();
+
+            final var credentials = state.getCredential(pod.getRepoCredentials());
+            final var authConfig = authConfigFactory.createAuthConfig(credentials);
+
+            dockerClient.pullImageCmd(pod.getImage())
+                    .withTag(tag)
+                    .withAuthConfig(authConfig)
+                    .exec(new PullImageResultCallback())
+                    .awaitCompletion();
+
             images.add(pod.getImage());
         } catch (final InterruptedException exception) {
             log.error("Error pulling image", exception);
