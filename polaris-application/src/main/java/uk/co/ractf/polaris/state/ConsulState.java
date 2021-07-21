@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.ractf.polaris.api.authentication.APIToken;
 import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.namespace.Namespace;
@@ -368,6 +369,52 @@ public class ConsulState implements ClusterState {
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.DELETE)
                         .key(ConsulPath.credential(id))
+                        .build());
+    }
+
+    @Override
+    public Map<String, APIToken> getAPITokens() {
+        final Map<String, APIToken> tokenMap = new HashMap<>();
+        for (final var tokenData : consul.keyValueClient().getValues(ConsulPath.tokens())) {
+            if (tokenData.getValueAsString().isPresent()) {
+                try {
+                    final var apiToken = APIToken.parse(tokenData.getValueAsString().get(), APIToken.class);
+                    tokenMap.put(apiToken.getId(), apiToken);
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing api token {}", tokenData.getKey(), exception);
+                }
+            }
+        }
+        return tokenMap;
+    }
+
+    @Override
+    public APIToken getAPIToken(final String id) {
+        final var tokenData = consul.keyValueClient().getValueAsString(ConsulPath.token(id));
+        if (tokenData.isPresent()) {
+            try {
+                return APIToken.parse(tokenData.get(), APIToken.class);
+            } catch (final JsonProcessingException exception) {
+                log.error("Error deserializing api token {}", id, exception);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void setAPIToken(final APIToken apiToken) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.SET)
+                        .key(ConsulPath.token(apiToken.getToken()))
+                        .value(apiToken.toJsonString())
+                        .build());
+    }
+
+    @Override
+    public void deleteAPIToken(final String id) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.DELETE)
+                        .key(ConsulPath.token(id))
                         .build());
     }
 }

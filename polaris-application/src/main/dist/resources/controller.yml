@@ -7,23 +7,6 @@ minPort: 20000
 maxPort: 65535
 singleUserUsername: polaris
 singleUserPassword: polaris
-singleUserRoles:
-  - TASK_GET
-  - TASK_ADD
-  - TASK_DELETE
-  - NAMESPACE_polaris
-  - NAMESPACE_ADMIN
-  - ALL_NAMESPACES
-  - DEPLOYMENT_GET
-  - DEPLOYMENT_CREATE
-  - DEPLOYMENT_UPDATE
-  - DEPLOYMENT_DELETE
-  - ALLOCATE_INSTANCE
-  - INSTANCE_LIST
-  - HOST_GET
-  - ANDROMEDA_CHALLENGE_SUBMIT
-  - ANDROMEDA_GET_INSTANCE
-  - ANDROMEDA_RESET_INSTANCE
 client:
   refreshInterval: 10 seconds
 consul:
