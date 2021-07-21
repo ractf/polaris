@@ -3,6 +3,7 @@
   "id": "example1",
   "image": "docker.io/bfirsh/reticulate-splines",
   "repo": "dockerhub",
+  "repoCredentials": "",
   "entrypoint": [],
   "env": {
     "aaa": "bbb"
