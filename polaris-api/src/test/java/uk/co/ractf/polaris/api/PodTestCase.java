@@ -46,7 +46,7 @@ public class PodTestCase {
 
     @Test
     public void testContainerEquals() {
-        EqualsVerifier.simple().forClass(Container.class).verify();
+        EqualsVerifier.simple().forClass(Container.class).withIgnoredFields("generatedRandomEnv").verify();
     }
 
     @Test

@@ -288,8 +288,6 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
         if (this == o) return true;
         if (!(o instanceof Container)) return false;
         final Container container = (Container) o;
-        System.out.println(repoCredentials);
-        System.out.println(container.repoCredentials);
         return Objects.equals(image, container.image) && Objects.equals(repo, container.repo) &&
                 Objects.equals(repoCredentials, container.repoCredentials) &&
                 Objects.equals(entrypoint, container.entrypoint) && Objects.equals(env, container.env) &&
@@ -300,13 +298,13 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
                 Objects.equals(capAdd, container.capAdd) && Objects.equals(healthChecks, container.healthChecks) &&
                 Objects.equals(terminationTimeout, container.terminationTimeout) &&
                 Objects.equals(ports, container.ports) && Objects.equals(metadata, container.metadata) &&
-                Objects.equals(generatedRandomEnv, container.generatedRandomEnv);
+                Objects.equals(getType(), container.getType()) && Objects.equals(getId(), container.getId());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(image, repo, repoCredentials, entrypoint, env, randomEnv, labels, affinity, antiaffinity,
                 resourceQuota, restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, ports, metadata,
-                generatedRandomEnv);
+                getType(), getId());
     }
 }
