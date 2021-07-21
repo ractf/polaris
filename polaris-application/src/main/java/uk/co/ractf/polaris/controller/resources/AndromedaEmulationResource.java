@@ -2,8 +2,10 @@ package uk.co.ractf.polaris.controller.resources;
 
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
+import com.github.dockerjava.api.model.AuthConfig;
 import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallenge;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallengeSubmitResponse;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
@@ -12,18 +14,21 @@ import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
+import uk.co.ractf.polaris.api.registry.credentials.StandardRegistryCredentials;
 import uk.co.ractf.polaris.api.task.Challenge;
-import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.security.PolarisSecurityContext;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
@@ -48,19 +53,31 @@ public class AndromedaEmulationResource {
     @Path("/job/submit")
     @Timed
     @ExceptionMetered
-    @RolesAllowed("ANDROMEDA_CHALLENGE_SUBMIT")
+    @RolesAllowed("ANDROMEDA")
     @Operation(summary = "Submit Andromeda Challenge", tags = {"Andromeda"},
             description = "Submits a challenges in a format compatible with Andromeda, to be converted to a Polaris challenge and deployment")
-    public Response submitChallenge(final AndromedaChallenge challenge) {
+    public Response submitChallenge(@Context final PolarisSecurityContext context,
+                                    @RequestBody final AndromedaChallenge challenge) {
+        final var namespace = context.isRoot() ? "polaris" : context.getNamespaces().get(0);
+
+        final var credentials = new StandardRegistryCredentials(new NamespacedId(namespace, challenge.getName()),
+                "standard",
+                new AuthConfig()
+                        .withUsername(challenge.getRegistryAuth().getUsername())
+                        .withPassword(challenge.getRegistryAuth().getPassword()));
+
+        clusterState.setCredential(credentials);
+
         final var resourceQuota = new ResourceQuota((long) challenge.getResources().getMemory(), 0L,
                 (long) (Double.parseDouble(challenge.getResources().getCpus()) * 1_000_000_000));
         final var portMapping = new PortMapping(challenge.getPort(), "tcp", true);
+
         final var pod = new Container("container", challenge.getName(), challenge.getImage(), "",
-                null, new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
+                credentials.getId(), new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
                 new HashMap<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>());
 
-        final var polarisChallenge = new Challenge(new NamespacedId(challenge.getName()), 0,
+        final var polarisChallenge = new Challenge(new NamespacedId(namespace, challenge.getName()), 0,
                 Collections.singletonList(pod), new StaticReplication("static", challenge.getReplicas()),
                 new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE));
 
@@ -71,14 +88,15 @@ public class AndromedaEmulationResource {
     @POST
     @Timed
     @ExceptionMetered
-    @RolesAllowed("ANDROMEDA_GET_INSTANCE")
+    @RolesAllowed("ANDROMEDA")
     @Operation(summary = "Request Instance Allocation", tags = {"Andromeda"},
             description = "Requests an instance allocation from polaris in andromda's format")
-    public Response getInstance(final AndromedaInstanceRequest request) {
+    public Response getInstance(@Context final PolarisSecurityContext context,
+                                @RequestBody final AndromedaInstanceRequest request) {
         if (clusterState.getTask(new NamespacedId(request.getJob())) == null) {
             return Response.status(404).build();
         }
-        final Instance instance = controller.getInstanceAllocator().allocate(
+        final var instance = controller.getInstanceAllocator().allocate(
                 new InstanceRequest(new NamespacedId(request.getJob()), request.getUser(), ""));
         return Response.status(200).entity(
                 new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
@@ -89,14 +107,15 @@ public class AndromedaEmulationResource {
     @Path("/reset")
     @Timed
     @ExceptionMetered
-    @RolesAllowed("ANDROMEDA_RESET_INSTANCE")
+    @RolesAllowed("ANDROMEDA")
     @Operation(summary = "Request Instance Reset", tags = {"Andromeda"},
             description = "Reset an instance allocation from polaris in andromda's format")
-    public AndromedaInstance resetInstance(final AndromedaInstanceRequest request) {
+    public AndromedaInstance resetInstance(@Context final PolarisSecurityContext context,
+                                           @RequestBody final AndromedaInstanceRequest request) {
         if (clusterState.getTask(new NamespacedId(request.getJob())) == null) {
             Response.status(404).build();
         }
-        final Instance instance = controller.getInstanceAllocator().requestNewAllocation(
+        final var instance = controller.getInstanceAllocator().requestNewAllocation(
                 new InstanceRequest(new NamespacedId(request.getJob()), request.getUser(), ""));
         return new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
                 Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]));
