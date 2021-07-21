@@ -8,7 +8,6 @@ import uk.co.ractf.polaris.api.andromeda.AndromedaChallenge;
 import uk.co.ractf.polaris.api.andromeda.AndromedaChallengeSubmitResponse;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstanceRequest;
-import uk.co.ractf.polaris.api.authentication.StandardRegistryCredentials;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instance.Instance;

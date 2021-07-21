@@ -5,10 +5,10 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import uk.co.ractf.polaris.api.authentication.ContainerRegistryCredentials;
-import uk.co.ractf.polaris.api.authentication.CredentialsDeleteResponse;
-import uk.co.ractf.polaris.api.authentication.CredentialsSubmitResponse;
-import uk.co.ractf.polaris.api.authentication.CredentialsUpdateResponse;
+import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials;
+import uk.co.ractf.polaris.api.registry.credentials.CredentialsDeleteResponse;
+import uk.co.ractf.polaris.api.registry.credentials.CredentialsSubmitResponse;
+import uk.co.ractf.polaris.api.registry.credentials.CredentialsUpdateResponse;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.state.ClusterState;
 

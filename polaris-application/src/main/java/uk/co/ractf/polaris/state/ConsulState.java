@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.co.ractf.polaris.api.authentication.ContainerRegistryCredentials;
+import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.namespace.Namespace;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
