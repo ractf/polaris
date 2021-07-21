@@ -279,11 +279,17 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
     }
 
     @Override
+    public boolean canUseRunner(final String runner) {
+        return "docker".equals(runner);
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Container)) return false;
         final Container container = (Container) o;
         return Objects.equals(image, container.image) && Objects.equals(repo, container.repo) &&
+                Objects.equals(repoCredentials, container.repoCredentials) &&
                 Objects.equals(entrypoint, container.entrypoint) && Objects.equals(env, container.env) &&
                 Objects.equals(randomEnv, container.randomEnv) && Objects.equals(labels, container.labels) &&
                 Objects.equals(affinity, container.affinity) && Objects.equals(antiaffinity, container.antiaffinity) &&
@@ -291,20 +297,12 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
                 Objects.equals(restartPolicy, container.restartPolicy) && Objects.equals(capDrop, container.capDrop) &&
                 Objects.equals(capAdd, container.capAdd) && Objects.equals(healthChecks, container.healthChecks) &&
                 Objects.equals(terminationTimeout, container.terminationTimeout) &&
-                Objects.equals(getPorts(), container.getPorts()) && Objects.equals(metadata, container.metadata) &&
-                Objects.equals(generatedRandomEnv, container.generatedRandomEnv) &&
-                Objects.equals(getType(), container.getType()) && Objects.equals(getId(), container.getId());
+                Objects.equals(ports, container.ports) && Objects.equals(metadata, container.metadata) &&
+                Objects.equals(generatedRandomEnv, container.generatedRandomEnv);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(image, repo, entrypoint, env, randomEnv, labels, affinity, antiaffinity, resourceQuota,
-                restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, getPorts(), metadata,
-                generatedRandomEnv, getType(), getId());
-    }
-
-    @Override
-    public boolean canUseRunner(final String runner) {
-        return "docker".equals(runner);
+        return Objects.hash(image, repo, repoCredentials, entrypoint, env, randomEnv, labels, affinity, antiaffinity, resourceQuota, restartPolicy, capDrop, capAdd, healthChecks, terminationTimeout, ports, metadata, generatedRandomEnv);
     }
 }
