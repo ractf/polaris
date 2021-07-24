@@ -38,11 +38,28 @@ public class PortAllocator {
         var lastUdpPort = portAllocations.getUdp().contains(lastTcpPort) ? generatePort(min, max, portAllocations.getUdp()) : lastTcpPort;
 
         for (final var portMapping : portMappings) {
-            final var tcp = "tcp".equals(portMapping.getProtocol());
-            final var port = tcp ? lastTcpPort : lastUdpPort;
-            final var protocol = tcp ? InternetProtocol.TCP : InternetProtocol.UDP;
-            portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", port + "/" + protocol.toString()),
-                    new ExposedPort(portMapping.getPort(), protocol)));
+            switch (portMapping.getProtocol()) {
+                case "tcp": {
+                    portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", lastTcpPort + "/tcp"),
+                            new ExposedPort(portMapping.getPort(), InternetProtocol.TCP)));
+                    break;
+                }
+                case "udp": {
+                    portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", lastUdpPort + "/udp"),
+                            new ExposedPort(portMapping.getPort(), InternetProtocol.UDP)));
+                    break;
+                }
+                case "*": {
+                    while (portAllocations.getTcp().contains(lastUdpPort)) {
+                        lastUdpPort = generatePort(min, max, portAllocations.getUdp());
+                    }
+                    portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", lastUdpPort + "/udp"),
+                            new ExposedPort(portMapping.getPort(), InternetProtocol.UDP)));
+                    portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", lastUdpPort + "/tcp"),
+                            new ExposedPort(portMapping.getPort(), InternetProtocol.TCP)));
+                    break;
+                }
+            }
 
             if (portAllocations.getTcp().contains(lastTcpPort)) {
                 lastTcpPort++;
