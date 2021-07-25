@@ -84,5 +84,7 @@
       "protocol": "tcp",
       "advertise": true
     }
-  ]
+  ],
+  "autoUpdate":false,
+  "tag":"latest"
 }
