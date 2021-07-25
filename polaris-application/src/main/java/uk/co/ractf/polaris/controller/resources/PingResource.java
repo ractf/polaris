@@ -5,6 +5,7 @@ import com.codahale.metrics.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import uk.co.ractf.polaris.security.PolarisSecurityContext;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -17,13 +18,15 @@ import java.util.Map;
 
 @Path("/ping")
 @Produces(MediaType.APPLICATION_JSON)
-public class PingResource {
+public class PingResource extends SecureResource {
 
     @GET
     @Timed
     @ExceptionMetered
+    @RolesAllowed("PING")
     @Operation(summary = "Ping", tags = {"Ping"}, description = "Ping")
-    public Map<String, String> ping(@Context final PolarisSecurityContext context) {
+    public Map<String, String> ping(@Context final SecurityContext securityContext) {
+        final var context = convertContext(securityContext);
         if (context.getUserPrincipal() == null) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }

@@ -17,12 +17,13 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.HashMap;
 import java.util.Map;
 
 @Path("/namespaces")
 @Produces(MediaType.APPLICATION_JSON)
-public class NamespaceResource {
+public class NamespaceResource extends SecureResource {
 
     private final ClusterState clusterState;
 
@@ -36,7 +37,8 @@ public class NamespaceResource {
     @ExceptionMetered
     @RolesAllowed("NAMESPACE")
     @Operation(summary = "Get Namespaces", tags = {"Namespace"}, description = "Gets a map of namespace id to namespace")
-    public Map<String, Namespace> getNamespaces(@Context final PolarisSecurityContext context) {
+    public Map<String, Namespace> getNamespaces(@Context final SecurityContext securityContext) {
+        final var context = convertContext(securityContext);
         final Map<String, Namespace> namespaceMap = new HashMap<>();
         for (final var entry : clusterState.getNamespaces().entrySet()) {
             if (context.isUserInNamespace(entry.getKey())) {
@@ -52,7 +54,8 @@ public class NamespaceResource {
     @ExceptionMetered
     @RolesAllowed("NAMESPACE")
     @Operation(summary = "Get Namespace", tags = {"Namespace"}, description = "Gets a namespace by id")
-    public Response getNamespace(@Context final PolarisSecurityContext context, @PathParam("id") final String id) {
+    public Response getNamespace(@Context final SecurityContext securityContext, @PathParam("id") final String id) {
+        final var context = convertContext(securityContext);
         if (context.isUserInNamespace(id)) {
             return Response.ok(clusterState.getNamespace(id)).build();
         }

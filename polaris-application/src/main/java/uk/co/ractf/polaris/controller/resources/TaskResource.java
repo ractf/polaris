@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 @Path("/tasks")
 @Produces(MediaType.APPLICATION_JSON)
-public class TaskResource {
+public class TaskResource extends SecureResource {
 
     private final ClusterState clusterState;
 
@@ -37,10 +37,11 @@ public class TaskResource {
     @RolesAllowed("TASK_GET")
     @Operation(summary = "Get Tasks", tags = {"Task"},
             description = "Gets a map of task id to task within a given namespace which can be filtered by type or id regex.")
-    public Map<NamespacedId, Task> getTasks(@Context final PolarisSecurityContext context,
+    public Map<NamespacedId, Task> getTasks(@Context final SecurityContext securityContext,
                                             @QueryParam("namespace") @DefaultValue("") final String namespace,
                                             @QueryParam("filter") @DefaultValue("") final String filter,
                                             @QueryParam("type") @DefaultValue("") final String type) {
+        final var context = convertContext(securityContext);
         final Map<NamespacedId, Task> taskMap;
         if (namespace.isEmpty()) {
             if (context.isRoot()) {
@@ -81,7 +82,8 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_GET")
     @Operation(summary = "Get Task", tags = {"Task"}, description = "Gets a task by given id")
-    public Task getTask(@Context final PolarisSecurityContext context, @PathParam("id") final NamespacedId id) {
+    public Task getTask(@Context final SecurityContext securityContext, @PathParam("id") final NamespacedId id) {
+        final var context = convertContext(securityContext);
         if (!context.isUserInNamespace(id.getNamespace())) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
@@ -98,7 +100,8 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_ADD")
     @Operation(summary = "Add Task", tags = {"Task"}, description = "Adds a task")
-    public Response addTask(@Context final PolarisSecurityContext context, @RequestBody final Task task) {
+    public Response addTask(@Context final SecurityContext securityContext, @RequestBody final Task task) {
+        final var context = convertContext(securityContext);
         if (!context.isUserInNamespace(task.getId().getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new TaskSubmitResponse(TaskSubmitResponse.Status.FORBIDDEN_NAMESPACE, task.getId())).build();
@@ -122,7 +125,8 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_UPDATE")
     @Operation(summary = "Update Task", tags = {"Task"}, description = "Modifies a task")
-    public Response updateTask(@Context final PolarisSecurityContext context, @RequestBody final Task task) {
+    public Response updateTask(@Context final SecurityContext securityContext, @RequestBody final Task task) {
+        final var context = convertContext(securityContext);
         if (!context.isUserInNamespace(task.getId().getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new TaskUpdateResponse(TaskUpdateResponse.Status.FORBIDDEN_NAMESPACE, task.getId())).build();
@@ -143,7 +147,8 @@ public class TaskResource {
     @ExceptionMetered
     @RolesAllowed("TASK_DELETE")
     @Operation(summary = "Delete Task", tags = {"Task"}, description = "Deletes a task")
-    public Response deleteTask(@Context final PolarisSecurityContext context, @PathParam("id") final NamespacedId id) {
+    public Response deleteTask(@Context final SecurityContext securityContext, @PathParam("id") final NamespacedId id) {
+        final var context = convertContext(securityContext);
         if (!context.isUserInNamespace(id.getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new TaskDeleteResponse(TaskDeleteResponse.Status.FORBIDDEN_NAMESPACE, id)).build();
