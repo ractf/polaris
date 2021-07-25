@@ -25,7 +25,7 @@ public class PolarisAuthenticator implements Authenticator<BasicCredentials, Pol
     public Optional<PolarisUser> authenticate(final BasicCredentials credentials) {
         if (config.getSingleUserUsername().equals(credentials.getUsername()) &&
                 config.getSingleUserPassword().equals(credentials.getPassword())) {
-            return Optional.of(new PolarisUser("polaris", null, true));
+            return Optional.of(new PolarisUser(credentials.getUsername(), null, true));
         }
 
         final var apiToken = clusterState.getAPIToken(credentials.getUsername());
