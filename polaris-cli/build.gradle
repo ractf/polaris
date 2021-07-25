@@ -14,26 +14,17 @@ buildscript {
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
         classpath "com.netflix.nebula:gradle-ospackage-plugin:8.5.1"
-        classpath "gradle.plugin.com.palantir.graal:gradle-graal:0.9.0"
     }
 }
 
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'application'
 apply plugin: 'nebula.ospackage'
-apply plugin: 'com.palantir.graal'
 
 mainClassName = 'uk.co.ractf.polaris.cli.Main'
 
 repositories {
     mavenCentral()
-}
-
-graal {
-    mainClass mainClassName
-    outputName 'polaris'
-    javaVersion '11'
-    option '--enable-https'
 }
 
 configurations {
@@ -73,42 +64,4 @@ shadowJar {
         attributes 'Main-Class': mainClassName
     }
     archiveName 'polaris-cli.jar'
-}
-
-task(generateGraalReflectionConfig, dependsOn: 'classes', type: JavaExec) {
-    main = 'picocli.codegen.aot.graalvm.ReflectionConfigGenerator'
-    classpath = configurations.generateConfig + sourceSets.main.runtimeClasspath
-    def outputFile = "${buildDir}/resources/main/META-INF/native-image/${project.group}/${project.name}/reflect-config.json"
-    args = ["--output=$outputFile", mainClassName]
-}
-tasks.nativeImage.dependsOn(generateGraalReflectionConfig)
-
-task(generateGraalDynamicProxyConfig, dependsOn: 'classes', type: JavaExec) {
-    main = 'picocli.codegen.aot.graalvm.DynamicProxyConfigGenerator'
-    classpath = configurations.generateConfig + sourceSets.main.runtimeClasspath
-    def outputFile = "${buildDir}/resources/main/META-INF/native-image/${project.group}/${project.name}/proxy-config.json"
-    args = ["--output=$outputFile", mainClassName]
-}
-tasks.nativeImage.dependsOn(generateGraalDynamicProxyConfig)
-
-tasks.nativeImage.dependsOn(generateReflectConfig)
-
-buildRpm {
-    packageName = 'polaris-cli'
-    release = GitInfo.getGitCommit()
-    version = rootProject.version
-    arch = 'X86_64'
-    os = 'LINUX'
-    license = 'AGPL'
-    url = 'https://github.com/ractf/polaris'
-    vendor = 'RACTF'
-    packageDescription = 'The RACTF challenge scheduler'
-    maintainer = 'RACTF <admins@ractf.co.uk>'
-    user = 'root'
-    group = 'root'
-
-    from(nativeImage.outputs.files) {
-        into '/usr/bin'
-        createDirectoryEntry = true
-    }
 }
