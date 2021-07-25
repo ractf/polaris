@@ -3,6 +3,7 @@ package uk.co.ractf.polaris.controller.resources;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import uk.co.ractf.polaris.security.PolarisSecurityContext;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,7 +23,7 @@ public class PingResource {
     @Timed
     @ExceptionMetered
     @Operation(summary = "Ping", tags = {"Ping"}, description = "Ping")
-    public Map<String, String> ping(@Context final SecurityContext context) {
+    public Map<String, String> ping(@Context final PolarisSecurityContext context) {
         if (context.getUserPrincipal() == null) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }

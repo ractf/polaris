@@ -10,7 +10,7 @@ singleUserPassword: polaris
 client:
   refreshInterval: 10 seconds
 consul:
-  endpoint: ${CONSUL-URL:-localhost:8500}
+  endpoint: ${CONSUL-URL:-consul:8500}
   serviceId: polaris-controller
   retryInterval: 5 seconds
 logging:

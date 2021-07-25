@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  registry:
+    image: registry:2
+    ports:
+      - "5000:5000"
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.password
+    volumes:
+      - ./auth:/auth
+    networks:
+      - polaris
+  consul:
+    image: consul
+    ports:
+      - "8500:8500"
+    command: "agent --dev -client 0.0.0.0"
+    networks:
+      - polaris
+  controller:
+    build: ../../../../.
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    command: "/bin/java -jar /opt/polaris/polaris.jar controller /etc/polaris/controller.yml"
+    environment:
+      - CONSUL-URL=consul:8500
+    depends_on:
+      - consul
+    networks:
+      - polaris
+  node:
+    build: ../../../../.
+    ports:
+      - "9090:9090"
+      - "9091:9091"
+    command: "/bin/java -jar /opt/polaris/polaris.jar node /etc/polaris/node.yml"
+    environment:
+      - CONSUL-URL=consul:8500
+    depends_on:
+      - controller
+    networks:
+      - polaris
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+networks:
+  polaris:
+    driver: bridge
