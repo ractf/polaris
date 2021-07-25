@@ -19,13 +19,14 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 @Path("/credentials")
 @Produces(MediaType.APPLICATION_JSON)
-public class CredentialResource {
+public class CredentialResource extends SecureResource {
 
     private final ClusterState clusterState;
 
@@ -40,10 +41,11 @@ public class CredentialResource {
     @RolesAllowed("CREDENTIAL_GET")
     @Operation(summary = "Get Credentials", tags = {"Credential"},
             description = "Gets a map of credential id to credential within a given namespace which can be filtered by type or id regex.")
-    public Map<NamespacedId, ContainerRegistryCredentials> getCredentials(@Context final PolarisSecurityContext context,
+    public Map<NamespacedId, ContainerRegistryCredentials> getCredentials(@Context final SecurityContext securityContext,
                                                                           @QueryParam("namespace") @DefaultValue("") final String namespace,
                                                                           @QueryParam("filter") @DefaultValue("") final String filter,
                                                                           @QueryParam("type") @DefaultValue("") final String type) {
+        final var context = convertContext(securityContext);
         final Map<NamespacedId, ContainerRegistryCredentials> credentialsMap;
 
         if (namespace.isEmpty()) {
@@ -85,7 +87,8 @@ public class CredentialResource {
     @ExceptionMetered
     @RolesAllowed("CREDENTIAL_GET")
     @Operation(summary = "Get Credential", tags = {"Credential"}, description = "Gets a set of credentials by given id")
-    public ContainerRegistryCredentials getCredential(@Context final PolarisSecurityContext context, @PathParam("id") final NamespacedId id) {
+    public ContainerRegistryCredentials getCredential(@Context final SecurityContext securityContext, @PathParam("id") final NamespacedId id) {
+        final var context = convertContext(securityContext);
         if (context.isUserInNamespace(id.getNamespace())) {
             throw new WebApplicationException(Response.Status.FORBIDDEN);
         }
@@ -102,7 +105,8 @@ public class CredentialResource {
     @ExceptionMetered
     @RolesAllowed("CREDENTIAL_ADD")
     @Operation(summary = "Add Credential", tags = {"Credential"}, description = "Adds a credential")
-    public Response addCredential(@Context final PolarisSecurityContext context, @RequestBody final ContainerRegistryCredentials credential) {
+    public Response addCredential(@Context final SecurityContext securityContext, @RequestBody final ContainerRegistryCredentials credential) {
+        final var context = convertContext(securityContext);
         if (!context.isUserInNamespace(credential.getId().getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new CredentialsSubmitResponse(CredentialsSubmitResponse.Status.FORBIDDEN_NAMESPACE, credential.getId())).build();
@@ -126,7 +130,8 @@ public class CredentialResource {
     @ExceptionMetered
     @RolesAllowed("CREDENTIAL_UPDATE")
     @Operation(summary = "Update Credential", tags = {"Credential"}, description = "Modifies a credential")
-    public Response updateCredential(@Context final PolarisSecurityContext context, @RequestBody final ContainerRegistryCredentials credentials) {
+    public Response updateCredential(@Context final SecurityContext securityContext, @RequestBody final ContainerRegistryCredentials credentials) {
+        final var context = convertContext(securityContext);
         if (!context.isUserInNamespace(credentials.getId().getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new CredentialsUpdateResponse(CredentialsUpdateResponse.Status.FORBIDDEN_NAMESPACE, credentials.getId())).build();
@@ -147,7 +152,8 @@ public class CredentialResource {
     @ExceptionMetered
     @RolesAllowed("CREDENTIAL_DELETE")
     @Operation(summary = "Delete Credential", tags = {"Credential"}, description = "Deletes a credential")
-    public Response deleteCredential(@Context final PolarisSecurityContext context, @PathParam("id") final NamespacedId id) {
+    public Response deleteCredential(@Context final SecurityContext securityContext, @PathParam("id") final NamespacedId id) {
+        final var context = convertContext(securityContext);
         if (!context.isUserInNamespace(id.getNamespace())) {
             return Response.status(Response.Status.FORBIDDEN)
                     .entity(new CredentialsDeleteResponse(CredentialsDeleteResponse.Status.FORBIDDEN_NAMESPACE, id)).build();

@@ -30,6 +30,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ import java.util.HashMap;
 @Path("/andromeda")
 @Produces(MediaType.APPLICATION_JSON)
 @Deprecated
-public class AndromedaEmulationResource {
+public class AndromedaEmulationResource extends SecureResource {
 
     private final Controller controller;
     private final ClusterState clusterState;
@@ -55,8 +56,9 @@ public class AndromedaEmulationResource {
     @RolesAllowed("ANDROMEDA")
     @Operation(summary = "Submit Andromeda Challenge", tags = {"Andromeda"},
             description = "Submits a challenges in a format compatible with Andromeda, to be converted to a Polaris challenge and deployment")
-    public Response submitChallenge(@Context final PolarisSecurityContext context,
+    public Response submitChallenge(@Context final SecurityContext securityContext,
                                     @RequestBody final AndromedaChallenge challenge) {
+        final var context = convertContext(securityContext);
         final var namespace = context.isRoot() ? "polaris" : context.getNamespaces().get(0);
 
         final var credentials = new StandardRegistryCredentials(new NamespacedId(namespace, challenge.getName()),
@@ -90,8 +92,7 @@ public class AndromedaEmulationResource {
     @RolesAllowed("ANDROMEDA")
     @Operation(summary = "Request Instance Allocation", tags = {"Andromeda"},
             description = "Requests an instance allocation from polaris in andromda's format")
-    public Response getInstance(@Context final PolarisSecurityContext context,
-                                @RequestBody final AndromedaInstanceRequest request) {
+    public Response getInstance(@RequestBody final AndromedaInstanceRequest request) {
         if (clusterState.getTask(new NamespacedId(request.getJob())) == null) {
             return Response.status(404).build();
         }
@@ -109,8 +110,7 @@ public class AndromedaEmulationResource {
     @RolesAllowed("ANDROMEDA")
     @Operation(summary = "Request Instance Reset", tags = {"Andromeda"},
             description = "Reset an instance allocation from polaris in andromda's format")
-    public AndromedaInstance resetInstance(@Context final PolarisSecurityContext context,
-                                           @RequestBody final AndromedaInstanceRequest request) {
+    public AndromedaInstance resetInstance(@RequestBody final AndromedaInstanceRequest request) {
         if (clusterState.getTask(new NamespacedId(request.getJob())) == null) {
             Response.status(404).build();
         }
