@@ -6,6 +6,8 @@ import com.google.common.collect.ObjectArrays;
 import com.smoketurner.dropwizard.consul.ConsulBundle;
 import com.smoketurner.dropwizard.consul.ConsulFactory;
 import io.dropwizard.Application;
+import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
@@ -36,6 +38,10 @@ public class ControllerMain extends Application<ControllerConfiguration> {
 
     @Override
     public void initialize(final Bootstrap<ControllerConfiguration> bootstrap) {
+        bootstrap.setConfigurationSourceProvider(
+                new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false))
+        );
+
         bootstrap.addBundle(new ConsulBundle<>(getName()) {
             @Override
             public ConsulFactory getConsulFactory(final ControllerConfiguration configuration) {
