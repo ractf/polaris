@@ -41,6 +41,8 @@ public class DockerRunner implements Runner<Container> {
     private final Set<String> downloadingImages = new ConcurrentSkipListSet<>();
     private final Set<String> dyingContainers = new ConcurrentSkipListSet<>();
     private final Set<String> startingContainers = new ConcurrentSkipListSet<>();
+    private final Map<String, String> instanceContainerIds = new HashMap<>();
+    private final Map<String, String> instanceNetworkIds = new HashMap<>();
 
     @Inject
     public DockerRunner(final DockerClient dockerClient, final Node node, final ClusterState state,
@@ -61,6 +63,44 @@ public class DockerRunner implements Runner<Container> {
     }
 
     @Override
+    public void createPod(final Task task, final Container container, final Instance instance) {
+        final var labels = container.getLabels();
+        labels.put("polaris", container.getId());
+        labels.put("polaris-instance", instance.getId());
+        labels.put("polaris-task", instance.getTaskId().toString());
+        labels.put("polaris-pod", container.getId());
+
+        final var instancePortBindings = instance.getPortBindings();
+        final List<PortBinding> portBindings = new ArrayList<>();
+        for (final var instancePortBinding : instancePortBindings) {
+            portBindings.add(new PortBinding(new Ports.Binding("0.0.0.0", instancePortBinding.getInternalPort()),
+                    ExposedPort.parse(instancePortBinding.getPort())));
+        }
+
+        var createContainerCmd = dockerClient.createContainerCmd(container.getImage());
+        createContainerCmd = createContainerCmd
+                .withHostName(container.getId() + "-" + instance.getTaskId().toString() + "-" + instance.getId().split("-")[0])
+                .withEnv(container.getFullEnv())
+                .withLabels(labels)
+                .withPortSpecs()
+                .withHostConfig(
+                        HostConfig.newHostConfig()
+                                .withPortBindings(portBindings)
+                                .withCapAdd(createCapabilityArray(container.getCapAdd()))
+                                .withCapDrop(createCapabilityArray(container.getCapDrop()))
+                                .withNanoCPUs(container.getResourceQuota().getNanocpu())
+                                .withMemory(container.getResourceQuota().getMemory())
+                                .withRestartPolicy(RestartPolicy.alwaysRestart())
+                                .withMemorySwap(container.getResourceQuota().getSwap()));
+
+        if (container.getEntrypoint().size() > 0) {
+            createContainerCmd = createContainerCmd.withCmd(container.getEntrypoint());
+        }
+
+        instanceContainerIds.put(instance.getId(), createContainerCmd.exec().getId());
+    }
+
+    @Override
     public void startPod(final Task task, final Container container, final Instance instance) {
         if (startingContainers.contains(container.getId() + instance.getId())) {
             return;
@@ -68,41 +108,13 @@ public class DockerRunner implements Runner<Container> {
         try {
             log.info("starting {}", instance.getId());
             startingContainers.add(container.getId() + instance.getId());
-            final var labels = container.getLabels();
-            labels.put("polaris", container.getId());
-            labels.put("polaris-instance", instance.getId());
-            labels.put("polaris-task", instance.getTaskId().toString());
-            labels.put("polaris-pod", container.getId());
 
-            final var instancePortBindings = instance.getPortBindings();
-            final List<PortBinding> portBindings = new ArrayList<>();
-            for (final var instancePortBinding : instancePortBindings) {
-                portBindings.add(new PortBinding(new Ports.Binding("0.0.0.0", instancePortBinding.getInternalPort()),
-                        ExposedPort.parse(instancePortBinding.getPort())));
-            }
-
-            var createContainerCmd = dockerClient.createContainerCmd(container.getImage());
-            createContainerCmd = createContainerCmd
-                    .withHostName(container.getId() + "-" + instance.getTaskId().toString() + "-" + instance.getId().split("-")[0])
-                    .withEnv(container.getFullEnv())
-                    .withLabels(labels)
-                    .withPortSpecs()
-                    .withHostConfig(
-                            HostConfig.newHostConfig()
-                                    .withPortBindings(portBindings)
-                                    .withCapAdd(createCapabilityArray(container.getCapAdd()))
-                                    .withCapDrop(createCapabilityArray(container.getCapDrop()))
-                                    .withNanoCPUs(container.getResourceQuota().getNanocpu())
-                                    .withMemory(container.getResourceQuota().getMemory())
-                                    .withRestartPolicy(RestartPolicy.alwaysRestart())
-                                    .withMemorySwap(container.getResourceQuota().getSwap()));
-
-            if (container.getEntrypoint().size() > 0) {
-                createContainerCmd = createContainerCmd.withCmd(container.getEntrypoint());
-            }
-
-            final var createContainerResponse = createContainerCmd.exec();
-            final var startContainerCmd = dockerClient.startContainerCmd(createContainerResponse.getId());
+            dockerClient.connectToNetworkCmd()
+                    .withContainerId(instanceContainerIds.get(instance.getId()))
+                    .withNetworkId(instanceNetworkIds.get(instance.getId()))
+                    .withContainerNetwork(new ContainerNetwork().withAliases(container.getId()))
+                    .exec();
+            final var startContainerCmd = dockerClient.startContainerCmd(instanceContainerIds.get(instance.getId()));
             startContainerCmd.exec();
             startingContainers.remove(container.getId() + instance.getId());
 
@@ -274,6 +286,12 @@ public class DockerRunner implements Runner<Container> {
     @Override
     public List<String> getImages() {
         return dockerClient.listImagesCmd().exec().stream().map(Image::getId).collect(Collectors.toList());
+    }
+
+    @Override
+    public void createNetwork(final List<Container> pods, final Task task, final Instance instance) {
+        instanceNetworkIds.put(instance.getId(),
+                dockerClient.createNetworkCmd().withName(instance.getId() + "-" + task.getId()).exec().getId());
     }
 
 }

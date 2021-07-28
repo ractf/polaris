@@ -78,23 +78,29 @@ public class InstanceReconciliationService extends AbstractScheduledService {
                 if (task == null) {
                     continue;
                 }
-
+                if (recentlyStartedInstances.getIfPresent(instance.getId()) != null) {
+                    continue;
+                }
                 for (final var pod : task.getPods()) {
-                    if (recentlyStartedInstances.getIfPresent(pod.getId() + instance.getId()) != null) {
-                        continue;
-                    }
-                    if (getRunner(pod).canStartPod(pod)) {
-                        log.debug("ensuring pod started {} {}", pod.getId(), instance.getId());
-                        recentlyStartedInstances.put(pod.getId() + instance.getId(), "");
-                        CompletableFuture.runAsync(() -> {
-                            if (!getRunner(pod).isPodStarted(pod, instance)) {
-                                log.info("telling runner to start instance of {} for {}", pod.getId(), instance.getId());
-                                getRunner(pod).startPod(task, pod, instance);
-                            }
-                        });
-                    } else {
+                    if (!getRunner(pod).canStartPod(pod)) {
                         getRunner(pod).preparePod(task, pod);
                     }
+                }
+                for (final var pod : task.getPods()) {
+                    getRunner(pod).createPod(task, pod, instance);
+                }
+                if (task.getPods().size() > 1) {
+                    /* TODO: This is assuming theres only one runner, thats a safe assumption now, the code shouldn't
+                    *  be written assuming it is. */
+                    getRunner(task.getPods().get(0)).createNetwork(task.getPods(), task, instance);
+                }
+                for (final var pod : task.getPods()) {
+                    CompletableFuture.runAsync(() -> {
+                        if (!getRunner(pod).isPodStarted(pod, instance)) {
+                            log.info("telling runner to start instance of {} for {}", pod.getId(), instance.getId());
+                            getRunner(pod).createPod(task, pod, instance);
+                        }
+                    });
                 }
             }
         } catch (final Exception exception) {
