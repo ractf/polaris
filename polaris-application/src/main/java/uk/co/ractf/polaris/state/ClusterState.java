@@ -9,6 +9,7 @@ import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.namespace.Namespace;
 import uk.co.ractf.polaris.api.node.NodeInfo;
+import uk.co.ractf.polaris.api.notification.NotificationReceiver;
 import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.node.Node;
@@ -127,5 +128,15 @@ public interface ClusterState {
     void setAPIToken(final APIToken apiToken);
 
     void deleteAPIToken(final String id);
+
+    void setNotificationReceiver(final NotificationReceiver receiver);
+
+    void deleteNotificationReceiver(final NamespacedId id);
+
+    Map<NamespacedId, NotificationReceiver> getNotificationReceivers();
+
+    Map<NamespacedId, NotificationReceiver> getNotificationReceivers(final String namespace);
+
+    NotificationReceiver getNotificationReceiver(final NamespacedId id);
 
 }

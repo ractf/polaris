@@ -8,10 +8,14 @@ import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.namespace.Namespace;
+import uk.co.ractf.polaris.api.notification.NotificationTarget;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
+import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.node.runner.Runner;
+import uk.co.ractf.polaris.notification.NotificationFacade;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.*;
@@ -31,6 +35,7 @@ public class DockerRunner implements Runner<Container> {
     private final Node node;
     private final ClusterState state;
     private final AuthConfigFactory authConfigFactory;
+    private final NotificationFacade notifications;
 
     private final Set<String> images = new ConcurrentSkipListSet<>();
     private final Set<String> downloadingImages = new ConcurrentSkipListSet<>();
@@ -39,11 +44,12 @@ public class DockerRunner implements Runner<Container> {
 
     @Inject
     public DockerRunner(final DockerClient dockerClient, final Node node, final ClusterState state,
-                        final AuthConfigFactory authConfigFactory) {
+                        final AuthConfigFactory authConfigFactory, final NotificationFacade notifications) {
         this.dockerClient = dockerClient;
         this.node = node;
         this.state = state;
         this.authConfigFactory = authConfigFactory;
+        this.notifications = notifications;
     }
 
     private Capability[] createCapabilityArray(final List<String> capabilities) {
@@ -55,7 +61,7 @@ public class DockerRunner implements Runner<Container> {
     }
 
     @Override
-    public void startPod(final Container container, final Instance instance) {
+    public void startPod(final Task task, final Container container, final Instance instance) {
         if (startingContainers.contains(container.getId() + instance.getId())) {
             return;
         }
@@ -105,6 +111,9 @@ public class DockerRunner implements Runner<Container> {
             state.setInstance(instance);
         } catch (final Exception e) {
             e.printStackTrace();
+            notifications.error(NotificationTarget.NAMESPACE_ADMIN, state.getNamespace(task.getId().getNamespace()),
+                    "Failed to start container " + container.getId() + "(Task: " + task.getId().toString() + ")",
+                    e.getMessage() + "(Instance: " + instance.getId() + ")");
         }
     }
 
@@ -119,10 +128,10 @@ public class DockerRunner implements Runner<Container> {
     }
 
     @Override
-    public void forceUpdatePod(final Container pod, final Instance instance) {
+    public void forceUpdatePod(final Task task, final Container pod, final Instance instance) {
         stopPod(pod, instance);
-        preparePod(pod);
-        startPod(pod, instance);
+        preparePod(task, pod);
+        startPod(task, pod, instance);
     }
 
     @Override
@@ -144,7 +153,17 @@ public class DockerRunner implements Runner<Container> {
                     }
                 }
             }).awaitCompletion();
-        } catch (final InterruptedException e) {
+            Namespace namespace = null;
+            if (pod.getRepoCredentials() != null) {
+                namespace = state.getNamespace(pod.getRepoCredentials().getNamespace());
+            }
+            notifications.info(NotificationTarget.NAMESPACE_ADMIN, namespace, "Updated pod " + pod.getId(), "");
+        } catch (final Exception e) {
+            Namespace namespace = null;
+            if (pod.getRepoCredentials() != null) {
+                namespace = state.getNamespace(pod.getRepoCredentials().getNamespace());
+            }
+            notifications.error(NotificationTarget.NAMESPACE_ADMIN, namespace, "Failed to update pod " + pod.getId(), e.getMessage());
             e.printStackTrace();
         }
     }
@@ -173,7 +192,7 @@ public class DockerRunner implements Runner<Container> {
     }
 
     @Override
-    public void preparePod(final Container pod) {
+    public void preparePod(final Task task, final Container pod) {
         if (downloadingImages.contains(pod.getImage())) {
             return;
         }
@@ -194,8 +213,11 @@ public class DockerRunner implements Runner<Container> {
                     .awaitCompletion();
 
             images.add(pod.getImage());
-        } catch (final InterruptedException exception) {
+        } catch (final Exception exception) {
             log.error("Error pulling image", exception);
+            notifications.error(NotificationTarget.NAMESPACE_ADMIN, state.getNamespace(task.getId().getNamespace()),
+                    "Failed to pull image for " + pod.getId(),
+                    "Image: " + pod.getImage() + "\nException: " + exception.getMessage());
         }
         downloadingImages.remove(pod.getImage());
     }

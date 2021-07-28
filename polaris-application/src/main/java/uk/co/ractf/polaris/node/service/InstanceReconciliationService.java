@@ -9,10 +9,12 @@ import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.ractf.polaris.api.notification.NotificationTarget;
 import uk.co.ractf.polaris.api.pod.Pod;
 import uk.co.ractf.polaris.node.Node;
 import uk.co.ractf.polaris.node.NodeConfiguration;
 import uk.co.ractf.polaris.node.runner.Runner;
+import uk.co.ractf.polaris.notification.NotificationFacade;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.HashMap;
@@ -30,6 +32,8 @@ public class InstanceReconciliationService extends AbstractScheduledService {
     private final Node node;
     private final Map<Class<? extends Pod>, Runner<? extends Pod>> runners = new HashMap<>();
     private final NodeConfiguration nodeConfiguration;
+    private final NotificationFacade notifications;
+
     private final LoadingCache<String, String> recentlyStartedInstances = CacheBuilder.newBuilder()
             .build(new CacheLoader<>() {
                 @Override
@@ -42,11 +46,13 @@ public class InstanceReconciliationService extends AbstractScheduledService {
 
     @Inject
     public InstanceReconciliationService(final ClusterState state, final Node node, final Set<Runner<?>> runners,
-                                         final NodeConfiguration nodeConfiguration) {
+                                         final NodeConfiguration nodeConfiguration,
+                                         final NotificationFacade notifications) {
         this.state = state;
         this.node = node;
         this.runnerSet = runners;
         this.nodeConfiguration = nodeConfiguration;
+        this.notifications = notifications;
     }
 
     @Override
@@ -83,16 +89,18 @@ public class InstanceReconciliationService extends AbstractScheduledService {
                         CompletableFuture.runAsync(() -> {
                             if (!getRunner(pod).isPodStarted(pod, instance)) {
                                 log.info("telling runner to start instance of {} for {}", pod.getId(), instance.getId());
-                                getRunner(pod).startPod(pod, instance);
+                                getRunner(pod).startPod(task, pod, instance);
                             }
                         });
                     } else {
-                        getRunner(pod).preparePod(pod);
+                        getRunner(pod).preparePod(task, pod);
                     }
                 }
             }
         } catch (final Exception exception) {
-            log.error("error", exception);
+            log.error("Error reconciling instances", exception);
+            notifications.error(NotificationTarget.SYSTEM_ADMIN, null,
+                    "Error reconciling instance (node: " + node.getId() + ")", exception.getMessage());
         }
     }
 

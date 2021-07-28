@@ -15,7 +15,6 @@ public class NodeServiceModule extends AbstractModule {
         serviceBinder.addBinding().to(NodeInfoSyncService.class);
         serviceBinder.addBinding().to(InstanceReconciliationService.class);
         serviceBinder.addBinding().to(OrphanKillerService.class);
-        serviceBinder.addBinding().to(CredentialRefreshService.class);
         serviceBinder.addBinding().to(AutoUpdateService.class);
     }
 

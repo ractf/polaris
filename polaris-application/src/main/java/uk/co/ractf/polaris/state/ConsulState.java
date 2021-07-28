@@ -18,6 +18,7 @@ import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.namespace.Namespace;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.node.NodeInfo;
+import uk.co.ractf.polaris.api.notification.NotificationReceiver;
 import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.util.ConsulPath;
 
@@ -46,7 +47,7 @@ public class ConsulState implements ClusterState {
     @NotNull
     @Override
     public Map<String, NodeInfo> getNodes() {
-        final Map<String, NodeInfo> nodeMap = new HashMap<>();
+        final var nodeMap = new HashMap<String, NodeInfo>();
         for (final var nodeData : consul.keyValueClient().getValues(ConsulPath.nodes())) {
             if (nodeData.getValueAsString().isPresent()) {
                 try {
@@ -124,7 +125,7 @@ public class ConsulState implements ClusterState {
     @NotNull
     @Override
     public Map<String, Instance> getInstancesOnNode(final String node) {
-        final Map<String, Instance> instances = new HashMap<>();
+        final var instances = new HashMap<String, Instance>();
         final var instanceMap = getInstances();
         for (final var entry : instanceMap.entrySet()) {
             if (entry.getValue().getNodeId().equals(node)) {
@@ -136,7 +137,7 @@ public class ConsulState implements ClusterState {
 
     @Override
     public Map<String, Instance> getInstancesOfTask(final NamespacedId namespacedId) {
-        final Map<String, Instance> instances = new HashMap<>();
+        final var instances = new HashMap<String, Instance>();
         final var instanceMap = getInstances();
         for (final var entry : instanceMap.entrySet()) {
             if (entry.getValue().getTaskId().equals(namespacedId)) {
@@ -153,7 +154,7 @@ public class ConsulState implements ClusterState {
 
     @Override
     public Map<String, Instance> getInstances() {
-        final Map<String, Instance> instanceMap = new HashMap<>();
+        final var instanceMap = new HashMap<String, Instance>();
         for (final var instanceData : consul.keyValueClient().getValues(ConsulPath.instances())) {
             if (instanceData.getValueAsString().isPresent()) {
                 try {
@@ -171,7 +172,7 @@ public class ConsulState implements ClusterState {
 
     @Override
     public Map<NamespacedId, Integer> getInstanceCounts() {
-        final Map<NamespacedId, Integer> instanceCounts = new HashMap<>();
+        final var instanceCounts = new HashMap<NamespacedId, Integer>();
         final var instanceMap = getInstances();
         for (final var entry : instanceMap.entrySet()) {
             final var current = instanceCounts.getOrDefault(entry.getValue().getTaskId(), 0);
@@ -183,7 +184,7 @@ public class ConsulState implements ClusterState {
 
     @Override
     public Map<NamespacedId, Task> getTasks() {
-        final Map<NamespacedId, Task> taskMap = new HashMap<>();
+        final var taskMap = new HashMap<NamespacedId, Task>();
         for (final var taskData : consul.keyValueClient().getValues(ConsulPath.tasks())) {
             if (taskData.getValueAsString().isPresent()) {
                 try {
@@ -204,20 +205,9 @@ public class ConsulState implements ClusterState {
 
     @Override
     public Map<NamespacedId, Task> getTasks(final String namespace) {
-        final Map<NamespacedId, Task> taskMap = new HashMap<>();
-        for (final var taskData : consul.keyValueClient().getValues(ConsulPath.tasks())) {
-            if (taskData.getValueAsString().isPresent()) {
-                try {
-                    final var task = Task.parse(taskData.getValueAsString().get(), Task.class);
-                    if (task.getId().getNamespace().equals(namespace)) {
-                        taskMap.put(task.getId(), task);
-                    }
-                } catch (final JsonProcessingException exception) {
-                    log.error("Error deserializing task " + taskData.getKey(), exception);
-                }
-            }
-        }
-        return taskMap;
+        return getTasks().entrySet().stream()
+                .filter(e -> e.getKey().getNamespace().equals(namespace))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
@@ -262,7 +252,7 @@ public class ConsulState implements ClusterState {
 
     @Override
     public Map<String, Namespace> getNamespaces() {
-        final Map<String, Namespace> namespaceMap = new HashMap<>();
+        final var namespaceMap = new HashMap<String, Namespace>();
         for (final var namespaceData : consul.keyValueClient().getValues(ConsulPath.namespaces())) {
             if (namespaceData.getValueAsString().isPresent()) {
                 try {
@@ -308,7 +298,7 @@ public class ConsulState implements ClusterState {
 
     @Override
     public Map<NamespacedId, ContainerRegistryCredentials> getCredentials() {
-        final Map<NamespacedId, ContainerRegistryCredentials> credentialsMap = new HashMap<>();
+        final var credentialsMap = new HashMap<NamespacedId, ContainerRegistryCredentials>();
         for (final var credentialData : consul.keyValueClient().getValues(ConsulPath.credentials())) {
             if (credentialData.getValueAsString().isPresent()) {
                 try {
@@ -324,20 +314,9 @@ public class ConsulState implements ClusterState {
 
     @Override
     public Map<NamespacedId, ContainerRegistryCredentials> getCredentials(final String namespace) {
-        final Map<NamespacedId, ContainerRegistryCredentials> credentialsMap = new HashMap<>();
-        for (final var credentialData : consul.keyValueClient().getValues(ConsulPath.credentials())) {
-            if (credentialData.getValueAsString().isPresent()) {
-                try {
-                    final var credential = ContainerRegistryCredentials.parse(credentialData.getValueAsString().get(), ContainerRegistryCredentials.class);
-                    if (credential.getId().getNamespace().equals(namespace)) {
-                        credentialsMap.put(credential.getId(), credential);
-                    }
-                } catch (final JsonProcessingException exception) {
-                    log.error("Error deserializing credential " + credentialData.getKey(), exception);
-                }
-            }
-        }
-        return credentialsMap;
+        return getCredentials().entrySet().stream()
+                .filter(e -> e.getKey().getNamespace().equals(namespace))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
@@ -416,5 +395,59 @@ public class ConsulState implements ClusterState {
                 Operation.builder(Verb.DELETE)
                         .key(ConsulPath.token(id))
                         .build());
+    }
+
+    public void setNotificationReceiver(final NotificationReceiver receiver) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.SET)
+                        .key(ConsulPath.notificationReceiver(receiver.getId()))
+                        .value(receiver.toJsonString())
+                        .build());
+    }
+
+    @Override
+    public void deleteNotificationReceiver(final NamespacedId id) {
+        consul.keyValueClient().performTransaction(
+                Operation.builder(Verb.DELETE)
+                        .key(ConsulPath.notificationReceiver(id))
+                        .build());
+    }
+
+    @Override
+    public Map<NamespacedId, NotificationReceiver> getNotificationReceivers() {
+        final var receivers = new HashMap<NamespacedId, NotificationReceiver>();
+        for (final var receiverData : consul.keyValueClient().getValues(ConsulPath.notificationReceivers())) {
+            if (receiverData.getValueAsString().isPresent()) {
+                try {
+                    final var receiver = NotificationReceiver.parse(receiverData.getValueAsString().get(), NotificationReceiver.class);
+                    receivers.put(receiver.getId(), receiver);
+                } catch (final JsonProcessingException e) {
+                    log.error("Error deserializing notification receiver " + receiverData.getKey(), e);
+                }
+            }
+        }
+        return receivers;
+    }
+
+    @Override
+    public Map<NamespacedId, NotificationReceiver> getNotificationReceivers(final String namespace) {
+        return getNotificationReceivers().entrySet().stream()
+                .filter(e -> e.getKey().getNamespace().equals(namespace))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    @Override
+    public NotificationReceiver getNotificationReceiver(final NamespacedId id) {
+        final var receiverData = consul.keyValueClient().getValue(ConsulPath.notificationReceiver(id));
+        if (receiverData.isPresent()) {
+            if (receiverData.get().getValueAsString().isPresent()) {
+                try {
+                    return NotificationReceiver.parse(receiverData.get().getValueAsString().get(), NotificationReceiver.class);
+                } catch (final JsonProcessingException exception) {
+                    log.error("Error deserializing notification receiver " + receiverData.get().getKey(), exception);
+                }
+            }
+        }
+        return null;
     }
 }

@@ -26,7 +26,7 @@ public class Namespace extends JsonRepresentable {
             @JsonProperty("hasResourceLimit") final Boolean hasResourceLimit,
             @JsonProperty("maxCpu") final Long maxCpu,
             @JsonProperty("maxMemory") final Long maxMemory,
-            @JsonProperty("allocatecCpu") final Long allocatedCpu,
+            @JsonProperty("allocatedCpu") final Long allocatedCpu,
             @JsonProperty("allocatedMemory") final Long allocatedMemory,
             @JsonProperty("allowedCapAdd") final List<String> allowedCapAdd,
             @JsonProperty("allowedCapDrop") final List<String> allowedCapDrop,

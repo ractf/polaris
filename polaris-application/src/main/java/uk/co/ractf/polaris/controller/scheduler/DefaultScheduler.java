@@ -10,13 +10,12 @@ import io.dropwizard.lifecycle.Managed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.instance.Instance;
+import uk.co.ractf.polaris.api.notification.NotificationTarget;
 import uk.co.ractf.polaris.api.task.Task;
+import uk.co.ractf.polaris.notification.NotificationFacade;
 import uk.co.ractf.polaris.state.ClusterState;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -28,6 +27,7 @@ public class DefaultScheduler implements Scheduler, Managed {
     private final ClusterState clusterState;
     private final Set<InstanceDecoratorPlugin> instanceDecoratorPlugins;
     private final MetricRegistry metricRegistry;
+    private final NotificationFacade notifications;
 
     private Timer nodeSelectionLatency;
     private Timer totalLatency;
@@ -37,11 +37,13 @@ public class DefaultScheduler implements Scheduler, Managed {
 
     @Inject
     public DefaultScheduler(final SchedulingAlgorithm schedulingAlgorithm, final ClusterState clusterState,
-                            final Set<InstanceDecoratorPlugin> instanceDecoratorPlugins, final MetricRegistry metricRegistry) {
+                            final Set<InstanceDecoratorPlugin> instanceDecoratorPlugins, final MetricRegistry metricRegistry,
+                            final NotificationFacade notifications) {
         this.schedulingAlgorithm = schedulingAlgorithm;
         this.clusterState = clusterState;
         this.instanceDecoratorPlugins = instanceDecoratorPlugins;
         this.metricRegistry = metricRegistry;
+        this.notifications = notifications;
     }
 
     @Override
@@ -65,6 +67,12 @@ public class DefaultScheduler implements Scheduler, Managed {
         if (!scheduleResult.isSuccessful()) {
             failMeter.mark();
             log.warn("Failed to schedule {}", task.getId());
+            final var joiner = new StringJoiner("\n");
+            for (final var reason : scheduleResult.getFailureReason()) {
+                joiner.add(reason);
+            }
+            notifications.error(NotificationTarget.NAMESPACE_ADMIN, clusterState.getNamespace(task.getId().getNamespace()),
+                    "Failed to schedule " + task.getId(), joiner.toString());
             return;
         }
         successMeter.mark();

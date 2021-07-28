@@ -2,6 +2,7 @@ package uk.co.ractf.polaris.node.runner;
 
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.pod.Pod;
+import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.controller.Controller;
 import uk.co.ractf.polaris.node.runner.docker.DockerRunner;
 
@@ -17,10 +18,11 @@ public interface Runner<T extends Pod> {
     /**
      * Starts a {@link Pod} with given {@link Instance} details
      *
+     * @param task     the task
      * @param pod      the pod
      * @param instance instance details
      */
-    void startPod(final T pod, final Instance instance);
+    void startPod(final Task task, final T pod, final Instance instance);
 
     /**
      * Stops a {@link Pod} with given {@link Instance} details
@@ -36,7 +38,7 @@ public interface Runner<T extends Pod> {
      * @param pod      the pod
      * @param instance the instance to update
      */
-    void forceUpdatePod(final T pod, final Instance instance);
+    void forceUpdatePod(final Task task, final T pod, final Instance instance);
 
     /**
      * Update a {@link Pod} if an update is available.
@@ -74,9 +76,10 @@ public interface Runner<T extends Pod> {
      * Prepares a {@link Pod} that currently cannot be started so it can be started in the future (e.g. {@link DockerRunner}
      * will pull the docker image)
      *
-     * @param pod the pod to prepare
+     * @param task the task the pod belongs to
+     * @param pod  the pod to prepare
      */
-    void preparePod(final T pod);
+    void preparePod(final Task task, final T pod);
 
     /**
      * Clean up after pods that are currently dead
