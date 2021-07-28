@@ -10,7 +10,7 @@ services:
       REGISTRY_AUTH_HTPASSWD_REALM: Registry
       REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.password
     volumes:
-      - ./auth:/auth
+      - ./registry.password:/auth/registry.password
     networks:
       - polaris
   consul:
@@ -21,7 +21,7 @@ services:
     networks:
       - polaris
   controller:
-    build: ../../../../.
+    build: ""
     ports:
       - "8080:8080"
       - "8081:8081"
@@ -33,7 +33,7 @@ services:
     networks:
       - polaris
   node:
-    build: ../../../../.
+    build: ""
     ports:
       - "9090:9090"
       - "9091:9091"

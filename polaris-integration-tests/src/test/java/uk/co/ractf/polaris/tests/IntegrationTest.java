@@ -13,7 +13,7 @@ public abstract class IntegrationTest {
     @BeforeAll
     public static void buildDocker() throws IOException, InterruptedException {
         new ProcessBuilder("docker-compose", "up", "-d")
-                .directory(new File("src/test/resources/"))
+                .directory(new File(".."))
                 .inheritIO()
                 .start()
                 .waitFor();
@@ -23,7 +23,7 @@ public abstract class IntegrationTest {
     @AfterAll
     public static void teardown() throws IOException, InterruptedException {
         new ProcessBuilder("docker-compose", "rm", "-sf")
-                .directory(new File("src/test/resources/"))
+                .directory(new File(".."))
                 .inheritIO()
                 .start()
                 .waitFor();
