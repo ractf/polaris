@@ -15,6 +15,7 @@ public class ConsulPath {
     private static final String NAMESPACES = "polaris/namespaces";
     private static final String CREDENTIALS = "polaris/credentials";
     private static final String TOKENS = "polaris/tokens";
+    private static final String NOTIFICATION_RECEIVERS = "polaris/notificationreceivers";
 
     public static String path(final String... parts) {
         final StringJoiner stringJoiner = new StringJoiner("/");
@@ -106,5 +107,13 @@ public class ConsulPath {
 
     public static String token(final String id) {
         return path(TOKENS, id);
+    }
+
+    public static String notificationReceivers() {
+        return NOTIFICATION_RECEIVERS;
+    }
+
+    public static String notificationReceiver(final NamespacedId id) {
+        return path(NOTIFICATION_RECEIVERS, id.toString());
     }
 }

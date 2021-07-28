@@ -9,7 +9,6 @@ import uk.co.ractf.polaris.api.namespace.Namespace;
 import uk.co.ractf.polaris.api.namespace.NamespaceCreateResponse;
 import uk.co.ractf.polaris.api.namespace.NamespaceDeleteResponse;
 import uk.co.ractf.polaris.api.namespace.NamespaceUpdateResponse;
-import uk.co.ractf.polaris.security.PolarisSecurityContext;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;

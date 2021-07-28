@@ -1,4 +1,4 @@
-package uk.co.ractf.polaris.node.service;
+package uk.co.ractf.polaris.controller.service;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -10,7 +10,9 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.co.ractf.polaris.api.notification.NotificationTarget;
 import uk.co.ractf.polaris.api.registry.credentials.AWSCredentials;
+import uk.co.ractf.polaris.notification.NotificationFacade;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.concurrent.TimeUnit;
@@ -21,14 +23,16 @@ public class CredentialRefreshService extends AbstractScheduledService {
     private static final Logger log = LoggerFactory.getLogger(CredentialRefreshService.class);
 
     private final ClusterState clusterState;
+    private final NotificationFacade notifications;
 
     @Inject
-    public CredentialRefreshService(final ClusterState clusterState) {
+    public CredentialRefreshService(final ClusterState clusterState, final NotificationFacade notifications) {
         this.clusterState = clusterState;
+        this.notifications = notifications;
     }
 
     @Override
-    protected void runOneIteration() throws Exception {
+    protected void runOneIteration() {
         for (final var entry : clusterState.getCredentials().entrySet()) {
             if (entry.getValue() instanceof AWSCredentials) {
                 try {
@@ -48,6 +52,8 @@ public class CredentialRefreshService extends AbstractScheduledService {
                     clusterState.setCredential(newCreds);
                 } catch (final Exception e) {
                     log.error("Failed to get AWS credentials", e);
+                    notifications.warning(NotificationTarget.NAMESPACE_ADMIN, clusterState.getNamespace(entry.getValue().getId().getNamespace()),
+                            "Could not update AWS credentials.", e.getMessage());
                 }
             }
         }

@@ -6,8 +6,10 @@ import com.google.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
+import uk.co.ractf.polaris.api.notification.NotificationTarget;
 import uk.co.ractf.polaris.controller.ControllerConfiguration;
 import uk.co.ractf.polaris.controller.scheduler.TaskScaler;
+import uk.co.ractf.polaris.notification.NotificationFacade;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.concurrent.TimeUnit;
@@ -20,13 +22,15 @@ public class TaskScaleReconciliationService extends AbstractScheduledService {
     private final ClusterState clusterState;
     private final TaskScaler taskScaler;
     private final ControllerConfiguration config;
+    private final NotificationFacade notifications;
 
     @Inject
     public TaskScaleReconciliationService(final ClusterState controller, final TaskScaler taskScaler,
-                                          final ControllerConfiguration config) {
+                                          final ControllerConfiguration config, final NotificationFacade notifications) {
         this.clusterState = controller;
         this.taskScaler = taskScaler;
         this.config = config;
+        this.notifications = notifications;
     }
 
     @Override
@@ -46,6 +50,8 @@ public class TaskScaleReconciliationService extends AbstractScheduledService {
             }
         } catch (final Exception e) {
             log.error("Error reconciling deployments", e);
+            notifications.error(NotificationTarget.SYSTEM_ADMIN, null,
+                    "Error reconciling deployments", e.getMessage());
         }
     }
 

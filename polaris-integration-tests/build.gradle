@@ -1,14 +1,3 @@
-plugins {
-    id 'java'
-}
-
-group 'uk.co.ractf'
-version '0.0.44'
-
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     testImplementation project(":polaris-api")
     testImplementation project(":polaris-apiclient")
