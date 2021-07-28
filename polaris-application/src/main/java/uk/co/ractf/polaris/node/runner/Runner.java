@@ -15,6 +15,16 @@ import java.util.List;
  */
 public interface Runner<T extends Pod> {
 
+
+    /**
+     * Creates a {@link Pod} with given {@link Instance} details
+     *
+     * @param task     the task
+     * @param pod      the pod
+     * @param instance instance details
+     */
+    void createPod(final Task task, final T pod, final Instance instance);
+
     /**
      * Starts a {@link Pod} with given {@link Instance} details
      *
@@ -111,5 +121,14 @@ public interface Runner<T extends Pod> {
      * @return the locally stored images
      */
     List<String> getImages();
+
+    /**
+     * Creates a network between a list of pods.
+     *
+     * @param pods the pods to network
+     * @param task the task the pods belong to.
+     * @param instance the instance
+     */
+    void createNetwork(final List<T> pods, final Task task, final Instance instance);
 
 }
