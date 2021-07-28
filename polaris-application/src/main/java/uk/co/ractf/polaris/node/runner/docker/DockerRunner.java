@@ -202,7 +202,7 @@ public class DockerRunner implements Runner<Container> {
         final Map<String, String> filter = new HashMap<>();
         filter.put("polaris-pod", pod.getId());
         filter.put("polaris-instance", instance.getId());
-        return dockerClient.listContainersCmd().withLabelFilter(filter).withShowAll(true).exec().size() > 0;
+        return dockerClient.listContainersCmd().withLabelFilter(filter).withStatusFilter(Collections.singletonList("running")).withShowAll(true).exec().size() > 0;
     }
 
     @Override
