@@ -109,11 +109,13 @@ public class DockerRunner implements Runner<Container> {
             log.info("starting {}", instance.getId());
             startingContainers.add(container.getId() + instance.getId());
 
-            dockerClient.connectToNetworkCmd()
-                    .withContainerId(instanceContainerIds.get(instance.getId()))
-                    .withNetworkId(instanceNetworkIds.get(instance.getId()))
-                    .withContainerNetwork(new ContainerNetwork().withAliases(container.getId()))
-                    .exec();
+            if (instanceNetworkIds.get(instance.getId()) != null) {
+                dockerClient.connectToNetworkCmd()
+                        .withContainerId(instanceContainerIds.get(instance.getId()))
+                        .withNetworkId(instanceNetworkIds.get(instance.getId()))
+                        .withContainerNetwork(new ContainerNetwork().withAliases(container.getId()))
+                        .exec();
+            }
             final var startContainerCmd = dockerClient.startContainerCmd(instanceContainerIds.get(instance.getId()));
             startContainerCmd.exec();
             startingContainers.remove(container.getId() + instance.getId());
