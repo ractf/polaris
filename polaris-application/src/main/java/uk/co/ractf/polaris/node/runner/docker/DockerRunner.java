@@ -85,7 +85,7 @@ public class DockerRunner implements Runner<Container> {
 
         var createContainerCmd = dockerClient.createContainerCmd(container.getImage());
         createContainerCmd = createContainerCmd
-                .withHostName(container.getId() + "-" + instance.getTaskId().toString() + "-" + instance.getId().split("-")[0])
+                .withHostName(container.getId().split("-")[0] + "-" + instance.getTaskId().toString().split("-")[0] + "-" + instance.getId().split("-")[0])
                 .withEnv(container.getFullEnv())
                 .withLabels(labels)
                 .withExposedPorts(instance.getPortBindings().stream().map(x -> ExposedPort.parse(x.getInternalPort())).collect(Collectors.toList()))
