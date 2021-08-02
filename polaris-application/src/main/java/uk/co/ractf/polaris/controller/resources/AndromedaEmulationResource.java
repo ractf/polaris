@@ -14,6 +14,7 @@ import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
+import uk.co.ractf.polaris.api.notification.NotificationTarget;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
@@ -21,7 +22,7 @@ import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials
 import uk.co.ractf.polaris.api.registry.credentials.StandardRegistryCredentials;
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.controller.Controller;
-import uk.co.ractf.polaris.security.PolarisSecurityContext;
+import uk.co.ractf.polaris.notification.NotificationFacade;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
@@ -44,11 +45,14 @@ public class AndromedaEmulationResource extends SecureResource {
 
     private final Controller controller;
     private final ClusterState clusterState;
+    private final NotificationFacade notification;
 
     @Inject
-    public AndromedaEmulationResource(final Controller controller, final ClusterState clusterState) {
+    public AndromedaEmulationResource(final Controller controller, final ClusterState clusterState,
+                                      final NotificationFacade notification) {
         this.controller = controller;
         this.clusterState = clusterState;
+        this.notification = notification;
     }
 
     @POST
@@ -76,6 +80,11 @@ public class AndromedaEmulationResource extends SecureResource {
                             .withPassword(challenge.getRegistryAuth().getPassword()));
 
             clusterState.setCredential(credentials);
+        }
+
+        if (challenge.getPort() == null) {
+            notification.error(NotificationTarget.NAMESPACE_ADMIN, clusterState.getNamespace(namespace),
+                    "Invalid challenge spec", challenge.toJsonString());
         }
 
         final var resourceQuota = new ResourceQuota((long) challenge.getResources().getMemory(), 0L,
