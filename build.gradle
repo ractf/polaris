@@ -4,7 +4,7 @@ allprojects {
     apply plugin: 'jacoco'
 
     group = 'uk.co.ractf'
-    version = '0.0.48'
+    version = '0.0.49'
 
     repositories {
         maven { url "https://repo1.maven.org/maven2/" }
