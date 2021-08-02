@@ -45,7 +45,7 @@ public class GenericSchedulingAlgorithm implements SchedulingAlgorithm {
 
     @Override
     public ScheduleResult schedule(final Task task) {
-        final var result = runPredicates(task);
+        /*final var result = runPredicates(task);
         if (result != null) {
             return result;
         }
@@ -58,10 +58,10 @@ public class GenericSchedulingAlgorithm implements SchedulingAlgorithm {
 
         normaliseScores(possibleNodes, pluginScores);
 
-        final var node = getHighestScoringNode(possibleNodes, pluginScores);
+        final var node = getHighestScoringNode(possibleNodes, pluginScores);*/
 
-        return new ScheduleResult(node, true, possibleNodes.size() + resolvableNodes.size(),
-                possibleNodes.size(), Collections.emptyList());
+        return new ScheduleResult(clusterState.getNodes().values().stream().findFirst().get(), true,
+                1, 1, Collections.emptyList());
     }
 
     private NodeInfo getHighestScoringNode(final List<NodeInfo> possibleNodes, final Map<NodeInfo, Map<ScorePlugin, Double>> pluginScores) {
