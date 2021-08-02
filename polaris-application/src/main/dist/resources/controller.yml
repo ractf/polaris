@@ -14,8 +14,6 @@ consul:
   serviceId: polaris-controller
   retryInterval: 5 seconds
 logging:
-  loggers:
-    uk.co.ractf: TRACE
   appenders:
     - type: console
     - type: sentry

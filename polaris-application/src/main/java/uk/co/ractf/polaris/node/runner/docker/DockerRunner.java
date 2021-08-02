@@ -55,6 +55,9 @@ public class DockerRunner implements Runner<Container> {
     }
 
     private Capability[] createCapabilityArray(final List<String> capabilities) {
+        if (capabilities == null) {
+            return new Capability[0];
+        }
         final List<Capability> list = new ArrayList<>();
         for (final var cap : capabilities) {
             list.add(Capability.valueOf(cap));
@@ -64,7 +67,10 @@ public class DockerRunner implements Runner<Container> {
 
     @Override
     public void createPod(final Task task, final Container container, final Instance instance) {
-        final var labels = container.getLabels();
+        var labels = container.getLabels();
+        if (labels == null) {
+            labels = new HashMap<>();
+        }
         labels.put("polaris", container.getId());
         labels.put("polaris-instance", instance.getId());
         labels.put("polaris-task", instance.getTaskId().toString());
@@ -93,7 +99,7 @@ public class DockerRunner implements Runner<Container> {
                                 .withRestartPolicy(RestartPolicy.alwaysRestart())
                                 .withMemorySwap(container.getResourceQuota().getSwap()));
 
-        if (container.getEntrypoint().size() > 0) {
+        if (container.getEntrypoint() != null && container.getEntrypoint().size() > 0) {
             createContainerCmd = createContainerCmd.withCmd(container.getEntrypoint());
         }
 

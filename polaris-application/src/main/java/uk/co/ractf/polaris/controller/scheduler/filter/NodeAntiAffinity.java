@@ -15,6 +15,9 @@ public class NodeAntiAffinity implements FilterPlugin {
         for (final var pod : task.getPods()) {
             if (pod instanceof PodWithAffinity) {
                 final var affinity = ((PodWithAffinity) pod).getAffinity();
+                if (affinity == null) {
+                    return FilterResult.SCHEDULABLE;
+                }
                 for (final var entry : affinity.entrySet()) {
                     final var value = nodeInfo.getLabels().get(entry.getKey());
                     if (entry.getValue().equals(value)) {

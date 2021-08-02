@@ -261,9 +261,11 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
 
     private void generateRandomEnvIfEmpty() {
         if (generatedRandomEnv.isEmpty()) {
-            for (final Map.Entry<String, RandomEnv> entry : randomEnv.entrySet()) {
-                final String generated = entry.getValue().generate();
-                generatedRandomEnv.put(entry.getKey(), generated);
+            if (randomEnv != null) {
+                for (final var entry : randomEnv.entrySet()) {
+                    final var generated = entry.getValue().generate();
+                    generatedRandomEnv.put(entry.getKey(), generated);
+                }
             }
         }
     }
@@ -271,11 +273,13 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
     @JsonIgnore
     public List<String> getFullEnv() {
         final List<String> list = new ArrayList<>();
-        for (final Map.Entry<String, String> entry : env.entrySet()) {
-            list.add(entry.getKey() + "=" + entry.getValue());
+        if (env != null) {
+            for (final var entry : env.entrySet()) {
+                list.add(entry.getKey() + "=" + entry.getValue());
+            }
         }
         generateRandomEnvIfEmpty();
-        for (final Map.Entry<String, String> entry : generatedRandomEnv.entrySet()) {
+        for (final var entry : generatedRandomEnv.entrySet()) {
             list.add(entry.getKey() + "=" + entry.getValue());
         }
         return list;
@@ -304,7 +308,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof Container)) return false;
-        final Container container = (Container) o;
+        final var container = (Container) o;
         return Objects.equals(image, container.image) && Objects.equals(repo, container.repo) &&
                 Objects.equals(repoCredentials, container.repoCredentials) &&
                 Objects.equals(entrypoint, container.entrypoint) && Objects.equals(env, container.env) &&
