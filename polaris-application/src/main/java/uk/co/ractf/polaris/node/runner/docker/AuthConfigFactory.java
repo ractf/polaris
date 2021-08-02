@@ -13,7 +13,8 @@ public class AuthConfigFactory {
         if (credentials instanceof StandardRegistryCredentials) {
             return ((StandardRegistryCredentials) credentials).getAuthConfig();
         } else if (credentials instanceof AWSCredentials) {
-            new AuthConfig().withRegistrytoken(((AWSCredentials) credentials).getAuthorizationToken());
+            final var creds = ((AWSCredentials) credentials).getAuthorizationToken().split(":");
+            return new AuthConfig().withUsername(creds[0]).withPassword(creds[1]);
         }
         return null;
     }

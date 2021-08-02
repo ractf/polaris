@@ -32,7 +32,7 @@ public class CredentialRefreshService extends AbstractScheduledService {
     }
 
     @Override
-    protected void runOneIteration() {
+    public void runOneIteration() {
         for (final var entry : clusterState.getCredentials().entrySet()) {
             if (entry.getValue() instanceof AWSCredentials) {
                 try {
@@ -61,6 +61,6 @@ public class CredentialRefreshService extends AbstractScheduledService {
 
     @Override
     protected Scheduler scheduler() {
-        return Scheduler.newFixedRateSchedule(60, 60, TimeUnit.MINUTES);
+        return Scheduler.newFixedRateSchedule(20, 20, TimeUnit.SECONDS);
     }
 }

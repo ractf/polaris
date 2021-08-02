@@ -10,8 +10,7 @@ import uk.co.ractf.polaris.api.registry.credentials.CredentialsDeleteResponse;
 import uk.co.ractf.polaris.api.registry.credentials.CredentialsSubmitResponse;
 import uk.co.ractf.polaris.api.registry.credentials.CredentialsUpdateResponse;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
-import uk.co.ractf.polaris.security.PolarisSecurityContext;
-import uk.co.ractf.polaris.security.PolarisUser;
+import uk.co.ractf.polaris.controller.service.CredentialRefreshService;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;
@@ -29,10 +28,13 @@ import java.util.regex.Pattern;
 public class CredentialResource extends SecureResource {
 
     private final ClusterState clusterState;
+    private final CredentialRefreshService credentialRefreshService;
 
     @Inject
-    public CredentialResource(final ClusterState clusterState) {
+    public CredentialResource(final ClusterState clusterState,
+                              final CredentialRefreshService credentialRefreshService) {
         this.clusterState = clusterState;
+        this.credentialRefreshService = credentialRefreshService;
     }
 
     @GET
@@ -121,6 +123,7 @@ public class CredentialResource extends SecureResource {
         }
 
         clusterState.setCredential(credential);
+        credentialRefreshService.runOneIteration();
         return Response.status(Response.Status.CREATED)
                 .entity(new CredentialsSubmitResponse(CredentialsSubmitResponse.Status.OK, credential.getId())).build();
     }
@@ -143,6 +146,7 @@ public class CredentialResource extends SecureResource {
         }
 
         clusterState.setCredential(credentials);
+        credentialRefreshService.runOneIteration();
         return Response.ok(new CredentialsUpdateResponse(CredentialsUpdateResponse.Status.OK, credentials.getId())).build();
     }
 
