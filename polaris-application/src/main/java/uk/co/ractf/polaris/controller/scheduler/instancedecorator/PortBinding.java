@@ -47,8 +47,8 @@ public class PortBinding implements InstanceDecoratorPlugin {
                 for (final var entry : portBindingMap.entrySet()) {
                     final var portMapping = entry.getKey();
                     final var portBinding = entry.getValue();
-                    final var internalPort = portMapping.getPort() + "/" + portMapping.getProtocol();
-                    final var externalPort = portBinding.getExposedPort().toString();
+                    final var internalPort = portBinding.getExposedPort().toString();
+                    final var externalPort = portBinding.getBinding().getHostPortSpec();
                     portBindings.add(new InstancePortBinding(externalPort, internalPort, node.getPublicIP(), portMapping.isAdvertise()));
                 }
             }

@@ -73,8 +73,8 @@ public class DockerRunner implements Runner<Container> {
         final var instancePortBindings = instance.getPortBindings();
         final List<PortBinding> portBindings = new ArrayList<>();
         for (final var instancePortBinding : instancePortBindings) {
-            portBindings.add(new PortBinding(new Ports.Binding("0.0.0.0", instancePortBinding.getInternalPort()),
-                    ExposedPort.parse(instancePortBinding.getPort())));
+            portBindings.add(new PortBinding(new Ports.Binding("", instancePortBinding.getPort()),
+                    ExposedPort.parse(instancePortBinding.getInternalPort())));
         }
 
         var createContainerCmd = dockerClient.createContainerCmd(container.getImage());
@@ -82,7 +82,7 @@ public class DockerRunner implements Runner<Container> {
                 .withHostName(container.getId() + "-" + instance.getTaskId().toString() + "-" + instance.getId().split("-")[0])
                 .withEnv(container.getFullEnv())
                 .withLabels(labels)
-                .withPortSpecs()
+                .withExposedPorts(instance.getPortBindings().stream().map(x -> ExposedPort.parse(x.getInternalPort())).collect(Collectors.toList()))
                 .withHostConfig(
                         HostConfig.newHostConfig()
                                 .withPortBindings(portBindings)
@@ -164,14 +164,14 @@ public class DockerRunner implements Runner<Container> {
                         for (final var container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
                             dockerClient.restartContainerCmd(container.getId()).withtTimeout(pod.getTerminationTimeout()).exec();
                         }
+                        Namespace namespace = null;
+                        if (pod.getRepoCredentials() != null) {
+                            namespace = state.getNamespace(pod.getRepoCredentials().getNamespace());
+                        }
+                        notifications.info(NotificationTarget.NAMESPACE_ADMIN, namespace, "Updated pod " + pod.getId(), "");
                     }
                 }
             }).awaitCompletion();
-            Namespace namespace = null;
-            if (pod.getRepoCredentials() != null) {
-                namespace = state.getNamespace(pod.getRepoCredentials().getNamespace());
-            }
-            notifications.info(NotificationTarget.NAMESPACE_ADMIN, namespace, "Updated pod " + pod.getId(), "");
         } catch (final Exception e) {
             Namespace namespace = null;
             if (pod.getRepoCredentials() != null) {
