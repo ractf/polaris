@@ -110,8 +110,11 @@ public class AndromedaEmulationResource extends SecureResource {
     @RolesAllowed("ANDROMEDA")
     @Operation(summary = "Request Instance Allocation", tags = {"Andromeda"},
             description = "Requests an instance allocation from polaris in andromda's format")
-    public Response getInstance(@RequestBody final AndromedaInstanceRequest request) {
-        if (clusterState.getTask(new NamespacedId(request.getJob())) == null) {
+    public Response getInstance(@Context final SecurityContext securityContext,
+                                @RequestBody final AndromedaInstanceRequest request) {
+        final var context = convertContext(securityContext);
+        final var namespace = context.isRoot() ? "polaris" : context.getNamespaces().get(0);
+        if (clusterState.getTask(new NamespacedId(namespace, request.getJob())) == null) {
             return Response.status(404).build();
         }
         final var instance = controller.getInstanceAllocator().allocate(
@@ -128,8 +131,11 @@ public class AndromedaEmulationResource extends SecureResource {
     @RolesAllowed("ANDROMEDA")
     @Operation(summary = "Request Instance Reset", tags = {"Andromeda"},
             description = "Reset an instance allocation from polaris in andromda's format")
-    public AndromedaInstance resetInstance(@RequestBody final AndromedaInstanceRequest request) {
-        if (clusterState.getTask(new NamespacedId(request.getJob())) == null) {
+    public AndromedaInstance resetInstance(@Context final SecurityContext securityContext,
+                                           @RequestBody final AndromedaInstanceRequest request) {
+        final var context = convertContext(securityContext);
+        final var namespace = context.isRoot() ? "polaris" : context.getNamespaces().get(0);
+        if (clusterState.getTask(new NamespacedId(namespace, request.getJob())) == null) {
             Response.status(404).build();
         }
         final var instance = controller.getInstanceAllocator().requestNewAllocation(
