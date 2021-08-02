@@ -17,6 +17,7 @@ import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.pod.Container;
 import uk.co.ractf.polaris.api.pod.PortMapping;
 import uk.co.ractf.polaris.api.pod.ResourceQuota;
+import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials;
 import uk.co.ractf.polaris.api.registry.credentials.StandardRegistryCredentials;
 import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.controller.Controller;
@@ -61,13 +62,19 @@ public class AndromedaEmulationResource extends SecureResource {
         final var context = convertContext(securityContext);
         final var namespace = context.isRoot() ? "polaris" : context.getNamespaces().get(0);
 
-        final var credentials = new StandardRegistryCredentials(new NamespacedId(namespace, challenge.getName()),
-                "standard",
-                new AuthConfig()
-                        .withUsername(challenge.getRegistryAuth().getUsername())
-                        .withPassword(challenge.getRegistryAuth().getPassword()));
+        final ContainerRegistryCredentials credentials;
 
-        clusterState.setCredential(credentials);
+        if (challenge.getRegistryAuth().getUsername().equalsIgnoreCase("polaris")) {
+            credentials = clusterState.getCredential(new NamespacedId(namespace, challenge.getRegistryAuth().getPassword()));
+        } else {
+            credentials = new StandardRegistryCredentials(new NamespacedId(namespace, challenge.getName()),
+                    "standard",
+                    new AuthConfig()
+                            .withUsername(challenge.getRegistryAuth().getUsername())
+                            .withPassword(challenge.getRegistryAuth().getPassword()));
+
+            clusterState.setCredential(credentials);
+        }
 
         final var resourceQuota = new ResourceQuota((long) challenge.getResources().getMemory(), 0L,
                 (long) (Double.parseDouble(challenge.getResources().getCpus()) * 1_000_000_000));
