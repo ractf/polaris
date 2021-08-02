@@ -118,7 +118,7 @@ public class AndromedaEmulationResource extends SecureResource {
             return Response.status(404).build();
         }
         final var instance = controller.getInstanceAllocator().allocate(
-                new InstanceRequest(new NamespacedId(request.getJob()), request.getUser(), ""));
+                new InstanceRequest(new NamespacedId(namespace, request.getJob()), request.getUser(), ""));
         return Response.status(200).entity(
                 new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
                         Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]))).build();
@@ -139,7 +139,7 @@ public class AndromedaEmulationResource extends SecureResource {
             Response.status(404).build();
         }
         final var instance = controller.getInstanceAllocator().requestNewAllocation(
-                new InstanceRequest(new NamespacedId(request.getJob()), request.getUser(), ""));
+                new InstanceRequest(new NamespacedId(namespace, request.getJob()), request.getUser(), ""));
         return new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
                 Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]));
     }
