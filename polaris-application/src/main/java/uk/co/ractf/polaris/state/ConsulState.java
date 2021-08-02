@@ -384,7 +384,7 @@ public class ConsulState implements ClusterState {
     public void setAPIToken(final APIToken apiToken) {
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
-                        .key(ConsulPath.token(apiToken.getToken()))
+                        .key(ConsulPath.token(apiToken.getId()))
                         .value(apiToken.toJsonString())
                         .build());
     }
