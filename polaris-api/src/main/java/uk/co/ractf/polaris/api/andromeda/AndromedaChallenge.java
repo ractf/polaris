@@ -2,6 +2,7 @@ package uk.co.ractf.polaris.api.andromeda;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 import java.util.Objects;
 
@@ -21,7 +22,7 @@ import java.util.Objects;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Deprecated
-public class AndromedaChallenge {
+public class AndromedaChallenge extends JsonRepresentable {
 
     private final String name;
     private final Integer port;
