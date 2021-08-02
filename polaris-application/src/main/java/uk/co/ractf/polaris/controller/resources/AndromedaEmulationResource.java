@@ -35,6 +35,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 
 @Path("/andromeda")
 @Produces(MediaType.APPLICATION_JSON)
@@ -61,13 +62,14 @@ public class AndromedaEmulationResource extends SecureResource {
                                     @RequestBody final AndromedaChallenge challenge) {
         final var context = convertContext(securityContext);
         final var namespace = context.isRoot() ? "polaris" : context.getNamespaces().get(0);
+        final var name = UUID.randomUUID().toString();
 
         final ContainerRegistryCredentials credentials;
 
         if (challenge.getRegistryAuth().getUsername().equalsIgnoreCase("polaris")) {
             credentials = clusterState.getCredential(new NamespacedId(namespace, challenge.getRegistryAuth().getPassword()));
         } else {
-            credentials = new StandardRegistryCredentials(new NamespacedId(namespace, challenge.getName()),
+            credentials = new StandardRegistryCredentials(new NamespacedId(namespace, name),
                     "standard",
                     new AuthConfig()
                             .withUsername(challenge.getRegistryAuth().getUsername())
@@ -80,17 +82,17 @@ public class AndromedaEmulationResource extends SecureResource {
                 (long) (Double.parseDouble(challenge.getResources().getCpus()) * 1_000_000_000));
         final var portMapping = new PortMapping(challenge.getPort(), "tcp", true);
 
-        final var pod = new Container("container", challenge.getName(), challenge.getImage(), "",
+        final var pod = new Container("container", name, challenge.getImage(), "",
                 credentials.getId(), new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
                 new HashMap<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
                 new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>(), true);
 
-        final var polarisChallenge = new Challenge(new NamespacedId(namespace, challenge.getName()), 0,
+        final var polarisChallenge = new Challenge(new NamespacedId(namespace, name), 0,
                 Collections.singletonList(pod), new StaticReplication("static", challenge.getReplicas()),
                 new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE));
 
         clusterState.setTask(polarisChallenge);
-        return Response.status(200).entity(new AndromedaChallengeSubmitResponse(challenge.getName())).build();
+        return Response.status(200).entity(new AndromedaChallengeSubmitResponse(name)).build();
     }
 
     @POST
