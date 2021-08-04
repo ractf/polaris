@@ -85,6 +85,7 @@ public class AndromedaEmulationResource extends SecureResource {
         if (challenge.getPort() == null) {
             notification.error(NotificationTarget.NAMESPACE_ADMIN, clusterState.getNamespace(namespace),
                     "Invalid challenge spec", challenge.toJsonString());
+            return Response.status(400).build();
         }
 
         final var resourceQuota = new ResourceQuota((long) challenge.getResources().getMemory(), 0L,
