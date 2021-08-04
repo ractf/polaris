@@ -70,6 +70,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
 
     @Override
     protected void runOneIteration() {
+        final var start = System.currentTimeMillis();
         try {
             final var tasks = state.getTasks();
             for (final var entry : state.getInstancesOnNode(node.getId()).entrySet()) {
@@ -112,6 +113,8 @@ public class InstanceReconciliationService extends AbstractScheduledService {
             notifications.error(NotificationTarget.SYSTEM_ADMIN, null,
                     "Error reconciling instance (node: " + node.getId() + ")", exception.getMessage());
         }
+        final var end = System.currentTimeMillis();
+        log.info("Finished instance reconcillation in {}ms", end - start);
     }
 
     @Override
