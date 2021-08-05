@@ -5,6 +5,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.task.*;
 import uk.co.ractf.polaris.security.PolarisSecurityContext;
@@ -157,6 +158,10 @@ public class TaskResource extends SecureResource {
         if (clusterState.getTask(id) == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(new TaskDeleteResponse(TaskDeleteResponse.Status.NOT_FOUND, id)).build();
+        }
+
+        for (final var entry : clusterState.getInstancesOfTask(id).entrySet()) {
+            clusterState.deleteInstance(entry.getValue());
         }
 
         clusterState.deleteTask(id);
