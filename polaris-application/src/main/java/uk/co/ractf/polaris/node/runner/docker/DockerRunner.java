@@ -163,10 +163,11 @@ public class DockerRunner implements Runner<Container> {
         filter.put("polaris-pod", pod.getId());
         //TODO: surely there's a better way to do this
         try {
+            log.info("Trying to pull image {}", pod.getImage());
             dockerClient.pullImageCmd(pod.getImage()).withTag(pod.getTag()).withAuthConfig(authConfig).exec(new PullImageResultCallback() {
                 @Override
                 public void onNext(final PullResponseItem item) {
-                    if ("Downloaded newer image".equals(item.getStatus())) {
+                    if (item.getStatus() != null && item.getStatus().contains("Downloaded newer image")) {
                         for (final var container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
                             dockerClient.restartContainerCmd(container.getId()).withtTimeout(pod.getTerminationTimeout()).exec();
                         }
