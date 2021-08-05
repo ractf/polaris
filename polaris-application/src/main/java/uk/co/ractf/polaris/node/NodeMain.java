@@ -48,6 +48,7 @@ public class NodeMain extends Application<NodeConfiguration> {
                         "uk.co.ractf.polaris.consul",
                         "uk.co.ractf.polaris.node.metrics",
                         "uk.co.ractf.polaris.node.runner",
+                        "uk.co.ractf.polaris.node.resources",
                         "uk.co.ractf.polaris.node.service"
                 )
                 .build());
