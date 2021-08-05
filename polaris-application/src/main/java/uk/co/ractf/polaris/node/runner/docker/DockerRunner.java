@@ -255,13 +255,14 @@ public class DockerRunner implements Runner<Container> {
 
     @Override
     public void killOrphans() {
+        final var instances = state.getInstancesOnNode(node.getId());
         for (final var container :
                 dockerClient.listContainersCmd().withLabelFilter(Collections.singletonList("polaris")).exec()) {
             final var podId = container.getLabels().get("polaris");
             final var instanceId = container.getLabels().get("polaris-instance");
             final var taskId = container.getLabels().get("polaris-task");
 
-            if (!state.getInstancesOnNode(node.getId()).containsKey(instanceId)) {
+            if (!instances.containsKey(instanceId)) {
                 final var challenge = state.getTask(new NamespacedId(taskId));
                 if (dyingContainers.contains(container.getId())) {
                     continue;
@@ -269,6 +270,7 @@ public class DockerRunner implements Runner<Container> {
 
                 dyingContainers.add(container.getId());
                 CompletableFuture.runAsync(() -> {
+                    log.info("Killing orphaned container {}", instanceId);
                     if (challenge != null) {
                         final int terminationTimeout = ((Container) challenge.getPod(podId)).getTerminationTimeout();
                         dockerClient.stopContainerCmd(container.getId()).withTimeout(terminationTimeout).exec();

@@ -23,7 +23,7 @@ public class OrphanKillerService extends AbstractScheduledService {
     }
 
     @Override
-    protected void runOneIteration() {
+    public void runOneIteration() {
         if (configuration.isKillOrphans()) {
             for (final var runner : runners) {
                 CompletableFuture.runAsync(runner::killOrphans);
@@ -33,6 +33,6 @@ public class OrphanKillerService extends AbstractScheduledService {
 
     @Override
     protected Scheduler scheduler() {
-        return Scheduler.newFixedRateSchedule(0, 5, TimeUnit.SECONDS);
+        return Scheduler.newFixedRateSchedule(0, 5, TimeUnit.MINUTES);
     }
 }
