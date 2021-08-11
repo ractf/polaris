@@ -19,17 +19,25 @@ import uk.co.ractf.polaris.api.common.JsonRepresentable;
 public abstract class RandomEnv extends JsonRepresentable {
 
     private final String type;
+    private final String display;
 
     /**
      * @param type the type of random env
+     * @param display
      */
     @Contract(pure = true)
-    public RandomEnv(@JsonProperty("type") final String type) {
+    public RandomEnv(@JsonProperty("type") final String type,
+                     @JsonProperty("display") final String display) {
         this.type = type;
+        this.display = display;
     }
 
     public String getType() {
         return type;
+    }
+
+    public String getDisplay() {
+        return display;
     }
 
     /**

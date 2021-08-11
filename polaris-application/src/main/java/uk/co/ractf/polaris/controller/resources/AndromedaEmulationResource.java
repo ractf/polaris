@@ -12,6 +12,7 @@ import uk.co.ractf.polaris.api.andromeda.AndromedaInstance;
 import uk.co.ractf.polaris.api.andromeda.AndromedaInstanceRequest;
 import uk.co.ractf.polaris.api.deployment.Allocation;
 import uk.co.ractf.polaris.api.deployment.StaticReplication;
+import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.notification.NotificationTarget;
@@ -33,10 +34,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 @Path("/andromeda")
 @Produces(MediaType.APPLICATION_JSON)
@@ -105,6 +103,26 @@ public class AndromedaEmulationResource extends SecureResource {
         return Response.status(200).entity(new AndromedaChallengeSubmitResponse(name)).build();
     }
 
+    private List<String> getExtra(final Instance instance) {
+        final var extra = new ArrayList<String>();
+        if (instance.getRandomEnv().isEmpty()) {
+            return extra;
+        }
+
+        for (final var pod : clusterState.getTask(instance.getTaskId()).getPods()) {
+            if (pod instanceof Container) {
+                final var container = (Container) pod;
+                for (final var entry : container.getRandomEnv().entrySet()) {
+                    if (entry.getValue().getDisplay() != null) {
+                        extra.add(entry.getValue().getDisplay().replace("{}", instance.getRandomEnv().get(entry.getKey())));
+                    }
+                }
+            }
+        }
+
+        return extra;
+    }
+
     @POST
     @Timed
     @ExceptionMetered
@@ -122,7 +140,8 @@ public class AndromedaEmulationResource extends SecureResource {
                 new InstanceRequest(new NamespacedId(namespace, request.getJob()), request.getUser(), ""));
         return Response.status(200).entity(
                 new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
-                        Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]))).build();
+                        Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]),
+                        getExtra(instance))).build();
     }
 
     @POST
@@ -142,7 +161,8 @@ public class AndromedaEmulationResource extends SecureResource {
         final var instance = controller.getInstanceAllocator().requestNewAllocation(
                 new InstanceRequest(new NamespacedId(namespace, request.getJob()), request.getUser(), ""));
         return new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
-                Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]));
+                Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]),
+                getExtra(instance));
     }
 
 }

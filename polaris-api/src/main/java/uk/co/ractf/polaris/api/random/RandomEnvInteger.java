@@ -32,9 +32,10 @@ public class RandomEnvInteger extends RandomEnv {
     @Contract(pure = true)
     public RandomEnvInteger(
             @JsonProperty("type") final String type,
+            @JsonProperty("display") final String display,
             @JsonProperty("min") final Integer min,
             @JsonProperty("max") final Integer max) {
-        super(type);
+        super(type, display);
         this.min = min;
         this.max = max;
     }
