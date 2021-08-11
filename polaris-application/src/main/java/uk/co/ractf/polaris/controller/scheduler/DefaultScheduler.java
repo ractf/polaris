@@ -4,6 +4,7 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import io.dropwizard.lifecycle.Managed;
@@ -59,7 +60,8 @@ public class DefaultScheduler implements Scheduler, Managed {
     }
 
     @Override
-    public void schedule(final Task task) {
+    @CanIgnoreReturnValue
+    public Instance schedule(final Task task) {
         attemptMeter.mark();
         final var startTime = System.nanoTime();
         final var scheduleResult = schedulingAlgorithm.schedule(task);
@@ -73,7 +75,7 @@ public class DefaultScheduler implements Scheduler, Managed {
             }
             notifications.error(NotificationTarget.NAMESPACE_ADMIN, clusterState.getNamespace(task.getId().getNamespace()),
                     "Failed to schedule " + task.getId(), joiner.toString());
-            return;
+            return null;
         }
         successMeter.mark();
 
@@ -86,6 +88,7 @@ public class DefaultScheduler implements Scheduler, Managed {
 
         totalLatency.update(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
         successMeter.mark();
+        return instance;
     }
 
     @Override
