@@ -34,6 +34,6 @@ public class OrphanKillerService extends AbstractScheduledService {
 
     @Override
     protected Scheduler scheduler() {
-        return Scheduler.newFixedRateSchedule(0, 1, TimeUnit.MINUTES);
+        return Scheduler.newFixedRateSchedule(0, 5, TimeUnit.MINUTES);
     }
 }
