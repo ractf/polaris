@@ -22,7 +22,9 @@ import uk.co.ractf.polaris.api.pod.ResourceQuota;
 import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials;
 import uk.co.ractf.polaris.api.registry.credentials.StandardRegistryCredentials;
 import uk.co.ractf.polaris.api.task.Challenge;
+import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.controller.Controller;
+import uk.co.ractf.polaris.controller.scheduler.Scheduler;
 import uk.co.ractf.polaris.notification.NotificationFacade;
 import uk.co.ractf.polaris.state.ClusterState;
 
@@ -35,6 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Path("/andromeda")
 @Produces(MediaType.APPLICATION_JSON)
@@ -44,13 +47,16 @@ public class AndromedaEmulationResource extends SecureResource {
     private final Controller controller;
     private final ClusterState clusterState;
     private final NotificationFacade notification;
+    private final Scheduler scheduler;
+    private final Map<String, Instance> singleUserInstances = new ConcurrentHashMap<>();
 
     @Inject
     public AndromedaEmulationResource(final Controller controller, final ClusterState clusterState,
-                                      final NotificationFacade notification) {
+                                      final NotificationFacade notification, final Scheduler scheduler) {
         this.controller = controller;
         this.clusterState = clusterState;
         this.notification = notification;
+        this.scheduler = scheduler;
     }
 
     @POST
@@ -97,7 +103,7 @@ public class AndromedaEmulationResource extends SecureResource {
 
         final var polarisChallenge = new Challenge(new NamespacedId(namespace, name), 0,
                 Collections.singletonList(pod), new StaticReplication("static", challenge.getReplicas()),
-                new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE));
+                new Allocation("user", Integer.MAX_VALUE, Integer.MAX_VALUE, false));
 
         clusterState.setTask(polarisChallenge);
         return Response.status(200).entity(new AndromedaChallengeSubmitResponse(name)).build();
@@ -123,6 +129,28 @@ public class AndromedaEmulationResource extends SecureResource {
         return extra;
     }
 
+    private Response makeResponse(final Instance instance) {
+        return Response.status(200).entity(
+                new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
+                        Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]),
+                        getExtra(instance))).build();
+    }
+
+    private Instance getSingleUserInstance(final String user, final Task task) {
+        if (singleUserInstances.containsKey(user)) {
+            final var currentInstance = singleUserInstances.get(user);
+            if (currentInstance.getTaskId().getId().equals(task.getId().getId())) {
+                return currentInstance;
+            }
+
+            singleUserInstances.remove(user);
+            clusterState.deleteInstance(currentInstance);
+        }
+        final var instance = scheduler.schedule(task);
+        singleUserInstances.put(user, instance);
+        return instance;
+    }
+
     @POST
     @Timed
     @ExceptionMetered
@@ -133,15 +161,19 @@ public class AndromedaEmulationResource extends SecureResource {
                                 @RequestBody final AndromedaInstanceRequest request) {
         final var context = convertContext(securityContext);
         final var namespace = context.isRoot() ? "polaris" : context.getNamespaces().get(0);
-        if (clusterState.getTask(new NamespacedId(namespace, request.getJob())) == null) {
+        final var task = clusterState.getTask(new NamespacedId(namespace, request.getJob()));
+        if (task == null) {
             return Response.status(404).build();
         }
-        final var instance = controller.getInstanceAllocator().allocate(
-                new InstanceRequest(new NamespacedId(namespace, request.getJob()), request.getUser(), ""));
-        return Response.status(200).entity(
-                new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
-                        Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]),
-                        getExtra(instance))).build();
+        final var challenge = (Challenge) task;
+        final Instance instance;
+        if (challenge.getAllocation().isSingleUser()) {
+            instance = getSingleUserInstance(request.getUser(), task);
+        } else {
+            instance = controller.getInstanceAllocator().allocate(
+                    new InstanceRequest(new NamespacedId(namespace, request.getJob()), request.getUser(), ""));
+        }
+        return makeResponse(instance);
     }
 
     @POST
@@ -151,18 +183,27 @@ public class AndromedaEmulationResource extends SecureResource {
     @RolesAllowed("ANDROMEDA")
     @Operation(summary = "Request Instance Reset", tags = {"Andromeda"},
             description = "Reset an instance allocation from polaris in andromda's format")
-    public AndromedaInstance resetInstance(@Context final SecurityContext securityContext,
+    public Response resetInstance(@Context final SecurityContext securityContext,
                                            @RequestBody final AndromedaInstanceRequest request) {
         final var context = convertContext(securityContext);
         final var namespace = context.isRoot() ? "polaris" : context.getNamespaces().get(0);
-        if (clusterState.getTask(new NamespacedId(namespace, request.getJob())) == null) {
-            Response.status(404).build();
+        final var task = clusterState.getTask(new NamespacedId(namespace, request.getJob()));
+        if (task == null) {
+            return Response.status(404).build();
         }
-        final var instance = controller.getInstanceAllocator().requestNewAllocation(
-                new InstanceRequest(new NamespacedId(namespace, request.getJob()), request.getUser(), ""));
-        return new AndromedaInstance(clusterState.getNode(instance.getNodeId()).getPublicIP(),
-                Integer.parseInt(instance.getPortBindings().get(0).getPort().split("/")[0]),
-                getExtra(instance));
+
+        final var currentSingleUserInstance = singleUserInstances.get(request.getUser());
+        singleUserInstances.remove(request.getUser());
+        clusterState.deleteInstance(currentSingleUserInstance);
+        final var challenge = (Challenge) task;
+        final Instance instance;
+        if (challenge.getAllocation().isSingleUser()) {
+            instance = getSingleUserInstance(request.getUser(), task);
+        } else {
+            instance = controller.getInstanceAllocator().requestNewAllocation(
+                    new InstanceRequest(new NamespacedId(namespace, request.getJob()), request.getUser(), ""));
+        }
+        return makeResponse(instance);
     }
 
 }

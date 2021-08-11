@@ -24,22 +24,25 @@ public class Allocation extends JsonRepresentable {
     private final String sticky;
     private final Integer userLimit;
     private final Integer teamLimit;
+    private final boolean singleUser;
 
     /**
      * Create an allocation
-     *
-     * @param sticky    should the allocator make instances sticky on "user" or "team"
+     *  @param sticky    should the allocator make instances sticky on "user" or "team"
      * @param userLimit max amount of users on an instance
      * @param teamLimit max amount of teams on an instance
+     * @param singleUser
      */
     @Contract(pure = true)
     public Allocation(
             @JsonProperty("sticky") final String sticky,
             @JsonProperty("userLimit") final Integer userLimit,
-            @JsonProperty("teamLimit") final Integer teamLimit) {
+            @JsonProperty("teamLimit") final Integer teamLimit,
+            @JsonProperty("strict") final boolean singleUser) {
         this.sticky = sticky;
         this.userLimit = userLimit;
         this.teamLimit = teamLimit;
+        this.singleUser = singleUser;
     }
 
     public String getSticky() {
@@ -54,16 +57,20 @@ public class Allocation extends JsonRepresentable {
         return teamLimit;
     }
 
+    public boolean isSingleUser() {
+        return singleUser;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Allocation)) return false;
         final Allocation that = (Allocation) o;
-        return Objects.equals(sticky, that.sticky) && Objects.equals(userLimit, that.userLimit) && Objects.equals(teamLimit, that.teamLimit);
+        return singleUser == that.singleUser && Objects.equals(sticky, that.sticky) && Objects.equals(userLimit, that.userLimit) && Objects.equals(teamLimit, that.teamLimit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sticky, userLimit, teamLimit);
+        return Objects.hash(sticky, userLimit, teamLimit, singleUser);
     }
 }

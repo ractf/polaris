@@ -256,9 +256,11 @@ public class DockerRunner implements Runner<Container> {
 
     @Override
     public void killOrphans() {
+        System.out.println("DockerRunner.killOrphans");
         final var instances = state.getInstancesOnNode(node.getId());
         for (final var container :
                 dockerClient.listContainersCmd().withLabelFilter(Collections.singletonList("polaris")).exec()) {
+            System.out.println(container.getId());
             final var podId = container.getLabels().get("polaris");
             final var instanceId = container.getLabels().get("polaris-instance");
             final var taskId = container.getLabels().get("polaris-task");

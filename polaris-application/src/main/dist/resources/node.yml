@@ -8,6 +8,7 @@ minPort: 20000
 maxPort: 65535
 singleUserUsername: polaris
 singleUserPassword: polaris
+killOrphans: true
 client:
   refreshInterval: 10 seconds
 consul:
