@@ -33,9 +33,10 @@ public class RandomEnvString extends RandomEnv {
     @Contract(pure = true)
     public RandomEnvString(
             @JsonProperty("type") final String type,
+            @JsonProperty("display") final String display,
             @JsonProperty("alphabet") final String alphabet,
             @JsonProperty("length") final Integer length) {
-        super(type);
+        super(type, display);
         this.alphabet = alphabet;
         this.length = length;
     }
