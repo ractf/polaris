@@ -55,7 +55,7 @@ public interface Runner<T extends Pod> {
      *
      * @param pod      the pod
      */
-    void updatePod(final T pod);
+    void updatePod(final Task task, final T pod);
 
     /**
      * Restart a specific {@link Instance} of a {@link Pod}

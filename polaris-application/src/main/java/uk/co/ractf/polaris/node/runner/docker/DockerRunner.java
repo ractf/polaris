@@ -155,7 +155,7 @@ public class DockerRunner implements Runner<Container> {
     }
 
     @Override
-    public void updatePod(final Container pod) {
+    public void updatePod(final Task task, final Container pod) {
         final var credentials = state.getCredential(pod.getRepoCredentials());
         final var authConfig = authConfigFactory.createAuthConfig(credentials);
 
@@ -164,12 +164,16 @@ public class DockerRunner implements Runner<Container> {
         //TODO: surely there's a better way to do this
         try {
             log.info("Trying to pull image {}", pod.getImage());
+            for (final var container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
+                dockerClient.stopContainerCmd(container.getId()).withTimeout(pod.getTerminationTimeout()).exec();
+            }
             dockerClient.pullImageCmd(pod.getImage()).withTag(pod.getTag()).withAuthConfig(authConfig).exec(new PullImageResultCallback() {
                 @Override
                 public void onNext(final PullResponseItem item) {
                     if (item.getStatus() != null && item.getStatus().contains("Downloaded newer image")) {
                         for (final var container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
-                            dockerClient.restartContainerCmd(container.getId()).withtTimeout(pod.getTerminationTimeout()).exec();
+                            createPod(task, pod, state.getInstance(container.getLabels().get("polaris-instance")));
+                            startPod(task, pod, state.getInstance(container.getLabels().get("polaris-instance")));
                         }
                         Namespace namespace = null;
                         if (pod.getRepoCredentials() != null) {
