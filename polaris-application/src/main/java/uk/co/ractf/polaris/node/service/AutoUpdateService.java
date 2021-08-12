@@ -28,7 +28,7 @@ public class AutoUpdateService extends AbstractScheduledService {
             for (final var pod : task.getPods()) {
                 for (final Runner runner : runners) {
                     if (runner.getType() == pod.getClass()) {
-                        runner.updatePod(pod);
+                        runner.updatePod(task, pod);
                     }
                 }
             }

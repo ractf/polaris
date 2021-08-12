@@ -1,6 +1,6 @@
 threadpoolSize: 5
 taskThreadpoolSize: 5
-reconciliationTickFrequency: 200
+reconciliationTickFrequency: 2000
 hostInfoSyncFrequency: 200
 schedulingAlgorithm: roundRobin
 threadpoolTimeoutSeconds: 30
