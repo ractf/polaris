@@ -111,9 +111,6 @@ public class AndromedaEmulationResource extends SecureResource {
 
     private List<String> getExtra(final Instance instance) {
         final var extra = new ArrayList<String>();
-        if (instance.getRandomEnv().isEmpty()) {
-            return extra;
-        }
 
         for (final var pod : clusterState.getTask(instance.getTaskId()).getPods()) {
             if (pod instanceof Container) {
@@ -125,6 +122,7 @@ public class AndromedaEmulationResource extends SecureResource {
                 }
             }
         }
+
         if (instance.getPortBindings().size() > 1) {
             for (var i = 1; i < instance.getPortBindings().size(); i++) {
                 extra.add("This challenge also has something on port " + instance.getPortBindings().get(i).getPort());
