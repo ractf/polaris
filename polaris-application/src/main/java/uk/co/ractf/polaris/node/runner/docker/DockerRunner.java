@@ -167,11 +167,10 @@ public class DockerRunner implements Runner<Container> {
             dockerClient.pullImageCmd(pod.getImage()).withTag(pod.getTag()).withAuthConfig(authConfig).exec(new PullImageResultCallback() {
                 @Override
                 public void onNext(final PullResponseItem item) {
+                    System.out.println(item.toString());
                     if (item.getStatus() != null && item.getStatus().contains("Downloaded newer image")) {
                         for (final var container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
                             dockerClient.stopContainerCmd(container.getId()).withTimeout(pod.getTerminationTimeout()).exec();
-                        }
-                        for (final var container : dockerClient.listContainersCmd().withLabelFilter(filter).exec()) {
                             createPod(task, pod, state.getInstance(container.getLabels().get("polaris-instance")));
                             startPod(task, pod, state.getInstance(container.getLabels().get("polaris-instance")));
                         }

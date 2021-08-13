@@ -12,7 +12,7 @@ killOrphans: true
 client:
   refreshInterval: 10 seconds
 consul:
-  endpoint: ${CONSUL-URL:-consul:8500}
+  endpoint: ${CONSUL-URL:-127.0.0.1:8500}
   serviceId: polaris-node
   retryInterval: 5 seconds
 server:
