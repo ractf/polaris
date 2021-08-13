@@ -61,11 +61,13 @@ public class PortAllocator {
                 }
             }
 
+            lastTcpPort++;
+            lastUdpPort++;
             if (portAllocations.getTcp().contains(lastTcpPort)) {
-                lastTcpPort++;
+                lastTcpPort = generatePort(min, max, portAllocations.getTcp());
             }
             if (portAllocations.getUdp().contains(lastUdpPort)) {
-                lastUdpPort++;
+                lastUdpPort = portAllocations.getUdp().contains(lastTcpPort) ? generatePort(min, max, portAllocations.getUdp()) : lastTcpPort;
             }
         }
         return portBindings;
