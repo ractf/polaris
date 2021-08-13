@@ -199,7 +199,9 @@ public class AndromedaEmulationResource extends SecureResource {
 
         final var currentSingleUserInstance = singleUserInstances.get(request.getUser());
         singleUserInstances.remove(request.getUser());
-        clusterState.deleteInstance(currentSingleUserInstance);
+        if (currentSingleUserInstance != null) {
+            clusterState.deleteInstance(currentSingleUserInstance);
+        }
         final var challenge = (Challenge) task;
         final Instance instance;
         if (challenge.getAllocation().isSingleUser()) {
