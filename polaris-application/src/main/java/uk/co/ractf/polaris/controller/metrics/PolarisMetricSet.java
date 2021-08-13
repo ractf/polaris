@@ -1,9 +1,6 @@
 package uk.co.ractf.polaris.controller.metrics;
 
-import com.codahale.metrics.Meter;
-import com.codahale.metrics.Metric;
-import com.codahale.metrics.MetricSet;
-import com.codahale.metrics.Timer;
+import com.codahale.metrics.*;
 import com.google.inject.Inject;
 import uk.co.ractf.polaris.state.ClusterState;
 
@@ -25,6 +22,7 @@ public class PolarisMetricSet implements MetricSet {
         metrics.put("tasks.count", new TasksGauge(clusterState));
         metrics.put("hosts.count", new HostsGauge(clusterState));
         metrics.put("instances.count", new InstancesGauge(clusterState));
+        metrics.put("instances.total", new Counter());
         metrics.put("pods.count", new PodsGauge(clusterState));
 
         metrics.put("resources.memory.allocated", new MemoryAllocatedGauge(clusterState));
