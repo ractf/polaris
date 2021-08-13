@@ -118,7 +118,9 @@ public class ConsulState implements ClusterState {
         if (containerCounter == null) {
             containerCounter = metricRegistry.counter("polaris.instances.total");
         }
-        containerCounter.inc();
+        if (containerCounter != null) {
+            containerCounter.inc();
+        }
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.instance(instance.getId()))
