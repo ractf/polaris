@@ -24,19 +24,26 @@ public class AutoUpdateService extends AbstractScheduledService {
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected void runOneIteration() throws Exception {
-        for (final var task : clusterState.getTasks().values()) {
-            for (final var pod : task.getPods()) {
-                for (final Runner runner : runners) {
-                    if (runner.getType() == pod.getClass()) {
-                        runner.updatePod(task, pod);
+        try {
+            System.out.println("AutoUpdateService.runOneIteration");
+            for (final var task : clusterState.getTasks().values()) {
+                System.out.println(task.getId());
+                for (final var pod : task.getPods()) {
+                    System.out.println(pod.getId());
+                    for (final Runner runner : runners) {
+                        if (runner.getType() == pod.getClass()) {
+                            runner.updatePod(task, pod);
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     protected Scheduler scheduler() {
-        return Scheduler.newFixedRateSchedule(2, 2, TimeUnit.MINUTES);
+        return Scheduler.newFixedRateSchedule(20, 20, TimeUnit.SECONDS);
     }
 }
