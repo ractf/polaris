@@ -1,8 +1,5 @@
 package uk.co.ractf.polaris.node.runner.docker;
 
-import com.codahale.metrics.Counter;
-import com.codahale.metrics.MetricFilter;
-import com.codahale.metrics.MetricRegistry;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.model.*;
@@ -39,8 +36,6 @@ public class DockerRunner implements Runner<Container> {
     private final ClusterState state;
     private final AuthConfigFactory authConfigFactory;
     private final NotificationFacade notifications;
-    private final MetricRegistry metricRegistry;
-    private Counter containerCounter;
 
     private final Set<String> images = new ConcurrentSkipListSet<>();
     private final Set<String> downloadingImages = new ConcurrentSkipListSet<>();
@@ -51,14 +46,12 @@ public class DockerRunner implements Runner<Container> {
 
     @Inject
     public DockerRunner(final DockerClient dockerClient, final Node node, final ClusterState state,
-                        final AuthConfigFactory authConfigFactory, final NotificationFacade notifications,
-                        final MetricRegistry metricRegistry) {
+                        final AuthConfigFactory authConfigFactory, final NotificationFacade notifications) {
         this.dockerClient = dockerClient;
         this.node = node;
         this.state = state;
         this.authConfigFactory = authConfigFactory;
         this.notifications = notifications;
-        this.metricRegistry = metricRegistry;
     }
 
     private Capability[] createCapabilityArray(final List<String> capabilities) {
@@ -119,10 +112,6 @@ public class DockerRunner implements Runner<Container> {
             return;
         }
         try {
-            if (containerCounter == null) {
-                containerCounter = metricRegistry.getCounters(MetricFilter.startsWith("polaris")).get("polaris.instances.total");
-            }
-            containerCounter.inc();
             log.info("starting {}", instance.getId());
             startingContainers.add(container.getId() + instance.getId());
 

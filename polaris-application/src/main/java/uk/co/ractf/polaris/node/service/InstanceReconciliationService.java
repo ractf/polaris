@@ -85,19 +85,19 @@ public class InstanceReconciliationService extends AbstractScheduledService {
                 for (final var pod : task.getPods()) {
                     if (!getRunner(pod).canStartPod(pod)) {
                         log.info("Pulling image for {}/{}...", task.getId(), pod.getId());
-                        getRunner(pod).preparePod(task, pod);
+                        //getRunner(pod).preparePod(task, pod);
                     }
                 }
                 for (final var pod : task.getPods()) {
                     log.info("Creating pod {} from task {} and instance {}...", pod.getId(), task.getId(), instance.getId());
-                    getRunner(pod).createPod(task, pod, instance);
+                    //getRunner(pod).createPod(task, pod, instance);
                 }
                 recentlyStartedInstances.put(instance.getId(), "");
                 if (task.getPods().size() > 1) {
                     /* TODO: This is assuming theres only one runner, thats a safe assumption now, the code shouldn't
                     *  be written assuming it is. */
                     log.info("Networking pods from task {} and instance {}...", task.getId(), instance.getId());
-                    getRunner(task.getPods().get(0)).createNetwork(task.getPods(), task, instance);
+                    //getRunner(task.getPods().get(0)).createNetwork(task.getPods(), task, instance);
                 }
                 for (final var pod : task.getPods()) {
                     CompletableFuture.runAsync(() -> {
