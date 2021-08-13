@@ -1,5 +1,7 @@
 package uk.co.ractf.polaris.state;
 
+import com.codahale.metrics.Counter;
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -35,10 +37,13 @@ public class ConsulState implements ClusterState {
 
     private final Consul consul;
     private final String sessionId;
+    private final MetricRegistry metricRegistry;
+    private Counter containerCounter;
 
     @Inject
-    public ConsulState(final Consul consul) {
+    public ConsulState(final Consul consul, final MetricRegistry metricRegistry) {
         this.consul = consul;
+        this.metricRegistry = metricRegistry;
         //TODO: this is probably terrible for debugging
         final Session session = ImmutableSession.builder().name(UUID.randomUUID().toString()).build();
         this.sessionId = consul.sessionClient().createSession(session).getId();
@@ -110,6 +115,10 @@ public class ConsulState implements ClusterState {
 
     @Override
     public void setInstance(final Instance instance) {
+        if (containerCounter == null) {
+            containerCounter = metricRegistry.counter("polaris.instances.total");
+        }
+        containerCounter.inc();
         consul.keyValueClient().performTransaction(
                 Operation.builder(Verb.SET)
                         .key(ConsulPath.instance(instance.getId()))
