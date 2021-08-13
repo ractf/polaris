@@ -125,6 +125,11 @@ public class AndromedaEmulationResource extends SecureResource {
                 }
             }
         }
+        if (instance.getPortBindings().size() > 1) {
+            for (var i = 1; i < instance.getPortBindings().size(); i++) {
+                extra.add("This challenge also has something on port " + instance.getPortBindings().get(i).getPort());
+            }
+        }
 
         return extra;
     }
