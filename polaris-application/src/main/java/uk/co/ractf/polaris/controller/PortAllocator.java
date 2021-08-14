@@ -38,6 +38,7 @@ public class PortAllocator {
         var lastUdpPort = portAllocations.getUdp().contains(lastTcpPort) ? generatePort(min, max, portAllocations.getUdp()) : lastTcpPort;
 
         for (final var portMapping : portMappings) {
+            System.out.println(portMapping);
             switch (portMapping.getProtocol()) {
                 case "tcp": {
                     portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", lastTcpPort + "/tcp"),
@@ -53,9 +54,11 @@ public class PortAllocator {
                     while (portAllocations.getTcp().contains(lastUdpPort)) {
                         lastUdpPort = generatePort(min, max, portAllocations.getUdp());
                     }
-                    portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", lastUdpPort + "/udp"),
+                    portBindings.put(new PortMapping(portMapping.getPort(), "tcp", portMapping.isAdvertise()),
+                            new PortBinding(new Ports.Binding("0.0.0.0", lastUdpPort + "/udp"),
                             new ExposedPort(portMapping.getPort(), InternetProtocol.UDP)));
-                    portBindings.put(portMapping, new PortBinding(new Ports.Binding("0.0.0.0", lastUdpPort + "/tcp"),
+                    portBindings.put(new PortMapping(portMapping.getPort(), "udp", portMapping.isAdvertise()),
+                            new PortBinding(new Ports.Binding("0.0.0.0", lastUdpPort + "/tcp"),
                             new ExposedPort(portMapping.getPort(), InternetProtocol.TCP)));
                     break;
                 }
