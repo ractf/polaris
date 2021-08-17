@@ -19,7 +19,7 @@ allprojects {
 
 subprojects {
     ext {
-        dropwizardVersion = '2.0.21'
+        dropwizardVersion = '2.0.24'
     }
 
     test.useTestNG()

@@ -36,21 +36,21 @@ dependencies {
     implementation "com.smoketurner.dropwizard:consul-core:2.0.12-1"
     implementation "com.smoketurner.dropwizard:consul-ribbon:2.0.12-1"
     implementation "org.dhatim:dropwizard-prometheus:3.1.4"
-    implementation "io.swagger.core.v3:swagger-core:2.1.7"
-    implementation "io.swagger.core.v3:swagger-jaxrs2:2.1.7"
-    implementation "io.swagger.core.v3:swagger-integration:2.1.7"
-    implementation "com.github.docker-java:docker-java-core:3.2.7"
-    implementation "com.github.docker-java:docker-java-transport-httpclient5:3.2.7"
-    implementation "org.jetbrains:annotations:20.1.0"
-    implementation "ru.vyarus:dropwizard-guicey:5.2.0"
-    implementation "com.palominolabs.metrics:metrics-guice:4.0.0"
-    implementation "io.dropwizard.metrics:metrics-core:4.1.2"
-    implementation "io.dropwizard.metrics:metrics-annotation:4.1.2"
-    implementation "com.amazonaws:aws-java-sdk-ecr:1.11.375"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+    implementation 'io.swagger.core.v3:swagger-core:2.1.10'
+    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.1.10'
+    implementation 'io.swagger.core.v3:swagger-integration:2.1.10'
+    implementation 'com.github.docker-java:docker-java-core:3.2.11'
+    implementation 'com.github.docker-java:docker-java-transport-httpclient5:3.2.11'
+    implementation 'org.jetbrains:annotations:21.0.1'
+    implementation 'ru.vyarus:dropwizard-guicey:5.3.0'
+    implementation 'com.palominolabs.metrics:metrics-guice:5.0.1'
+    implementation 'io.dropwizard.metrics:metrics-core:4.2.3'
+    implementation 'io.dropwizard.metrics:metrics-annotation:4.2.3'
+    implementation 'com.amazonaws:aws-java-sdk-ecr:1.12.45'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     testImplementation "io.dropwizard:dropwizard-testing:$dropwizardVersion"
-    testImplementation "org.assertj:assertj-core:3.11.1"
-    testImplementation "org.mockito:mockito-core:3.+"
+    testImplementation 'org.assertj:assertj-core:3.20.2'
+    testImplementation 'org.mockito:mockito-core:3.11.2'
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 
