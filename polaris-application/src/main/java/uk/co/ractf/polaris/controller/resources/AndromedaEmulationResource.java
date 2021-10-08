@@ -99,7 +99,7 @@ public class AndromedaEmulationResource extends SecureResource {
         final var pod = new Container("container", name, challenge.getImage(), "",
                 credentials.getId(), new ArrayList<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(), new HashMap<>(),
                 new HashMap<>(), resourceQuota, "always", new ArrayList<>(), new ArrayList<>(),
-                new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>(), true);
+                new ArrayList<>(), 5, Collections.singletonList(portMapping), new HashMap<>(), true, Collections.emptyList());
 
         final var polarisChallenge = new Challenge(new NamespacedId(namespace, name), 0,
                 Collections.singletonList(pod), new StaticReplication("static", challenge.getReplicas()),
