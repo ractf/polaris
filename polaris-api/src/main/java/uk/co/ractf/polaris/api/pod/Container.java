@@ -114,6 +114,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
     private final List<PortMapping> ports;
     private final Map<String, String> metadata;
     private final boolean autoUpdate;
+    private final List<String> securityOptions;
 
     private final Map<String, String> generatedRandomEnv = new HashMap<>();
 
@@ -139,6 +140,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
      * @param portMappings       ports to expose
      * @param metadata           other metadata
      * @param autoUpdate         if the container should be automatically updated
+     * @param securityOptions
      */
     public Container(
             @JsonProperty("type") final String type,
@@ -160,7 +162,8 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
             @JsonProperty("terminationTimeout") final Integer terminationTimeout,
             @JsonProperty("ports") final List<PortMapping> portMappings,
             @JsonProperty("metadata") final Map<String, String> metadata,
-            @JsonProperty("autoUpdate") final boolean autoUpdate) {
+            @JsonProperty("autoUpdate") final boolean autoUpdate,
+            @JsonProperty("securityOptions") final List<String> securityOptions) {
         super(type, id);
         this.image = image;
         this.repo = repo;
@@ -180,6 +183,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
         this.ports = portMappings;
         this.metadata = metadata;
         this.autoUpdate = autoUpdate;
+        this.securityOptions = securityOptions;
     }
 
     public String getImage() {
@@ -247,6 +251,10 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
 
     public Map<String, String> getMetadata() {
         return metadata;
+    }
+
+    public List<String> getSecurityOptions() {
+        return securityOptions;
     }
 
     @Override
