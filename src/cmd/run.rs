@@ -72,14 +72,6 @@ impl Command for Run {
 
         info!("Starting Polaris.");
 
-        let provider = AWSCredentialProvider::new(String::from("AKIAZFVPOYEPLRI5FFEY"), String::from("Z70RYQ0Iz/OcNszneBkrbZyLWxC0ge2B4O0/VEGe"), String::from("eu-west-2"));
-        let provider = CachingDockerCredentialProvider::new(Box::new(provider));
-        let x = provider.provide().await?;
-        let x = provider.provide().await?;
-        let x = provider.provide().await?;
-        let x = provider.provide().await?;
-        println!("{:?}", x);
-
         start_api(&config, &pool).await?;
 
         Ok(())
