@@ -1,0 +1,585 @@
+{
+  "db": "PostgreSQL",
+  "04be7fd79712b4e605668c7c42f6ac70547f82fa7f34df173f6ac894e1db41cd": {
+    "query": "SELECT id FROM token_events WHERE token_id=$1 AND event_id=$2",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4",
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "09ada42e55a4ae5556072b6e7c43cb5d1d27bb2867dc53a5e2c7e7692b42b29f": {
+    "query": "\n                UPDATE event SET name = $1, start_time = $2, end_time = $3, max_cpu = $4, max_ram = $5, api_url = $6, api_token = $7 WHERE id = $8\n            ",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Timestamptz",
+          "Timestamptz",
+          "Int8",
+          "Int8",
+          "Varchar",
+          "Varchar",
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "2a8bf6353955d624bd6baac24350ca223b1cf33c157f48ff95f33743303c3f23": {
+    "query": "SELECT id, name, start_time, end_time, max_cpu, max_ram, api_url, api_token FROM event WHERE id=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "start_time",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "end_time",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 4,
+          "name": "max_cpu",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 5,
+          "name": "max_ram",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 6,
+          "name": "api_url",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "api_token",
+          "type_info": "Varchar"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "2ee9a9bd33455ae0bf9380fbff46a399a85106c645982552c8623baae9c77f24": {
+    "query": "SELECT event_id FROM token_events WHERE token_id=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "event_id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "305196efecbbfc99318722499896af6d267bf88ebe095d5b68306f1438018165": {
+    "query": "\n                UPDATE token SET name = $1, token = $2, permissions = $3, issued = $4, expiry = $5 WHERE id = $6\n            ",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Varchar",
+          "TextArray",
+          "Timestamptz",
+          "Timestamptz",
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "30b6e55915b2599e2f226de0146b5c54f5f32a40573fdba51e1acd021b73841b": {
+    "query": "DELETE FROM token WHERE id=$1",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "411e69f19f9c9ded2410c84a77317dccee3b0c44db2bece8a8c7bec043ad4625": {
+    "query": "SELECT id FROM event WHERE name=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "496ef212683822d2e71b17c99d2f1ad3e3449a0b383f62937bb50f0e05ecf50d": {
+    "query": "INSERT INTO token_events (token_id, event_id) VALUES ($1, $2)",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Int4",
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "4e9bbd8596bbd1d44f56472cb18f7fcd84c80e099358f988e6050665bf66b482": {
+    "query": "SELECT id, name, token, permissions, issued, expiry FROM token",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "token",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "permissions",
+          "type_info": "TextArray"
+        },
+        {
+          "ordinal": 4,
+          "name": "issued",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "expiry",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ]
+    }
+  },
+  "76787893e981298834a23692eb1748104d3283d0ebb730491763f3e39ee9075c": {
+    "query": "\n                INSERT INTO token ( name, token, permissions, issued, expiry )\n                VALUES ($1, $2, $3, $4, $5)\n                RETURNING id\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Varchar",
+          "TextArray",
+          "Timestamptz",
+          "Timestamptz"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "76bff2621740ff0cacdd2c69db945e66d181c4888a40de64c98261fb96798201": {
+    "query": "SELECT id, name, token, permissions, issued, expiry FROM token WHERE token=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "token",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "permissions",
+          "type_info": "TextArray"
+        },
+        {
+          "ordinal": 4,
+          "name": "issued",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "expiry",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ]
+    }
+  },
+  "7f4dbb6316f358d25dbe475f918e5c80038ed5745df88c483c3df7be3c1c370e": {
+    "query": "DELETE FROM event WHERE id=$1",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "835bb2c42a2ddb6eb1a1d7024afd7d51a670a78ed92f3784c0b7df65f1ee63c5": {
+    "query": "SELECT id, name, start_time, end_time, max_cpu, max_ram, api_url, api_token FROM event",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "start_time",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "end_time",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 4,
+          "name": "max_cpu",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 5,
+          "name": "max_ram",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 6,
+          "name": "api_url",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "api_token",
+          "type_info": "Varchar"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "8ba62e1d344993b776e8b6b489c5699ab4c060979f0efa3832ac33562515e0a8": {
+    "query": "SELECT id FROM token WHERE id=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "9e57f5df7d648d7f927c5a8f8444d75879185286911e772a02551768909adc98": {
+    "query": "SELECT id FROM registry_tokens WHERE id=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "a2f9086e78dc995870142fb28891760ceab7e17206741fbb327a6b32626176e7": {
+    "query": "SELECT id FROM event WHERE id=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "c4b3ce1e9dc57e978a8f50b15a2f569683d64d51e42914e661908b02e925b101": {
+    "query": "\n                UPDATE registry_tokens SET name = $1, data = $2 WHERE id = $3\n            ",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Jsonb",
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "d216720199610219c069ee45639f0fe3a3019ebf44cb8c0daaf85d724625bb50": {
+    "query": "SELECT id FROM token WHERE name=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "d7366cd9c0f9e71d3b85963efa0b8f0e0256b71c425e94e9bd2e34ffbbcc845f": {
+    "query": "\n                INSERT INTO registry_tokens (name, data)\n                VALUES ($1, $2)\n                RETURNING id\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Jsonb"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "e1b4bce80b594ce3bee4f2febb2d625e1f70590a97a8450e052c6b39b3cad903": {
+    "query": "\n                INSERT INTO event ( name, start_time, end_time, max_cpu, max_ram, api_url, api_token )\n                VALUES ($1, $2, $3, $4, $5, $6, $7)\n                RETURNING id\n            ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Varchar",
+          "Timestamptz",
+          "Timestamptz",
+          "Int8",
+          "Int8",
+          "Varchar",
+          "Varchar"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "e32891bbc15c54664a277f646404450a870abd28069ef9c71cf4a9a2806db894": {
+    "query": "SELECT id, name, token, permissions, issued, expiry FROM token WHERE id=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "token",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "permissions",
+          "type_info": "TextArray"
+        },
+        {
+          "ordinal": 4,
+          "name": "issued",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "expiry",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ]
+    }
+  },
+  "ef0a021570af7e9696db1f8d15db8771d8fea1d10635efb6fb05f05c6e35cfa5": {
+    "query": "DELETE FROM token_events WHERE token_id=$1 AND event_id=$2",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Int4",
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  }
+}
