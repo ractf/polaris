@@ -151,6 +151,36 @@
       "nullable": []
     }
   },
+  "3a81d0b35de54a869c2567fb221d8d2e2f3bb9ae26923e9abfbf202d7959aa33": {
+    "query": "SELECT id, name, data FROM registry_tokens",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "data",
+          "type_info": "Jsonb"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false,
+        false
+      ]
+    }
+  },
   "411e69f19f9c9ded2410c84a77317dccee3b0c44db2bece8a8c7bec043ad4625": {
     "query": "SELECT id FROM event WHERE name=$1",
     "describe": {
@@ -169,6 +199,18 @@
       "nullable": [
         false
       ]
+    }
+  },
+  "4768f673ad67a3cdff346d32436b6b923e1673b6807a1fc0368c6628df7190f2": {
+    "query": "DELETE FROM registry_tokens WHERE id=$1",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": []
     }
   },
   "496ef212683822d2e71b17c99d2f1ad3e3449a0b383f62937bb50f0e05ecf50d": {
@@ -378,6 +420,26 @@
       ]
     }
   },
+  "866fbcfd215caa2c2dcc78941fae948ae601b34ef255044815e7e5bea871ea43": {
+    "query": "SELECT id FROM registry_tokens WHERE name=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
   "8ba62e1d344993b776e8b6b489c5699ab4c060979f0efa3832ac33562515e0a8": {
     "query": "SELECT id FROM token WHERE id=$1",
     "describe": {
@@ -489,6 +551,38 @@
         ]
       },
       "nullable": [
+        false
+      ]
+    }
+  },
+  "db8456982167f3511aedbfb624b6e62075d4026128e10d0550adf8616268f17a": {
+    "query": "SELECT id, name, data FROM registry_tokens WHERE id=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "data",
+          "type_info": "Jsonb"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
         false
       ]
     }
