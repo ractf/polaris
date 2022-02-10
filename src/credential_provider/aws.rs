@@ -4,8 +4,8 @@ use aws_sdk_ecr::Client;
 use aws_smithy_types_convert::date_time::DateTimeExt;
 use aws_types::config::Config;
 use aws_types::credentials::SharedCredentialsProvider;
-use aws_types::Credentials;
 use aws_types::region::Region;
+use aws_types::Credentials;
 use chrono::{DateTime, Utc};
 use itertools::Itertools;
 use thiserror::Error;
@@ -48,7 +48,9 @@ impl CacheableDockerCredentialProvider for AWSCredentialProvider {
             let x = vec[0]
                 .authorization_token
                 .as_ref()
-                .ok_or_else::<anyhow::Error, _>(|| AWSError::AuthorizationTokenNotProvided.into())?;
+                .ok_or_else::<anyhow::Error, _>(|| {
+                    AWSError::AuthorizationTokenNotProvided.into()
+                })?;
             let decoded = base64::decode(x)?;
             let decoded = String::from_utf8(decoded)?;
             let split = decoded.split(':');

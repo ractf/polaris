@@ -50,15 +50,20 @@ impl RegistryToken {
                 self.name,
                 json as _,
             )
-                .fetch_one(pool)
-                .await?;
+            .fetch_one(pool)
+            .await?;
             self.id = Some(insert.id);
         } else {
-            sqlx::query!(r#"
+            sqlx::query!(
+                r#"
                 UPDATE registry_tokens SET name = $1, data = $2 WHERE id = $3
             "#,
-                self.name, json as _, self.id
-            ).execute(pool).await?;
+                self.name,
+                json as _,
+                self.id
+            )
+            .execute(pool)
+            .await?;
         }
         Ok(())
     }

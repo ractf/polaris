@@ -1,6 +1,9 @@
 use crate::api::start_api;
 use crate::cmd::Command;
 use crate::config::Config;
+use crate::credential_provider::aws::AWSCredentialProvider;
+use crate::credential_provider::cache::CachingDockerCredentialProvider;
+use crate::credential_provider::{CacheableDockerCredentialProvider, DockerCredentialProvider};
 use anyhow::{bail, Result};
 use sqlx::postgres::PgPoolOptions;
 use std::io;
@@ -15,9 +18,6 @@ use tracing_appender::rolling::{RollingFileAppender, Rotation};
 use tracing_subscriber::fmt::format::FmtSpan;
 use tracing_subscriber::fmt::writer::MakeWriterExt;
 use tracing_subscriber::{fmt, layer::SubscriberExt};
-use crate::credential_provider::aws::AWSCredentialProvider;
-use crate::credential_provider::cache::CachingDockerCredentialProvider;
-use crate::credential_provider::{CacheableDockerCredentialProvider, DockerCredentialProvider};
 
 /// Arguments for running polaris
 #[derive(Debug, StructOpt)]

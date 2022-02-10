@@ -1,9 +1,9 @@
-use std::collections::HashMap;
-use anyhow::Result;
-use bollard::Docker;
 use crate::credential_provider::DockerCredentialProvider;
 use crate::data::pod::OCIContainer;
 use crate::executor::Executor;
+use anyhow::Result;
+use bollard::Docker;
+use std::collections::HashMap;
 
 pub struct DockerExecutor {
     docker: Docker,
@@ -15,15 +15,13 @@ impl DockerExecutor {
         let docker = Docker::connect_with_local_defaults()?;
         Ok(DockerExecutor {
             docker,
-            credential_providers: Default::default()
+            credential_providers: Default::default(),
         })
     }
 }
 
 impl DockerExecutor {
-    async fn pull_image(&self, image: String) {
-
-    }
+    async fn pull_image(&self, image: String) {}
 }
 
 #[async_trait::async_trait]

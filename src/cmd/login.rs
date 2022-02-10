@@ -36,9 +36,7 @@ impl Command for Login {
             profile.token = token;
         }
 
-        profiles
-            .profiles
-            .insert(self.profile.clone(), profile);
+        profiles.profiles.insert(self.profile.clone(), profile);
 
         if profiles.default.is_none() || self.default {
             profiles.default = Some(self.profile.clone());
