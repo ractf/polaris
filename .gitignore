@@ -1,1 +1,4 @@
 /target
+rpmbuild
+SOURCES
+*.rpm

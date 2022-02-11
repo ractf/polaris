@@ -1,0 +1,14 @@
+[Unit]
+Description=The RACTF challenge scheduler
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/polaris run
+Type=simple
+Restart=on-failure
+RestartSec=10
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target

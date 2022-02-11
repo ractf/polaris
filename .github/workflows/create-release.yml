@@ -1,0 +1,151 @@
+name: Create Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:35
+    steps:
+      - name: Install Git
+        run: dnf install git -y
+
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+        with:
+          ref: 'main'
+          fetch-depth: '0'
+
+      - name: Get short commit hash
+        id: hash
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: Get the semver
+        id: semver
+        run: echo -n "::set-output name=semver::" && grep "version = " Cargo.toml | cut -d '"' -f 2
+
+      - name: Check if semver changed
+        id: semver_change
+        run: git --no-pager log -G "version =" --pretty=format:"%h" ./Cargo.toml | grep `git rev-parse --short HEAD` &>/dev/null && echo "::set-output name=changed::true" ||  echo "::set-output name=changed::false"
+
+      - name: Log if semver changed
+        id: semver_change_test
+        run: git --no-pager log -G "version =" --pretty=format:"%h" ./Cargo.toml | grep `git rev-parse --short HEAD` &>/dev/null && echo "changed" ||  echo "not changed"
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-stable-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-stable-cargo-registry-
+
+      - name: Cache Cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-stable-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-stable-cargo-index-
+
+      - name: Cache Cargo build
+        uses: actions/cache@v1
+        with:
+          path: target/debug
+          key: ${{ runner.os }}-stable-debug-target-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-stable-debug-target-
+      
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        if: steps.semver_change.outputs.changed == 'true'
+        with:
+          toolchain: stable
+
+      - name: Setup RPM tools
+        if: steps.semver_change.outputs.changed == 'true'
+        run: "dnf install rpmdevtools gcc copr-cli -y && echo '%_topdir %(echo $PWD)/rpmbuild' > $HOME/.rpmmacros && rpmdev-setuptree"
+        working-directory: build
+
+      - name: Update the Semver in the RPM Spec
+        if: steps.semver_change.outputs.changed == 'true'
+        run: 'sed -i -e "s/Version:.*/Version:        $VERSION/g" build/SPECS/polaris.spec'
+        env:
+          VERSION: ${{ steps.semver.outputs.semver }}
+
+      - name: Build Polaris
+        uses: actions-rs/cargo@v1
+        if: steps.semver_change.outputs.changed == 'true'
+        with:
+          command: build
+          args: --release --all-features
+
+      - name: Compile RPM
+        if: steps.semver_change.outputs.changed == 'true'
+        run: ./build.sh
+        working-directory: build
+        env:
+          VERSION: ${{ steps.semver.outputs.semver }}
+
+      - name: Create Sentry release
+        if: steps.semver_change.outputs.changed == 'true'
+        uses: getsentry/action-release@v1
+        with:
+          version: ${{ steps.semver.outputs.semver }}
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+
+      - name: Create Release
+        if: steps.semver_change.outputs.changed == 'true'
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.semver.outputs.semver }}
+          release_name: Release ${{ steps.semver.outputs.semver }}
+          body: ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset - Binary
+        if: steps.semver_change.outputs.changed == 'true'
+        id: upload-release-asset-binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./target/release/polaris
+          asset_name: polaris
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release Asset - RPM
+        if: steps.semver_change.outputs.changed == 'true'
+        id: upload-release-asset-rpm
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/rpmbuild/RPMS/x86_64/polaris-${{ steps.semver.outputs.semver }}-1.x86_64.rpm
+          asset_name: polaris-${{ steps.semver.outputs.semver }}-1.x86_64.rpm
+          asset_content_type: application/octet-stream
+
+      - name: Login to COPR
+        if: steps.semver_change.outputs.changed == 'true'
+        run: 'mkdir ~/.config && printf "[copr-cli]\nlogin = $LOGIN\nusername = $USERNAME\ntoken = $TOKEN\ncopr_url = https://copr.fedorainfracloud.org" > ~/.config/copr'
+        env:
+          LOGIN: ${{ secrets.COPR_LOGIN }}
+          USERNAME: ${{ secrets.COPR_USERNAME }}
+          TOKEN: ${{ secrets.COPR_TOKEN }}
+
+      - name: Upload to COPR
+        if: steps.semver_change.outputs.changed == 'true'
+        run: copr-cli build polaris ./build/rpmbuild/SRPMS/polaris-${{ steps.semver.outputs.semver }}-1.src.rpm
