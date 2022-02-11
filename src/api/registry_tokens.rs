@@ -1,9 +1,8 @@
 use crate::api::error::APIError;
 use crate::api::AppState;
-use crate::data::token::{CreateableToken, Token};
+use crate::data::token::Token;
 use actix_web::web::{Data, Json, Path};
 use actix_web::{delete, get, post, HttpMessage, HttpRequest, HttpResponse};
-use chrono::Utc;
 use tracing::{error, info};
 use crate::data::registry::RegistryToken;
 

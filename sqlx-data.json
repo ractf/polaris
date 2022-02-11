@@ -40,6 +40,19 @@
       "nullable": []
     }
   },
+  "234cb70a590b28598ef0ee416c7122d7954bbbd83ef5a76427f57a5d6b1d2e24": {
+    "query": "DELETE FROM allowed_registry_tokens WHERE event_id=$1 AND registry_token_id=$2",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Int4",
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "2a8bf6353955d624bd6baac24350ca223b1cf33c157f48ff95f33743303c3f23": {
     "query": "SELECT id, name, start_time, end_time, max_cpu, max_ram, api_url, api_token FROM event WHERE id=$1",
     "describe": {
@@ -151,6 +164,19 @@
       "nullable": []
     }
   },
+  "33ff9382d1e4a79ab0127689905e413f958b9d1edeab3ae693a883b872a579bc": {
+    "query": "INSERT INTO allowed_registry_tokens (registry_token_id, event_id) VALUES ($1, $2)",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Int4",
+          "Int4"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "3a81d0b35de54a869c2567fb221d8d2e2f3bb9ae26923e9abfbf202d7959aa33": {
     "query": "SELECT id, name, data FROM registry_tokens",
     "describe": {
@@ -177,6 +203,27 @@
       "nullable": [
         false,
         false,
+        false
+      ]
+    }
+  },
+  "3d702ea38fe0b8b5892053c5517828242db4dcee82b2d680641e494a05dbfed3": {
+    "query": "SELECT id FROM allowed_registry_tokens WHERE registry_token_id=$1 AND event_id=$2",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4",
+          "Int4"
+        ]
+      },
+      "nullable": [
         false
       ]
     }
@@ -300,6 +347,56 @@
   },
   "76bff2621740ff0cacdd2c69db945e66d181c4888a40de64c98261fb96798201": {
     "query": "SELECT id, name, token, permissions, issued, expiry FROM token WHERE token=$1",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "token",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "permissions",
+          "type_info": "TextArray"
+        },
+        {
+          "ordinal": 4,
+          "name": "issued",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "expiry",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
+      ]
+    }
+  },
+  "7b1a0abf0d38b272a1ffe39d37cfa2a9a7bb144fe337bf5f92d733e63621d211": {
+    "query": "SELECT id, name, token, permissions, issued, expiry FROM token WHERE name=$1",
     "describe": {
       "columns": [
         {

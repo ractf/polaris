@@ -10,7 +10,7 @@ use crate::cmd::login::Login;
 use crate::cmd::run::Run;
 use crate::cmd::token::Token;
 use anyhow::Result;
-use structopt::StructOpt;
+use clap::Parser;
 
 /// Trait implemented by all subcommands of `polaris` to define a common interface
 #[async_trait::async_trait(?Send)]
@@ -23,10 +23,10 @@ pub trait Command {
 #[async_trait::async_trait(?Send)]
 pub trait APICommand {
     /// Run the subcommand
-    async fn run(&self, client: PolarisClient) -> Result<()>;
+    async fn run(&self, client: PolarisClient, json: bool) -> Result<()>;
 }
 
-/// Dispatch a structopt command from an enum variant
+/// Dispatch a clap command from an enum variant
 #[macro_export]
 macro_rules! dispatch {
     ($y:ident, $dst:expr, $($x:ident),*) => {
@@ -36,7 +36,7 @@ macro_rules! dispatch {
     };
 }
 
-/// Dispatch a structopt command from an enum variant, and select a profile from the command line
+/// Dispatch a clap command from an enum variant, and select a profile from the command line
 #[macro_export]
 macro_rules! api_dispatch {
     ($y:ident, $dst:expr, $($x:ident),*) => {
@@ -55,7 +55,7 @@ macro_rules! api_dispatch {
         let default_profile = if let Some(profile) = profiles.profiles.get(&profile) {
             profile.clone()
         } else {
-            if $dst.profile.is_some() {
+            if $dst.profile.is_none() {
                 eprintln!("Invalid default profile. Please run polaris login.");
             } else {
                 eprintln!("Invalid profile specified.");
@@ -64,13 +64,13 @@ macro_rules! api_dispatch {
         };
         let client = crate::client::PolarisClient::new(default_profile).expect("Error creating polaris client.");
         match &$dst.subcommand {
-            $($y::$x(cmd) => cmd.run(client).await?,)*
+            $($y::$x(cmd) => cmd.run(client, $dst.json).await?,)*
         }
     };
 }
 
 /// RACTF Polaris
-#[derive(StructOpt, Debug)]
+#[derive(Parser, Debug)]
 pub enum Polaris {
     /// Run Polaris
     Run(Run),

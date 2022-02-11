@@ -7,16 +7,20 @@ use crate::cmd::token::create::TokenCreate;
 use crate::cmd::token::delete::TokenDelete;
 use crate::cmd::token::view::TokenView;
 use crate::cmd::Command;
-use structopt::StructOpt;
+use clap::{Parser, Subcommand};
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 pub struct Token {
     pub profile: Option<String>,
-    #[structopt(flatten)]
+
+    #[clap(long)]
+    pub json: bool,
+
+    #[clap(subcommand)]
     pub subcommand: TokenSubcommand,
 }
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Subcommand)]
 pub enum TokenSubcommand {
     Create(TokenCreate),
     Delete(TokenDelete),

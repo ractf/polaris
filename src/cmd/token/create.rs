@@ -1,17 +1,17 @@
 use crate::client::PolarisClient;
 use crate::cmd::APICommand;
 use crate::data::token::CreateableToken;
-use structopt::StructOpt;
+use clap::Parser;
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 pub struct TokenCreate {
-    #[structopt(help = "Token Name")]
+    #[clap(help = "Token Name")]
     name: String,
 }
 
 #[async_trait::async_trait(?Send)]
 impl APICommand for TokenCreate {
-    async fn run(&self, client: PolarisClient) -> anyhow::Result<()> {
+    async fn run(&self, client: PolarisClient, json: bool) -> anyhow::Result<()> {
         let token = client
             .create_token(CreateableToken {
                 name: self.name.clone(),
@@ -19,7 +19,11 @@ impl APICommand for TokenCreate {
                 expiry: None,
             })
             .await?;
-        println!("{}", token);
+        if json {
+            println!("{}", serde_json::to_string(&token)?);
+        } else {
+            println!("{}", token);
+        }
         Ok(())
     }
 }

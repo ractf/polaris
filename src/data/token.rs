@@ -7,7 +7,6 @@ use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use std::fmt;
 use std::fmt::Formatter;
-use tracing::trace;
 
 /// A token that can be used to access the Polaris API
 #[derive(Serialize, Deserialize, Debug, Clone)]

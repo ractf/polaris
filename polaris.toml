@@ -1,7 +1,7 @@
 [log]
 level = "TRACE"
 
-[[api.auth.tokens]]
+[api.auth.bootstrap_token]
 name = "bootstrap"
 token = "polaris"
 permissions = ["root"]

@@ -106,9 +106,30 @@ pub async fn delete_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest
     let token_id = id.into_inner();
     let tokens = Token::delete_by_id(&state.pool, token_id).await;
 
-    if let Ok(token) = tokens {
-        HttpResponse::Ok().json(token)
+    if let Ok(_) = tokens {
+        HttpResponse::Ok().finish()
     } else {
         HttpResponse::InternalServerError().json(APIError::resource_not_found(token_id))
+    }
+}
+
+#[delete("/token/name/{name}")]
+pub async fn delete_token_by_name(name: Path<String>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+    let exts = req.extensions();
+    let token = exts.get::<Token>().unwrap();
+    if !token.has_permission("root") {
+        return HttpResponse::Forbidden().json(APIError::missing_permission("root"));
+    }
+
+    let token_name = name.into_inner();
+    if let Ok(mut token) = Token::get_by_name(&state.pool, token_name.clone()).await {
+        let result = token.delete(&state.pool).await;
+        if result.is_ok() {
+            HttpResponse::Ok().finish()
+        } else {
+            HttpResponse::InternalServerError().json(APIError::DatabaseError)
+        }
+    } else {
+        HttpResponse::InternalServerError().json(APIError::resource_name_not_found(token_name))
     }
 }

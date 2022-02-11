@@ -29,7 +29,7 @@ pub async fn bearer_auth_validator(
             }
         }
 
-        for token in &auth.tokens {
+        if let Some(token) = &state.config.api.auth.bootstrap_token {
             if token.token == credentials.token() {
                 req.extensions_mut().insert(token.clone());
                 return Ok(req);

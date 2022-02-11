@@ -4,7 +4,7 @@
 
 use crate::cmd::{Command, Polaris};
 use anyhow::Result;
-use structopt::StructOpt;
+use clap::Parser;
 
 pub mod api;
 pub mod client;
@@ -17,7 +17,7 @@ pub mod notification;
 
 #[actix_web::main]
 async fn main() -> Result<()> {
-    let polaris: Polaris = Polaris::from_args();
+    let polaris: Polaris = Polaris::parse();
     cmd::dispatch!(Polaris, polaris, Run, Login, Token);
     Ok(())
 }

@@ -1,7 +1,7 @@
 use crate::Command;
-use structopt::StructOpt;
+use clap::Parser;
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 pub struct EventCreate {}
 
 #[async_trait::async_trait(?Send)]

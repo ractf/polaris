@@ -3,7 +3,6 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
-use crate::data::token::Token;
 
 /// Information required to generate a set of docker registry credentials
 #[derive(Debug, Serialize, Deserialize)]

@@ -6,20 +6,20 @@ use sqlx::postgres::PgPoolOptions;
 use std::io;
 use std::mem::ManuallyDrop;
 use std::path::PathBuf;
-use std::process::exit;
 use std::str::FromStr;
-use structopt::StructOpt;
 use tracing::{error, Level};
-use tracing::{info, warn};
+use tracing::info;
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
 use tracing_subscriber::fmt::format::FmtSpan;
 use tracing_subscriber::fmt::writer::MakeWriterExt;
 use tracing_subscriber::{fmt, layer::SubscriberExt};
+use crate::data::token::Token;
+use clap::Parser;
 
 /// Arguments for running polaris
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 pub struct Run {
-    #[structopt(
+    #[clap(
         parse(from_os_str),
         default_value = "/etc/polaris.toml",
         help = "Location of polaris config file"
@@ -41,31 +41,15 @@ impl Command for Run {
 
         setup_logging(&config)?;
 
-        if config.api.auth.tokens.is_empty() {
-            warn!("No tokens are defined!");
-        }
-
-        let mut usable_tokens = 0;
-        for token in &config.api.auth.tokens {
-            if token.token.is_empty() {
-                warn!("Token \"{}\" is empty and will not be usable.", token.name);
-            } else {
-                usable_tokens += 1;
-            }
-        }
-        if usable_tokens == 0 {
-            error!(
-                "There are no usable tokens, please setup a token in {:?}",
-                &self.config
-            );
-            exit(0);
-        }
-
         let pool = PgPoolOptions::new()
             .max_connections(5)
             .connect(&config.database_url)
             .await?;
         sqlx::migrate!().run(&pool).await?;
+
+        if Token::get_all(&pool).await?.is_empty() && config.api.auth.bootstrap_token.is_none() {
+            error!("There are no API tokens in the database and no bootstrap token is set, the API will be inaccessible.");
+        }
 
         info!("Starting Polaris.");
 

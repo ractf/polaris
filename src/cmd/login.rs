@@ -3,18 +3,21 @@ use crate::Command;
 use anyhow::Result;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Password;
-use structopt::StructOpt;
+use clap::Parser;
 
 /// Login to a polaris server
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 pub struct Login {
-    #[structopt(long, help = "Profile name")]
+    #[clap(long, short, help = "Profile name")]
     profile: String,
-    #[structopt(long, short, help = "API Token")]
+
+    #[clap(long, short, help = "API Token")]
     token: Option<String>,
-    #[structopt(long, short, help = "Overwrite the default token with this token.")]
+
+    #[clap(long, short, help = "Overwrite the default token with this token.")]
     default: bool,
-    #[structopt(help = "Polaris Server", default_value = "http://127.0.0.1:8080")]
+
+    #[clap(help = "Polaris Server", default_value = "http://127.0.0.1:8080")]
     server: String,
 }
 
