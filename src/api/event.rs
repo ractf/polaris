@@ -5,6 +5,7 @@ use crate::data::token::Token;
 use actix_web::web::{Data, Json, Path};
 use actix_web::{delete, get, post, put, HttpMessage, HttpRequest, HttpResponse};
 use tracing::{error, info};
+use crate::require_permission;
 
 #[post("/event")]
 pub async fn create_event(
@@ -12,11 +13,7 @@ pub async fn create_event(
     state: Data<AppState>,
     req: HttpRequest,
 ) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("event.create") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("event.create"));
-    }
+    let token = require_permission!(req, "event.create");
 
     let mut event = event.into_inner();
 
@@ -51,13 +48,9 @@ pub async fn create_event(
 
 #[get("/event/{id}")]
 pub async fn get_event(event: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
+    let token = require_permission!(req, "event.view");
     let event_id = event.into_inner();
 
-    if !token.has_permission("event.view") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("event.view"));
-    }
     if !token.is_valid_for_event(&state.pool, event_id).await {
         return HttpResponse::NotFound().json(APIError::event_not_found(event_id));
     }
@@ -77,11 +70,7 @@ pub async fn get_event(event: Path<i32>, state: Data<AppState>, req: HttpRequest
 
 #[get("/event/")]
 pub async fn get_events(state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("event.view.all") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("event.view.all"));
-    }
+    let token = require_permission!(req, "event.view.all");
 
     let events = Event::get_all(&state.pool).await;
 
@@ -103,13 +92,9 @@ pub async fn delete_event(
     state: Data<AppState>,
     req: HttpRequest,
 ) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    let event_id = event.into_inner();
+    let token = require_permission!(req, "event.delete");
 
-    if !token.has_permission("event.delete") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("event.delete"));
-    }
+    let event_id = event.into_inner();
     if !token.is_valid_for_event(&state.pool, event_id).await {
         return HttpResponse::NotFound().json(APIError::event_not_found(event_id));
     }
@@ -134,11 +119,7 @@ pub async fn update_event(
     state: Data<AppState>,
     req: HttpRequest,
 ) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("event.update") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("event.update"));
-    }
+    let token = require_permission!(req, "event.update");
 
     let mut event = event.into_inner();
 

@@ -63,3 +63,15 @@ pub async fn start_api(config: &Config, pool: &PgPool) -> Result<()> {
     .await?;
     Ok(())
 }
+
+#[macro_export]
+macro_rules! require_permission {
+    ($dst:expr, $arg:tt) => {{
+        let exts = $dst.extensions();
+        let token = exts.get::<Token>().unwrap();
+        if !token.has_permission($arg) {
+            return HttpResponse::Forbidden().json(APIError::missing_permission($arg));
+        }
+        token.clone()
+    }}
+}

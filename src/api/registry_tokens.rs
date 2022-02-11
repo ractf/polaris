@@ -5,6 +5,7 @@ use actix_web::web::{Data, Json, Path};
 use actix_web::{delete, get, post, HttpMessage, HttpRequest, HttpResponse};
 use tracing::{error, info};
 use crate::data::registry::RegistryToken;
+use crate::require_permission;
 
 #[post("/registry_token")]
 pub async fn create_registry_token(
@@ -12,11 +13,7 @@ pub async fn create_registry_token(
     state: Data<AppState>,
     req: HttpRequest,
 ) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("registry_token.create") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("registry_token.create"));
-    }
+    require_permission!(req, "registry_token.create");
 
     let mut new_token = new_token.into_inner();
 
@@ -41,11 +38,7 @@ pub async fn create_registry_token(
 //TODO: I'm not sure the best way of handling access control for these routes, for now its root until I find a less strict solution that works
 #[get("/registry_token")]
 pub async fn get_registry_tokens(state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("root") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("root"));
-    }
+    require_permission!(req, "root");
 
     let tokens = RegistryToken::get_all(&state.pool).await;
 
@@ -58,11 +51,7 @@ pub async fn get_registry_tokens(state: Data<AppState>, req: HttpRequest) -> Htt
 
 #[get("/registry_token/{id}")]
 pub async fn get_registry_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("root") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("root"));
-    }
+    require_permission!(req, "root");
 
     let token_id = id.into_inner();
     let tokens = RegistryToken::get(&state.pool, token_id).await;
@@ -76,11 +65,7 @@ pub async fn get_registry_token(id: Path<i32>, state: Data<AppState>, req: HttpR
 
 #[delete("/registry_token/{id}")]
 pub async fn delete_registry_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("registry_token.delete") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("registry_token.delete"));
-    }
+    require_permission!(req, "registry_token.delete");
 
     let token_id = id.into_inner();
     let result = RegistryToken::delete_by_id(&state.pool, token_id).await;

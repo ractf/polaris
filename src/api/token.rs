@@ -5,6 +5,7 @@ use actix_web::web::{Data, Json, Path};
 use actix_web::{delete, get, post, HttpMessage, HttpRequest, HttpResponse};
 use chrono::Utc;
 use tracing::{error, info};
+use crate::require_permission;
 
 #[post("/token")]
 pub async fn create_token(
@@ -12,11 +13,7 @@ pub async fn create_token(
     state: Data<AppState>,
     req: HttpRequest,
 ) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("root") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("root"));
-    }
+    require_permission!(req, "root");
 
     let new_token = new_token.into_inner();
 
@@ -44,11 +41,7 @@ pub async fn create_token(
 
 #[get("/token")]
 pub async fn get_tokens(state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("root") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("root"));
-    }
+    require_permission!(req, "root");
 
     let tokens = Token::get_all(&state.pool).await;
 
@@ -61,11 +54,7 @@ pub async fn get_tokens(state: Data<AppState>, req: HttpRequest) -> HttpResponse
 
 #[get("/token/{id}")]
 pub async fn get_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("root") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("root"));
-    }
+    require_permission!(req, "root");
 
     let token_id = id.into_inner();
     let tokens = Token::get(&state.pool, token_id).await;
@@ -79,11 +68,7 @@ pub async fn get_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -
 
 #[get("/token/name/{name}")]
 pub async fn get_token_by_name(name: Path<String>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("root") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("root"));
-    }
+    require_permission!(req, "root");
 
     let token_name = name.into_inner();
     let tokens = Token::get_by_name(&state.pool, token_name.clone()).await;
@@ -97,11 +82,7 @@ pub async fn get_token_by_name(name: Path<String>, state: Data<AppState>, req: H
 
 #[delete("/token/{id}")]
 pub async fn delete_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("root") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("root"));
-    }
+    require_permission!(req, "root");
 
     let token_id = id.into_inner();
     let tokens = Token::delete_by_id(&state.pool, token_id).await;
@@ -115,11 +96,7 @@ pub async fn delete_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest
 
 #[delete("/token/name/{name}")]
 pub async fn delete_token_by_name(name: Path<String>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    let exts = req.extensions();
-    let token = exts.get::<Token>().unwrap();
-    if !token.has_permission("root") {
-        return HttpResponse::Forbidden().json(APIError::missing_permission("root"));
-    }
+    require_permission!(req, "root");
 
     let token_name = name.into_inner();
     if let Ok(mut token) = Token::get_by_name(&state.pool, token_name.clone()).await {
