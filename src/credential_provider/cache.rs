@@ -31,7 +31,7 @@ impl CachingDockerCredentialProvider {
 
     fn insert_cache(&self, cache: Cache) {
         if let Ok(mut inner) = self.cache.lock() {
-            let _ = inner.insert(cache);
+            *inner = Some(cache)
         }
     }
 }

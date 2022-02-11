@@ -19,7 +19,7 @@ impl APICommand for TokenCreate {
                 expiry: None,
             })
             .await?;
-        println!("{:?}", token);
+        println!("{}", token);
         Ok(())
     }
 }

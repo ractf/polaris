@@ -9,7 +9,7 @@ mod registry_tokens;
 
 use crate::api::auth::bearer_auth_validator;
 use crate::api::event::{create_event, delete_event, get_event, get_events, update_event};
-use crate::api::token::{create_token, delete_token, get_token, get_tokens};
+use crate::api::token::{create_token, delete_token, get_token, get_token_by_name, get_tokens};
 use crate::config::Config;
 use actix_web::web::Data;
 use actix_web::{App, HttpServer};
@@ -47,6 +47,7 @@ pub async fn start_api(config: &Config, pool: &PgPool) -> Result<()> {
             .service(create_token)
             .service(get_tokens)
             .service(get_token)
+            .service(get_token_by_name)
             .service(delete_token)
             .service(whoami::whoami)
     })

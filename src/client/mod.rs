@@ -8,6 +8,7 @@ use crate::data::token::{CreateableToken, Token};
 use anyhow::Result;
 use reqwest::header::HeaderMap;
 use reqwest::{Client, ClientBuilder};
+use std::fmt::Write;
 
 /// HTTP client for interacting with Polaris
 #[derive(Debug, Clone)]
@@ -42,6 +43,22 @@ impl PolarisClient {
     pub async fn create_token(&self, token: CreateableToken) -> Result<Token> {
         let url = self.make_url("/token");
         let response = self.client.post(url).json(&token).send().await?;
+        return Ok(response.json().await?);
+    }
+
+    /// Get token by ID
+    pub async fn get_token(&self, id: i32) -> Result<Token> {
+        let mut url = self.make_url("/token/");
+        write!(url, "{}", id).unwrap();
+        let response = self.client.get(url).send().await?;
+        return Ok(response.json().await?);
+    }
+
+    /// Get token by name
+    pub async fn get_token_by_name(&self, name: &str) -> Result<Token> {
+        let mut url = self.make_url("/token/name/");
+        url.push_str(name);
+        let response = self.client.get(url).send().await?;
         return Ok(response.json().await?);
     }
 

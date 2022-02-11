@@ -5,6 +5,9 @@ use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::PgPool;
+use std::fmt;
+use std::fmt::Formatter;
+use tracing::trace;
 
 /// A token that can be used to access the Polaris API
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -63,6 +66,25 @@ impl Token {
         )
         .fetch_one(pool)
         .await?;
+        Ok(Token {
+            id: Some(result.id),
+            name: result.name,
+            token: result.token,
+            permissions: result.permissions,
+            issued: result.issued,
+            expiry: result.expiry,
+        })
+    }
+
+    /// Get a token from the token's name
+    pub async fn get_by_name(pool: &PgPool, name: String) -> Result<Token> {
+        let result = sqlx::query!(
+            "SELECT id, name, token, permissions, issued, expiry FROM token WHERE name=$1",
+            name
+        )
+            .fetch_one(pool)
+            .await?;
+
         Ok(Token {
             id: Some(result.id),
             name: result.name,
@@ -221,5 +243,21 @@ impl From<CreateableToken> for Token {
             issued: Some(Utc::now()),
             expiry: token.expiry,
         }
+    }
+}
+
+impl fmt::Display for Token {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "Token `{}` created: {}", self.name, self.token)?;
+
+        if !self.permissions.is_empty() {
+            write!(f, ", with permissions: {:?}", self.permissions)?;
+        }
+
+        if let Some(expires) = self.expiry {
+            write!(f, ", expiring on: {}", expires.to_rfc2822())?;
+        }
+
+        Ok(())
     }
 }

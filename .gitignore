@@ -2,3 +2,4 @@
 rpmbuild
 SOURCES
 *.rpm
+.idea

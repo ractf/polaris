@@ -9,6 +9,7 @@ pub enum APIError {
     NameTaken { name: String },
     EventNotFound { event: i32 },
     ResourceNotFound { id: i32 },
+    ResourceNameNotFound { name: String },
 }
 
 impl APIError {
@@ -36,5 +37,9 @@ impl APIError {
 
     pub fn resource_not_found(id: i32) -> APIError {
         APIError::ResourceNotFound { id }
+    }
+
+    pub fn resource_name_not_found<S: ToString>(name: S) -> APIError {
+        APIError::ResourceNameNotFound { name: name.to_string() }
     }
 }
