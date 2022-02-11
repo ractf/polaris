@@ -78,7 +78,7 @@ impl Command for Run {
 fn setup_logging(config: &Config) -> Result<()> {
     let stdout_layer = fmt::Layer::new()
         .with_span_events(FmtSpan::FULL)
-        .with_writer(io::stdout.with_min_level(Level::from_str(&config.log.level)?));
+        .with_writer(io::stdout.with_max_level(Level::from_str(&config.log.level)?));
 
     if let Some(log_path) = &config.log.path {
         let file_appender = RollingFileAppender::new(

@@ -3,6 +3,7 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
+use crate::data::token::Token;
 
 /// Information required to generate a set of docker registry credentials
 #[derive(Debug, Serialize, Deserialize)]
@@ -121,6 +122,46 @@ impl RegistryToken {
     /// Delete a token by id
     pub async fn delete_by_id(pool: &PgPool, id: i32) -> Result<()> {
         sqlx::query!("DELETE FROM registry_tokens WHERE id=$1", id)
+            .execute(pool)
+            .await?;
+        Ok(())
+    }
+
+    /// Check if a registry token can be accessed in a given event
+    pub async fn can_be_used_by_event(&self, pool: &PgPool, event_id: i32) -> bool {
+        let result = sqlx::query!(
+            "SELECT id FROM allowed_registry_tokens WHERE registry_token_id=$1 AND event_id=$2",
+            self.id,
+            event_id,
+        )
+            .fetch_optional(pool)
+            .await;
+        if let Ok(result) = result {
+            result.is_some()
+        } else {
+            false
+        }
+    }
+
+    /// Allow a registry token to be used in an event
+    pub async fn grant_access(&self, pool: &PgPool, event_id: i32) -> Result<()> {
+        sqlx::query!(
+            "INSERT INTO allowed_registry_tokens (registry_token_id, event_id) VALUES ($1, $2)",
+            self.id,
+            event_id,
+        )
+            .execute(pool)
+            .await?;
+        Ok(())
+    }
+
+    /// Remove a registry token from a given event
+    pub async fn revoke_access(&self, pool: &PgPool, event_id: i32) -> Result<()> {
+        sqlx::query!(
+            "DELETE FROM allowed_registry_tokens WHERE event_id=$1 AND registry_token_id=$2",
+            event_id,
+            self.id,
+        )
             .execute(pool)
             .await?;
         Ok(())

@@ -5,6 +5,7 @@ mod error;
 mod event;
 mod token;
 mod whoami;
+mod registry_tokens;
 
 use crate::api::auth::bearer_auth_validator;
 use crate::api::event::{create_event, delete_event, get_event, get_events, update_event};
