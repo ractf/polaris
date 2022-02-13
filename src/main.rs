@@ -1,6 +1,7 @@
 //! # RACTF Polaris
 
 //#![deny(missing_docs)]
+#![deny(unsafe_code)]
 
 use crate::cmd::{Command, Polaris};
 use anyhow::Result;
