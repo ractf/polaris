@@ -5,17 +5,22 @@ use clap::Parser;
 
 #[derive(Debug, Parser)]
 pub struct TokenCreate {
-    #[clap(help = "Token Name")]
+    #[clap(short, long, help = "Token Name")]
     name: String,
+
+    #[clap(short, long, help = "Token permissions")]
+    perms: String,
 }
 
 #[async_trait::async_trait(?Send)]
 impl APICommand for TokenCreate {
     async fn run(&self, client: PolarisClient, json: bool) -> anyhow::Result<()> {
+        let token_perms = self.perms.split(',').map(String::from).collect();
+
         let token = client
             .create_token(CreateableToken {
                 name: self.name.clone(),
-                permissions: vec![],
+                permissions: token_perms,
                 expiry: None,
             })
             .await?;
@@ -24,6 +29,7 @@ impl APICommand for TokenCreate {
         } else {
             println!("{}", token);
         }
+
         Ok(())
     }
 }
