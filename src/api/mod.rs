@@ -17,7 +17,7 @@ use crate::api::token::{
 };
 use crate::api::whoami::whoami as whoami_route;
 use crate::config::Config;
-use actix_web::web::Data;
+use actix_web::web::{scope, Data};
 use actix_web::{App, HttpServer};
 use actix_web_httpauth::middleware::HttpAuthentication;
 use anyhow::Result;
@@ -42,25 +42,28 @@ pub async fn start_api(config: &Config, pool: &PgPool) -> Result<()> {
     HttpServer::new(move || {
         let auth = HttpAuthentication::bearer(bearer_auth_validator);
         App::new()
-            .wrap(TracingLogger::default())
-            .wrap(auth)
             .app_data(Data::new(state.clone()))
-            .service(create_event)
-            .service(get_event)
-            .service(get_events)
-            .service(delete_event)
-            .service(update_event)
-            .service(create_token)
-            .service(get_tokens)
-            .service(get_token)
-            .service(get_token_by_name)
-            .service(delete_token)
-            .service(delete_token_by_name)
-            .service(whoami_route)
-            .service(create_registry_token)
-            .service(get_registry_tokens)
-            .service(get_registry_token)
-            .service(delete_registry_token)
+            .wrap(TracingLogger::default())
+            .service(
+                scope("/api")
+                    .wrap(auth)
+                    .service(create_event)
+                    .service(get_event)
+                    .service(get_events)
+                    .service(delete_event)
+                    .service(update_event)
+                    .service(create_token)
+                    .service(get_tokens)
+                    .service(get_token)
+                    .service(get_token_by_name)
+                    .service(delete_token)
+                    .service(delete_token_by_name)
+                    .service(whoami_route)
+                    .service(create_registry_token)
+                    .service(get_registry_tokens)
+                    .service(get_registry_token)
+                    .service(delete_registry_token),
+            )
     })
     .bind(&config.api.bind)?
     .run()

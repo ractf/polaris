@@ -22,7 +22,7 @@ pub struct PolarisClient {
 
 macro_rules! url {
     ($dst:expr, $($arg:tt)*) => {
-        format!("{}{}", $dst.profile.server, format!($($arg)*))
+        format!("{}/api{}", $dst.profile.server, format!($($arg)*))
     }
 }
 
