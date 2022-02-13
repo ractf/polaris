@@ -122,7 +122,6 @@ fn parse_docker_image(image: String, default_repo: String) -> Result<DockerImage
     let (repo, image) = if let Some(split) = image.rsplit_once('/') {
         (split.0.to_string(), split.1.to_string())
     } else {
-        //TODO: Maybe make this configurable?
         (default_repo, image)
     };
 
