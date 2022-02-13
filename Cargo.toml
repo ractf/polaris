@@ -7,7 +7,7 @@ edition = "2021"
 lto = true
 
 [dependencies]
-actix-web = "4.0.0-rc.1"
+actix-web = "4.0.0-rc.3"
 actix-web-httpauth = "0.6.0-beta.7"
 anyhow = "1.0"
 async-trait = "0.1"
@@ -36,7 +36,7 @@ thiserror = "1.0"
 tokio = { version = "1.15", features = ["full"] }
 toml = "0.5"
 tracing = "0.1"
-tracing-actix-web = "0.5.0-rc.1"
+tracing-actix-web = "0.5.0-rc.3"
 tracing-appender = "0.2"
 tracing-futures = "0.2"
 tracing-log = "0.1"
