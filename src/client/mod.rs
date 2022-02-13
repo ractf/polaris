@@ -3,15 +3,15 @@
 pub mod auth;
 mod error;
 
-use std::fmt::Display;
 use crate::client::auth::Profile;
-use crate::data::event::Event;
-use crate::data::token::{CreateableToken, Token};
 use crate::client::error::{PolarisError, Result};
+use crate::data::event::Event;
+use crate::data::registry::RegistryToken;
+use crate::data::token::{CreateableToken, Token};
 use reqwest::header::HeaderMap;
 use reqwest::{Client, ClientBuilder, Response};
 use serde::de::DeserializeOwned;
-use crate::data::registry::RegistryToken;
+use std::fmt::Display;
 
 /// HTTP client for interacting with Polaris
 #[derive(Debug, Clone)]
@@ -160,5 +160,4 @@ impl PolarisClient {
     pub async fn delete_registry_token(&self, id: i32) -> Result<RegistryToken> {
         delete!(self, "/registry_token/{id}")
     }
-
 }

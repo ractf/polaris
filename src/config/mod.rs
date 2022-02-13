@@ -2,9 +2,11 @@
 
 pub mod api;
 mod authentication;
+pub mod docker;
 pub mod log;
 
 use crate::config::api::APIConfig;
+use crate::config::docker::DockerConfig;
 use crate::config::log::LogConfig;
 use serde::{Deserialize, Serialize};
 
@@ -20,6 +22,9 @@ pub struct Config {
     /// The URL of the Postgres database used by Polaris
     #[serde(default = "database_url")]
     pub database_url: String,
+    /// Docker configuration
+    #[serde(default)]
+    pub docker: DockerConfig,
 }
 
 fn database_url() -> String {

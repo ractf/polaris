@@ -6,6 +6,7 @@ pub mod default;
 
 use anyhow::Result;
 use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
 
 /// Provide credentials for a docker registry
 #[async_trait::async_trait]
@@ -22,7 +23,7 @@ pub trait CacheableDockerCredentialProvider {
 }
 
 /// Credentials for authenticating with a Docker registry, mirrored from `bollard::auth::DockerCredentials`
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[allow(missing_docs)]
 pub struct DockerCredentials {
     pub username: Option<String>,
@@ -32,6 +33,20 @@ pub struct DockerCredentials {
     pub serveraddress: Option<String>,
     pub identitytoken: Option<String>,
     pub registrytoken: Option<String>,
+}
+
+impl DockerCredentials {
+    pub fn empty() -> Self {
+        Self {
+            username: None,
+            password: None,
+            auth: None,
+            email: None,
+            serveraddress: None,
+            identitytoken: None,
+            registrytoken: None,
+        }
+    }
 }
 
 impl From<bollard::auth::DockerCredentials> for DockerCredentials {

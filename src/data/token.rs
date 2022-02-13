@@ -81,8 +81,8 @@ impl Token {
             "SELECT id, name, token, permissions, issued, expiry FROM token WHERE name=$1",
             name
         )
-            .fetch_one(pool)
-            .await?;
+        .fetch_one(pool)
+        .await?;
 
         Ok(Token {
             id: Some(result.id),

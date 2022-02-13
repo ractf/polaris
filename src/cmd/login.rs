@@ -1,9 +1,9 @@
 use crate::client::auth::{Profile, Profiles};
 use crate::Command;
 use anyhow::Result;
+use clap::Parser;
 use dialoguer::theme::ColorfulTheme;
 use dialoguer::Password;
-use clap::Parser;
 
 /// Login to a polaris server
 #[derive(Debug, Parser)]

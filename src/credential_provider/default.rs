@@ -6,6 +6,12 @@ pub struct DefaultDockerCredentialProvider {
     credentials: DockerCredentials,
 }
 
+impl DefaultDockerCredentialProvider {
+    pub fn new(credentials: DockerCredentials) -> Self {
+        Self { credentials }
+    }
+}
+
 #[async_trait::async_trait]
 impl DockerCredentialProvider for DefaultDockerCredentialProvider {
     async fn provide(&self) -> Result<DockerCredentials> {

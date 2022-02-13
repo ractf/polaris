@@ -1,6 +1,6 @@
-use std::fmt::{Display, Formatter};
-use reqwest::Error;
 use crate::api::error::APIError;
+use reqwest::Error;
+use std::fmt::{Display, Formatter};
 
 pub type Result<T> = std::result::Result<T, PolarisError>;
 

@@ -1,11 +1,11 @@
 use crate::api::error::APIError;
 use crate::api::AppState;
+use crate::data::registry::RegistryToken;
 use crate::data::token::Token;
+use crate::require_permission;
 use actix_web::web::{Data, Json, Path};
 use actix_web::{delete, get, post, HttpMessage, HttpRequest, HttpResponse};
 use tracing::{error, info};
-use crate::data::registry::RegistryToken;
-use crate::require_permission;
 
 #[post("/registry_token")]
 pub async fn create_registry_token(
@@ -50,7 +50,11 @@ pub async fn get_registry_tokens(state: Data<AppState>, req: HttpRequest) -> Htt
 }
 
 #[get("/registry_token/{id}")]
-pub async fn get_registry_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+pub async fn get_registry_token(
+    id: Path<i32>,
+    state: Data<AppState>,
+    req: HttpRequest,
+) -> HttpResponse {
     require_permission!(req, "root");
 
     let token_id = id.into_inner();
@@ -64,7 +68,11 @@ pub async fn get_registry_token(id: Path<i32>, state: Data<AppState>, req: HttpR
 }
 
 #[delete("/registry_token/{id}")]
-pub async fn delete_registry_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+pub async fn delete_registry_token(
+    id: Path<i32>,
+    state: Data<AppState>,
+    req: HttpRequest,
+) -> HttpResponse {
     require_permission!(req, "registry_token.delete");
 
     let token_id = id.into_inner();

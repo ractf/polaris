@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "type")]
@@ -40,6 +40,8 @@ impl APIError {
     }
 
     pub fn resource_name_not_found<S: ToString>(name: S) -> APIError {
-        APIError::ResourceNameNotFound { name: name.to_string() }
+        APIError::ResourceNameNotFound {
+            name: name.to_string(),
+        }
     }
 }

@@ -72,10 +72,7 @@ impl RegistryToken {
 
     /// Get a token with a given id
     pub async fn get(pool: &PgPool, id: i32) -> Result<RegistryToken> {
-        let result = sqlx::query!(
-            "SELECT id, name, data FROM registry_tokens WHERE id=$1",
-            id
-        )
+        let result = sqlx::query!("SELECT id, name, data FROM registry_tokens WHERE id=$1", id)
             .fetch_one(pool)
             .await?;
         Ok(RegistryToken {
@@ -103,10 +100,9 @@ impl RegistryToken {
 
     /// Get all registry tokens stored in the database
     pub async fn get_all(pool: &PgPool) -> Result<Vec<RegistryToken>> {
-        let results =
-            sqlx::query!("SELECT id, name, data FROM registry_tokens")
-                .fetch_all(pool)
-                .await?;
+        let results = sqlx::query!("SELECT id, name, data FROM registry_tokens")
+            .fetch_all(pool)
+            .await?;
         let mut tokens = Vec::with_capacity(results.len());
         for result in results {
             tokens.push(RegistryToken {
@@ -133,8 +129,8 @@ impl RegistryToken {
             self.id,
             event_id,
         )
-            .fetch_optional(pool)
-            .await;
+        .fetch_optional(pool)
+        .await;
         if let Ok(result) = result {
             result.is_some()
         } else {
@@ -149,8 +145,8 @@ impl RegistryToken {
             self.id,
             event_id,
         )
-            .execute(pool)
-            .await?;
+        .execute(pool)
+        .await?;
         Ok(())
     }
 
@@ -161,8 +157,8 @@ impl RegistryToken {
             event_id,
             self.id,
         )
-            .execute(pool)
-            .await?;
+        .execute(pool)
+        .await?;
         Ok(())
     }
 }

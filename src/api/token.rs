@@ -1,11 +1,11 @@
 use crate::api::error::APIError;
 use crate::api::AppState;
 use crate::data::token::{CreateableToken, Token};
+use crate::require_permission;
 use actix_web::web::{Data, Json, Path};
 use actix_web::{delete, get, post, HttpMessage, HttpRequest, HttpResponse};
 use chrono::Utc;
 use tracing::{error, info};
-use crate::require_permission;
 
 #[post("/token")]
 pub async fn create_token(
@@ -67,7 +67,11 @@ pub async fn get_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -
 }
 
 #[get("/token/name/{name}")]
-pub async fn get_token_by_name(name: Path<String>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+pub async fn get_token_by_name(
+    name: Path<String>,
+    state: Data<AppState>,
+    req: HttpRequest,
+) -> HttpResponse {
     require_permission!(req, "root");
 
     let token_name = name.into_inner();
@@ -85,9 +89,9 @@ pub async fn delete_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest
     require_permission!(req, "root");
 
     let token_id = id.into_inner();
-    let tokens = Token::delete_by_id(&state.pool, token_id).await;
+    let result = Token::delete_by_id(&state.pool, token_id).await;
 
-    if let Ok(_) = tokens {
+    if result.is_ok() {
         HttpResponse::Ok().finish()
     } else {
         HttpResponse::InternalServerError().json(APIError::resource_not_found(token_id))
@@ -95,7 +99,11 @@ pub async fn delete_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest
 }
 
 #[delete("/token/name/{name}")]
-pub async fn delete_token_by_name(name: Path<String>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+pub async fn delete_token_by_name(
+    name: Path<String>,
+    state: Data<AppState>,
+    req: HttpRequest,
+) -> HttpResponse {
     require_permission!(req, "root");
 
     let token_name = name.into_inner();

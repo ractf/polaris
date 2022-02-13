@@ -1,20 +1,20 @@
 use crate::api::start_api;
 use crate::cmd::Command;
 use crate::config::Config;
+use crate::data::token::Token;
 use anyhow::{bail, Result};
+use clap::Parser;
 use sqlx::postgres::PgPoolOptions;
 use std::io;
 use std::mem::ManuallyDrop;
 use std::path::PathBuf;
 use std::str::FromStr;
-use tracing::{error, Level};
 use tracing::info;
+use tracing::{error, Level};
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
 use tracing_subscriber::fmt::format::FmtSpan;
 use tracing_subscriber::fmt::writer::MakeWriterExt;
 use tracing_subscriber::{fmt, layer::SubscriberExt};
-use crate::data::token::Token;
-use clap::Parser;
 
 /// Arguments for running polaris
 #[derive(Debug, Parser)]
