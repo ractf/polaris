@@ -54,7 +54,7 @@ macro_rules! delete {
     ($dst:expr, $($arg:tt)*) => {{
         let url = url!($dst, $($arg)*);
         let response = $dst.client.delete(url).send().await?;
-        $dst.parse_response(response).await
+        $dst.parse_empty_response(response).await
     }}
 }
 
@@ -81,6 +81,14 @@ impl PolarisClient {
         }
     }
 
+    async fn parse_empty_response(&self, response: Response) -> Result<()> {
+        if response.status().is_success() {
+            Ok(())
+        } else {
+            Err(PolarisError::APIError(response.json().await?))
+        }
+    }
+
     /// Create a new event
     pub async fn create_event(&self, event: Event) -> Result<Event> {
         post!(self, &event, "/event")
@@ -89,6 +97,11 @@ impl PolarisClient {
     /// Get an event from the API
     pub async fn get_event(&self, id: i32) -> Result<Event> {
         get!(self, "/event/{id}")
+    }
+
+    /// Get an event from the API by name
+    pub async fn get_event_by_name<T: Display + AsRef<str>>(&self, name: T) -> Result<Event> {
+        get!(self, "/event/name/{name}")
     }
 
     /// Get all events from the API
@@ -131,14 +144,9 @@ impl PolarisClient {
         delete!(self, "/token/{id}")
     }
 
-    /// Delete token by name
-    pub async fn delete_token_by_name<T: Display + AsRef<str>>(&self, name: T) -> Result<()> {
-        delete!(self, "/token/name/{name}")
-    }
-
     /// Get the current token
     pub async fn whoami(&self) -> Result<Token> {
-        delete!(self, "/whoami")
+        get!(self, "/whoami")
     }
 
     /// Create a registry token
@@ -157,7 +165,7 @@ impl PolarisClient {
     }
 
     /// Delete a registry token by id
-    pub async fn delete_registry_token(&self, id: i32) -> Result<RegistryToken> {
+    pub async fn delete_registry_token(&self, id: i32) -> Result<()> {
         delete!(self, "/registry_token/{id}")
     }
 }

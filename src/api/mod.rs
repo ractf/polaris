@@ -8,12 +8,12 @@ mod token;
 mod whoami;
 
 use crate::api::auth::bearer_auth_validator;
-use crate::api::event::{create_event, delete_event, get_event, get_events, update_event};
+use crate::api::event::{create_event, delete_event, get_event, get_event_by_name, get_events, update_event};
 use crate::api::registry_tokens::{
     create_registry_token, delete_registry_token, get_registry_token, get_registry_tokens,
 };
 use crate::api::token::{
-    create_token, delete_token, delete_token_by_name, get_token, get_token_by_name, get_tokens,
+    create_token, delete_token, get_token, get_token_by_name, get_tokens,
 };
 use crate::api::whoami::whoami as whoami_route;
 use crate::config::Config;
@@ -49,6 +49,7 @@ pub async fn start_api(config: &Config, pool: &PgPool) -> Result<()> {
                     .wrap(auth)
                     .service(create_event)
                     .service(get_event)
+                    .service(get_event_by_name)
                     .service(get_events)
                     .service(delete_event)
                     .service(update_event)
@@ -57,7 +58,6 @@ pub async fn start_api(config: &Config, pool: &PgPool) -> Result<()> {
                     .service(get_token)
                     .service(get_token_by_name)
                     .service(delete_token)
-                    .service(delete_token_by_name)
                     .service(whoami_route)
                     .service(create_registry_token)
                     .service(get_registry_tokens)

@@ -4,6 +4,9 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::PgPool;
+use std::fmt;
+use std::fmt::Formatter;
+use crate::cmd::sep;
 
 /// Database model for an Event
 #[derive(Debug, Deserialize, Serialize)]
@@ -67,6 +70,21 @@ impl Event {
         })
     }
 
+    /// Get an event from a given name
+    pub async fn get_by_name(pool: &PgPool, name: &str) -> Result<Event> {
+        let result = sqlx::query!("SELECT id, name, start_time, end_time, max_cpu, max_ram, api_url, api_token FROM event WHERE name=$1", name).fetch_one(pool).await?;
+        Ok(Event {
+            id: Some(result.id),
+            name: result.name,
+            start_time: result.start_time,
+            end_time: result.end_time,
+            max_cpu: result.max_cpu,
+            max_ram: result.max_ram,
+            api_url: result.api_url,
+            api_token: result.api_token,
+        })
+    }
+
     /// Delete this event
     pub async fn delete(&mut self, pool: &PgPool) -> Result<()> {
         sqlx::query!("DELETE FROM event WHERE id=$1", self.id)
@@ -117,5 +135,43 @@ impl Event {
             .fetch_optional(pool)
             .await?;
         Ok(result.is_some())
+    }
+}
+
+impl fmt::Display for Event {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        write!(f, "Event `{}`", self.name)?;
+
+        if let Some(start_time) = self.start_time {
+            sep(f)?;
+            write!(f, "starting on: {}", start_time.to_rfc2822())?;
+        }
+
+        if let Some(end_time) = self.end_time {
+            sep(f)?;
+            write!(f, "ending on: {}", end_time.to_rfc2822())?;
+        }
+
+        if let Some(max_cpu) = self.max_cpu {
+            sep(f)?;
+            write!(f, "max CPU: {}", max_cpu)?;
+        }
+
+        if let Some(max_ram) = self.max_ram {
+            sep(f)?;
+            write!(f, "max RAM: {}", max_ram)?;
+        }
+
+        if let Some(api_url) = &self.api_url {
+            sep(f)?;
+            write!(f, "API URL: {}", api_url)?;
+        }
+
+        if let Some(api_token) = &self.api_token {
+            sep(f)?;
+            write!(f, "API Token: {}", api_token)?;
+        }
+
+        Ok(())
     }
 }

@@ -5,12 +5,15 @@ mod login;
 mod run;
 mod token;
 
+use std::fmt::Display;
 use crate::client::PolarisClient;
 use crate::cmd::login::Login;
 use crate::cmd::run::Run;
 use crate::cmd::token::Token;
+use crate::cmd::event::Event;
 use anyhow::Result;
 use clap::Parser;
+use serde::Serialize;
 
 /// Trait implemented by all subcommands of `polaris` to define a common interface
 #[async_trait::async_trait(?Send)]
@@ -69,6 +72,55 @@ macro_rules! api_dispatch {
     };
 }
 
+#[macro_export]
+macro_rules! output_object {
+    ($fmt:tt, $obj:expr, $json:expr) => {{
+        if $json {
+            println!("{}", serde_json::to_string(&$obj)?);
+        } else {
+            println!($fmt, $obj);
+        }
+
+        Ok(())
+    }}
+}
+
+pub fn output_object<T: Serialize + Display>(obj: T, json: bool) -> Result<()> {
+    if json {
+        println!("{}", serde_json::to_string(&obj)?);
+    } else {
+        println!("{:#}", obj);
+    }
+
+    Ok(())
+}
+
+pub fn output_objects<T: Serialize + Display>(objs: Vec<T>, json: bool) -> Result<()> {
+    if json {
+        println!("{}", serde_json::to_string(&objs)?);
+    } else {
+        for obj in objs {
+            println!("{}", obj);
+        }
+    }
+
+    Ok(())
+}
+
+pub fn deleted<T: Display>(name: T, json: bool) -> Result<()> {
+    if json {
+        println!(r#"{{"message":"{name} Deleted."}}"#);
+    } else {
+        println!("{name} Deleted.")
+    }
+
+    Ok(())
+}
+
+pub fn sep(f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    write!(f, "{}", if f.alternate() { "\n" } else { ", " })
+}
+
 /// RACTF Polaris
 #[derive(Parser, Debug)]
 pub enum Polaris {
@@ -78,6 +130,8 @@ pub enum Polaris {
     Login(Login),
     /// Manage Polaris tokens
     Token(Token),
+    /// Manage Polaris events
+    Event(Event),
 }
 
 pub use {api_dispatch, dispatch};

@@ -7,6 +7,7 @@ use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use std::fmt;
 use std::fmt::Formatter;
+use crate::cmd::sep;
 
 /// A token that can be used to access the Polaris API
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -247,14 +248,16 @@ impl From<CreateableToken> for Token {
 
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(f, "Token `{}` created: {}", self.name, self.token)?;
+        write!(f, "Token `{}`: {}", self.name, self.token)?;
 
         if !self.permissions.is_empty() {
-            write!(f, ", with permissions: {:?}", self.permissions)?;
+            sep(f)?;
+            write!(f, "with permissions: {:?}", self.permissions)?;
         }
 
         if let Some(expires) = self.expiry {
-            write!(f, ", expiring on: {}", expires.to_rfc2822())?;
+            sep(f)?;
+            write!(f, "expiring on: {}", expires.to_rfc2822())?;
         }
 
         Ok(())

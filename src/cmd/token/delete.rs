@@ -1,29 +1,28 @@
 use crate::client::PolarisClient;
-use crate::cmd::APICommand;
+use crate::cmd::{APICommand, deleted};
 use clap::Parser;
 
 #[derive(Debug, Parser)]
 pub struct TokenDelete {
-    #[clap(short, long, help = "Token Name", required_unless_present = "id")]
+    /// Token Name
+    #[clap(long, required_unless_present = "id")]
     name: Option<String>,
 
-    #[clap(short, long, help = "Token ID")]
+    /// Token ID
+    #[clap(long)]
     id: Option<i32>,
 }
 
 #[async_trait::async_trait(?Send)]
 impl APICommand for TokenDelete {
     async fn run(&self, client: PolarisClient, json: bool) -> anyhow::Result<()> {
-        if let Some(token_name) = &self.name {
-            client.delete_token_by_name(token_name).await?
+        let token_id = if let Some(token_name) = &self.name {
+            let token = client.get_token_by_name(token_name).await?;
+            token.id.expect("Token has no ID?")
         } else {
-            let token_id = self.id.unwrap();
-            client.delete_token(token_id).await?
+            self.id.unwrap()
         };
-
-        if !json {
-            println!("Token deleted.");
-        }
-        Ok(())
+        client.delete_token(token_id).await?;
+        deleted("Token", json)
     }
 }

@@ -1,40 +1,38 @@
 use crate::client::PolarisClient;
-use crate::cmd::APICommand;
+use crate::cmd::{APICommand, output_object};
 use crate::data::token::CreateableToken;
 use chrono::prelude::*;
 use clap::Parser;
 
-#[derive(Debug, Parser)]
+#[derive(Clone, Debug, Parser)]
 pub struct TokenCreate {
-    #[clap(short, long, help = "Token Name")]
+    /// Token Name
+    #[clap(long)]
     name: String,
 
-    #[clap(short, long, help = "Token Expiry Date (RFC-3339 format)", parse(try_from_str = DateTime::parse_from_rfc3339))]
+    /// Token Expiry Date (RFC-3339 format)
+    #[clap(long, parse(try_from_str = DateTime::parse_from_rfc3339))]
     expiry: Option<DateTime<FixedOffset>>,
 
-    #[clap(short, long, help = "Token Permissions")]
-    perms: String,
+    /// Token Permissions
+    #[clap(long)]
+    permissions: String,
+}
+
+impl From<TokenCreate> for CreateableToken {
+    fn from(t: TokenCreate) -> Self {
+        Self {
+            name: t.name,
+            expiry: t.expiry.map(Into::into),
+            permissions: t.permissions.split(',').map(String::from).collect(),
+        }
+    }
 }
 
 #[async_trait::async_trait(?Send)]
 impl APICommand for TokenCreate {
     async fn run(&self, client: PolarisClient, json: bool) -> anyhow::Result<()> {
-        let token_perms = self.perms.split(',').map(String::from).collect();
-        let token_expiry = self.expiry.map(Into::into);
-
-        let token = client
-            .create_token(CreateableToken {
-                name: self.name.clone(),
-                permissions: token_perms,
-                expiry: token_expiry,
-            })
-            .await?;
-        if json {
-            println!("{}", serde_json::to_string(&token)?);
-        } else {
-            println!("{}", token);
-        }
-
-        Ok(())
+        let token = client.create_token(self.clone().into()).await?;
+        output_object( token, json)
     }
 }

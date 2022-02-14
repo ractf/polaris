@@ -8,6 +8,7 @@ pub enum APIError {
     MissingPermission { permission: String },
     NameTaken { name: String },
     EventNotFound { event: i32 },
+    EventNameNotFound { event_name: String },
     ResourceNotFound { id: i32 },
     ResourceNameNotFound { name: String },
 }
@@ -33,6 +34,10 @@ impl APIError {
 
     pub fn event_not_found(event: i32) -> APIError {
         APIError::EventNotFound { event }
+    }
+
+    pub fn event_name_not_found(event_name: String) -> APIError {
+        APIError::EventNameNotFound { event_name }
     }
 
     pub fn resource_not_found(id: i32) -> APIError {

@@ -19,6 +19,6 @@ pub mod notification;
 #[actix_web::main]
 async fn main() -> Result<()> {
     let polaris: Polaris = Polaris::parse();
-    cmd::dispatch!(Polaris, polaris, Run, Login, Token);
+    cmd::dispatch!(Polaris, polaris, Run, Login, Token, Event);
     Ok(())
 }

@@ -19,11 +19,8 @@ use tracing_subscriber::{fmt, layer::SubscriberExt};
 /// Arguments for running polaris
 #[derive(Debug, Parser)]
 pub struct Run {
-    #[clap(
-        parse(from_os_str),
-        default_value = "/etc/polaris.toml",
-        help = "Location of polaris config file"
-    )]
+    /// Location of polaris config file
+    #[clap(parse(from_os_str), default_value = "/etc/polaris.toml")]
     config: PathBuf,
 }
 

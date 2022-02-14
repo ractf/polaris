@@ -68,7 +68,33 @@ pub async fn get_event(event: Path<i32>, state: Data<AppState>, req: HttpRequest
     }
 }
 
-#[get("/event/")]
+#[get("/event/name/{name}")]
+pub async fn get_event_by_name(event_name: Path<String>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+    let token = require_permission!(req, "event.view");
+    let event_name = event_name.into_inner();
+
+    let event = Event::get_by_name(&state.pool, &event_name).await;
+
+    if let Ok(mut event) = event {
+        if let Some(event_id) = event.id {
+            if !token.is_valid_for_event(&state.pool, event_id).await {
+                return HttpResponse::NotFound().json(APIError::event_not_found(event_id));
+            }
+        } else {
+            return HttpResponse::NotFound().json(APIError::event_name_not_found(event_name));
+        }
+
+        if !token.has_permission("event.view.sensitive") {
+            event.api_token = None
+        }
+        HttpResponse::Ok().json(event)
+    } else {
+        error!("{:?}", event);
+        HttpResponse::NotFound().json(APIError::event_name_not_found(event_name))
+    }
+}
+
+#[get("/event")]
 pub async fn get_events(state: Data<AppState>, req: HttpRequest) -> HttpResponse {
     let token = require_permission!(req, "event.view.all");
 
