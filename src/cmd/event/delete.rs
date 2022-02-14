@@ -1,4 +1,3 @@
-use anyhow::bail;
 use crate::cmd::{APICommand, deleted};
 use clap::Parser;
 use crate::client::PolarisClient;
