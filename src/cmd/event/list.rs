@@ -1,6 +1,6 @@
-use clap::Parser;
 use crate::client::PolarisClient;
-use crate::cmd::{APICommand, output_objects};
+use crate::cmd::{output_objects, APICommand};
+use clap::Parser;
 
 #[derive(Debug, Parser)]
 pub struct EventList {}

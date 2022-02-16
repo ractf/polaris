@@ -1,6 +1,6 @@
-use crate::cmd::{APICommand, deleted};
-use clap::Parser;
 use crate::client::PolarisClient;
+use crate::cmd::{deleted, APICommand};
+use clap::Parser;
 
 #[derive(Debug, Parser)]
 pub struct EventDelete {

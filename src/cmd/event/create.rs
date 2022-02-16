@@ -1,8 +1,8 @@
-use crate::cmd::{APICommand, output_object};
 use crate::client::PolarisClient;
+use crate::cmd::{output_object, APICommand};
 use crate::data::event::Event;
-use clap::Parser;
 use chrono::prelude::*;
+use clap::Parser;
 
 #[derive(Clone, Debug, Parser)]
 pub struct EventCreate {

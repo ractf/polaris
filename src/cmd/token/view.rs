@@ -1,5 +1,5 @@
 use crate::client::PolarisClient;
-use crate::cmd::{APICommand, output_object};
+use crate::cmd::{output_object, APICommand};
 use clap::Parser;
 
 #[derive(Debug, Parser)]

@@ -8,11 +8,16 @@ mod token;
 mod whoami;
 
 use crate::api::auth::bearer_auth_validator;
-use crate::api::event::{create_event, delete_event, get_event, get_event_by_name, get_events, update_event};
+use crate::api::event::{
+    create_event, delete_event, get_event, get_event_by_name, get_events, update_event,
+};
 use crate::api::registry_tokens::{
     create_registry_token, delete_registry_token, get_registry_token, get_registry_tokens,
 };
-use crate::api::token::{auth_token_for_event, create_token, delete_token, get_token, get_token_by_bearer, get_token_by_name, get_tokens, token_is_valid_for_event};
+use crate::api::token::{
+    auth_token_for_event, create_token, delete_token, get_token, get_token_by_bearer,
+    get_token_by_name, get_tokens, token_is_valid_for_event,
+};
 use crate::api::whoami::whoami as whoami_route;
 use crate::config::Config;
 use actix_web::web::{scope, Data};

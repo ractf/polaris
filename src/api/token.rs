@@ -67,7 +67,11 @@ pub async fn get_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -
 }
 
 #[get("/token/bearer/{bearer}")]
-pub async fn get_token_by_bearer(bearer: Path<String>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+pub async fn get_token_by_bearer(
+    bearer: Path<String>,
+    state: Data<AppState>,
+    req: HttpRequest,
+) -> HttpResponse {
     require_permission!(req, "root");
 
     let bearer = bearer.into_inner();
@@ -115,7 +119,7 @@ pub async fn token_is_valid_for_event(
     event_id: Path<i32>,
     token: Json<Token>,
     state: Data<AppState>,
-    req: HttpRequest
+    req: HttpRequest,
 ) -> HttpResponse {
     require_permission!(req, "root");
 
@@ -130,7 +134,7 @@ pub async fn auth_token_for_event(
     event_id: Path<i32>,
     token: Json<Token>,
     state: Data<AppState>,
-    req: HttpRequest
+    req: HttpRequest,
 ) -> HttpResponse {
     require_permission!(req, "root");
 

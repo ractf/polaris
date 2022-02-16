@@ -1,9 +1,9 @@
-use actix_web::{delete, get, HttpMessage, HttpRequest, HttpResponse, post, put};
 use actix_web::web::{Data, Json, Path};
+use actix_web::{delete, get, post, put, HttpMessage, HttpRequest, HttpResponse};
 use tracing::{error, info};
 
-use crate::api::AppState;
 use crate::api::error::APIError;
+use crate::api::AppState;
 use crate::data::event::Event;
 use crate::data::token::Token;
 use crate::require_permission;
@@ -70,7 +70,11 @@ pub async fn get_event(event: Path<i32>, state: Data<AppState>, req: HttpRequest
 }
 
 #[get("/event/name/{name}")]
-pub async fn get_event_by_name(event_name: Path<String>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+pub async fn get_event_by_name(
+    event_name: Path<String>,
+    state: Data<AppState>,
+    req: HttpRequest,
+) -> HttpResponse {
     let token = require_permission!(req, "event.view");
     let event_name = event_name.into_inner();
 

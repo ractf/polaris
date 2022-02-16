@@ -1,5 +1,5 @@
 use crate::client::PolarisClient;
-use crate::cmd::{APICommand, output_object};
+use crate::cmd::{output_object, APICommand};
 use crate::data::token::CreateableToken;
 use chrono::prelude::*;
 use clap::Parser;
@@ -33,6 +33,6 @@ impl From<TokenCreate> for CreateableToken {
 impl APICommand for TokenCreate {
     async fn run(&self, client: PolarisClient, json: bool) -> anyhow::Result<()> {
         let token = client.create_token(self.clone().into()).await?;
-        output_object( token, json)
+        output_object(token, json)
     }
 }

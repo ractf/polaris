@@ -1,5 +1,6 @@
 //! Database models related to API tokens
 
+use crate::cmd::sep;
 use anyhow::Result;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
@@ -7,7 +8,6 @@ use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use std::fmt;
 use std::fmt::Formatter;
-use crate::cmd::sep;
 
 /// A token that can be used to access the Polaris API
 #[derive(Serialize, Deserialize, Debug, Clone)]

@@ -1,12 +1,12 @@
 //! Database models related to events
 
+use crate::cmd::sep;
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use std::fmt;
 use std::fmt::Formatter;
-use crate::cmd::sep;
 
 /// Database model for an Event
 #[derive(Debug, Deserialize, Serialize)]

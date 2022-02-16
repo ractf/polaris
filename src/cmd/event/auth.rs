@@ -1,9 +1,9 @@
-use crate::cmd::APICommand;
 use crate::client::PolarisClient;
+use crate::cmd::APICommand;
 use crate::data::event::Event;
 use crate::data::token::Token;
-use clap::Parser;
 use chrono::prelude::*;
+use clap::Parser;
 
 #[derive(Debug, Parser)]
 pub struct AuthManage {

@@ -5,15 +5,15 @@ mod login;
 mod run;
 mod token;
 
-use std::fmt::Display;
 use crate::client::PolarisClient;
+use crate::cmd::event::Event;
 use crate::cmd::login::Login;
 use crate::cmd::run::Run;
 use crate::cmd::token::Token;
-use crate::cmd::event::Event;
 use anyhow::Result;
 use clap::Parser;
 use serde::Serialize;
+use std::fmt::Display;
 
 /// Trait implemented by all subcommands of `polaris` to define a common interface
 #[async_trait::async_trait(?Send)]
@@ -82,7 +82,7 @@ macro_rules! output_object {
         }
 
         Ok(())
-    }}
+    }};
 }
 
 pub fn output_object<T: Serialize + Display>(obj: T, json: bool) -> Result<()> {
