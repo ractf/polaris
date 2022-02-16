@@ -77,7 +77,14 @@ impl PolarisClient {
         if response.status().is_success() {
             Ok(response.json().await?)
         } else if response.status() == StatusCode::UNAUTHORIZED {
-            Err(PolarisError::Unauthorized(response.text().await?))
+            let err_desc = response
+                .headers()
+                .get("www-authenticate")
+                .and_then(|hv| hv.to_str().ok())
+                .and_then(|s| s.split_once('='))
+                .map(|(_, s)| s.to_string());
+
+            Err(PolarisError::Unauthorized(err_desc))
         } else {
             Err(PolarisError::APIError(response.json().await?))
         }
