@@ -9,7 +9,7 @@ pub type Result<T> = std::result::Result<T, PolarisError>;
 pub enum PolarisError {
     APIError(APIError),
     UnknownError(anyhow::Error),
-    Unauthorized,
+    Unauthorized(String),
 }
 
 impl Display for PolarisError {
@@ -22,8 +22,8 @@ impl Display for PolarisError {
                 writeln!(f, "{}", error)?;
             }
 
-            PolarisError::Unauthorized => {
-                writeln!(f, "Permission denied.")?;
+            PolarisError::Unauthorized(error) => {
+                writeln!(f, "Permission denied: {}.", error)?;
             }
         }
         Ok(())
