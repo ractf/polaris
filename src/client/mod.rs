@@ -9,7 +9,7 @@ use crate::data::event::Event;
 use crate::data::registry::RegistryToken;
 use crate::data::token::{CreateableToken, Token};
 use reqwest::header::HeaderMap;
-use reqwest::{Client, ClientBuilder, Response};
+use reqwest::{Client, ClientBuilder, Response, StatusCode};
 use serde::de::DeserializeOwned;
 use std::fmt::Display;
 
@@ -76,6 +76,8 @@ impl PolarisClient {
     async fn parse_response<T: DeserializeOwned>(&self, response: Response) -> Result<T> {
         if response.status().is_success() {
             Ok(response.json().await?)
+        } else if response.status() == StatusCode::UNAUTHORIZED {
+            Err(PolarisError::Unauthorized)
         } else {
             Err(PolarisError::APIError(response.json().await?))
         }
