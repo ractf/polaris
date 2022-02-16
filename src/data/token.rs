@@ -77,10 +77,10 @@ impl Token {
     }
 
     /// Get a token from the token's name
-    pub async fn get_by_name(pool: &PgPool, name: String) -> Result<Token> {
+    pub async fn get_by_name<T: AsRef<str>>(pool: &PgPool, name: T) -> Result<Token> {
         let result = sqlx::query!(
             "SELECT id, name, token, permissions, issued, expiry FROM token WHERE name=$1",
-            name
+            name.as_ref()
         )
         .fetch_one(pool)
         .await?;
@@ -96,10 +96,10 @@ impl Token {
     }
 
     /// Get a token from a Bearer token
-    pub async fn get_by_token(pool: &PgPool, token: String) -> Result<Token> {
+    pub async fn get_by_token<T: AsRef<str>>(pool: &PgPool, token: T) -> Result<Token> {
         let result = sqlx::query!(
             "SELECT id, name, token, permissions, issued, expiry FROM token WHERE token=$1",
-            token
+            token.as_ref()
         )
         .fetch_one(pool)
         .await?;

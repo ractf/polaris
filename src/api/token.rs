@@ -66,6 +66,20 @@ pub async fn get_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -
     }
 }
 
+#[get("/token/bearer/{bearer}")]
+pub async fn get_token_by_bearer(bearer: Path<String>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+    require_permission!(req, "root");
+
+    let bearer = bearer.into_inner();
+    let token = Token::get_by_token(&state.pool, bearer.as_str()).await;
+
+    if let Ok(tok) = token {
+        HttpResponse::Ok().json(tok)
+    } else {
+        HttpResponse::InternalServerError().json(APIError::resource_name_not_found(bearer))
+    }
+}
+
 #[get("/token/name/{name}")]
 pub async fn get_token_by_name(
     name: Path<String>,
@@ -75,7 +89,7 @@ pub async fn get_token_by_name(
     require_permission!(req, "root");
 
     let token_name = name.into_inner();
-    if let Ok(token) = Token::get_by_name(&state.pool, token_name.clone()).await {
+    if let Ok(token) = Token::get_by_name(&state.pool, token_name.as_str()).await {
         HttpResponse::Ok().json(token)
     } else {
         HttpResponse::InternalServerError().json(APIError::resource_name_not_found(token_name))
@@ -93,5 +107,39 @@ pub async fn delete_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest
         HttpResponse::Ok().finish()
     } else {
         HttpResponse::InternalServerError().json(APIError::resource_not_found(token_id))
+    }
+}
+
+#[post("/token/is_valid/{event_id}")]
+pub async fn token_is_valid_for_event(
+    event_id: Path<i32>,
+    token: Json<Token>,
+    state: Data<AppState>,
+    req: HttpRequest
+) -> HttpResponse {
+    require_permission!(req, "root");
+
+    let event_id = event_id.into_inner();
+    let result = token.is_valid_for_event(&state.pool, event_id).await;
+
+    HttpResponse::Ok().json(result)
+}
+
+#[post("/token/auth/{event_id}")]
+pub async fn auth_token_for_event(
+    event_id: Path<i32>,
+    token: Json<Token>,
+    state: Data<AppState>,
+    req: HttpRequest
+) -> HttpResponse {
+    require_permission!(req, "root");
+
+    let event_id = event_id.into_inner();
+    let result = token.add_event(&state.pool, event_id).await;
+
+    if result.is_ok() {
+        HttpResponse::Ok().json(())
+    } else {
+        HttpResponse::InternalServerError().json(APIError::resource_not_found(event_id))
     }
 }

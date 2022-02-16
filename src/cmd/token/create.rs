@@ -15,8 +15,8 @@ pub struct TokenCreate {
     expiry: Option<DateTime<FixedOffset>>,
 
     /// Token Permissions
-    #[clap(long)]
-    permissions: String,
+    #[clap(long, use_delimiter = true)]
+    permissions: Vec<String>,
 }
 
 impl From<TokenCreate> for CreateableToken {
@@ -24,7 +24,7 @@ impl From<TokenCreate> for CreateableToken {
         Self {
             name: t.name,
             expiry: t.expiry.map(Into::into),
-            permissions: t.permissions.split(',').map(String::from).collect(),
+            permissions: t.permissions,
         }
     }
 }

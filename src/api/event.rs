@@ -1,11 +1,12 @@
-use crate::api::error::APIError;
+use actix_web::{delete, get, HttpMessage, HttpRequest, HttpResponse, post, put};
+use actix_web::web::{Data, Json, Path};
+use tracing::{error, info};
+
 use crate::api::AppState;
+use crate::api::error::APIError;
 use crate::data::event::Event;
 use crate::data::token::Token;
 use crate::require_permission;
-use actix_web::web::{Data, Json, Path};
-use actix_web::{delete, get, post, put, HttpMessage, HttpRequest, HttpResponse};
-use tracing::{error, info};
 
 #[post("/event")]
 pub async fn create_event(

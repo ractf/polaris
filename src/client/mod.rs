@@ -148,9 +148,24 @@ impl PolarisClient {
         get!(self, "/token/name/{name}")
     }
 
+    /// Get token by bearer
+    pub async fn get_token_by_bearer<T: Display + AsRef<str>>(&self, bearer: T) -> Result<Token> {
+        get!(self, "/token/bearer/{bearer}")
+    }
+
     /// Delete token by ID
     pub async fn delete_token(&self, id: i32) -> Result<()> {
         delete!(self, "/token/{id}")
+    }
+
+    /// Authorize a token for an event
+    pub async fn auth_token_for_event(&self, event_id: i32, token: &Token) -> Result<()> {
+        post!(self, token, "/token/auth/{event_id}")
+    }
+
+    /// Is a token authorized for an event
+    pub async fn token_is_valid_for_event(&self, event_id: i32, token: &Token) -> Result<bool> {
+        post!(self, token, "/token/is_valid/{event_id}")
     }
 
     /// Get the current token
