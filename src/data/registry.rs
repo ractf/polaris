@@ -91,10 +91,13 @@ impl RegistryToken {
     }
 
     /// Check if a human readable name is taken
-    pub async fn is_name_taken(pool: &PgPool, name: &String) -> Result<bool> {
-        let result = sqlx::query!("SELECT id FROM registry_tokens WHERE name=$1", name)
-            .fetch_optional(pool)
-            .await?;
+    pub async fn is_name_taken<T: AsRef<str>>(pool: &PgPool, name: T) -> Result<bool> {
+        let result = sqlx::query!(
+            "SELECT id FROM registry_tokens WHERE name=$1",
+            name.as_ref()
+        )
+        .fetch_optional(pool)
+        .await?;
         Ok(result.is_some())
     }
 

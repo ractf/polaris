@@ -54,7 +54,7 @@ macro_rules! delete {
     ($dst:expr, $($arg:tt)*) => {{
         let url = url!($dst, $($arg)*);
         let response = $dst.client.delete(url).send().await?;
-        $dst.parse_empty_response(response).await
+        $dst.parse_response(response).await
     }}
 }
 
@@ -85,14 +85,6 @@ impl PolarisClient {
                 .map(|(_, s)| s.to_string());
 
             Err(PolarisError::Unauthorized(err_desc))
-        } else {
-            Err(PolarisError::APIError(response.json().await?))
-        }
-    }
-
-    async fn parse_empty_response(&self, response: Response) -> Result<()> {
-        if response.status().is_success() {
-            Ok(())
         } else {
             Err(PolarisError::APIError(response.json().await?))
         }
@@ -161,6 +153,11 @@ impl PolarisClient {
     /// Authorize a token for an event
     pub async fn auth_token_for_event(&self, event_id: i32, token: &Token) -> Result<()> {
         post!(self, token, "/token/auth/{event_id}")
+    }
+
+    /// Authorize a token for an event
+    pub async fn revoke_token_for_event(&self, event_id: i32, token: &Token) -> Result<()> {
+        post!(self, token, "/token/revoke/{event_id}")
     }
 
     /// Is a token authorized for an event

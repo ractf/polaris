@@ -1,6 +1,6 @@
 //! Database models related to API tokens
 
-use crate::cmd::sep;
+use crate::data::sep;
 use anyhow::Result;
 use nanoid::nanoid;
 use serde::{Deserialize, Serialize};
@@ -133,25 +133,18 @@ impl Token {
         )
         .fetch_optional(pool)
         .await;
-        if let Ok(result) = result {
-            result.is_some()
-        } else {
-            false
-        }
+        result.ok().flatten().is_some()
     }
 
     /// Get all events the token is valid in
     pub async fn get_events(&self, pool: &PgPool) -> Result<Vec<i32>> {
-        let mut events: Vec<i32> = vec![];
         let results = sqlx::query!(
             "SELECT event_id FROM token_events WHERE token_id=$1",
             self.id
         )
         .fetch_all(pool)
         .await?;
-        for result in results {
-            events.push(result.event_id);
-        }
+        let events = results.into_iter().map(|r| r.event_id).collect();
         Ok(events)
     }
 
@@ -186,8 +179,8 @@ impl Token {
     }
 
     /// Check if a human readable name is taken
-    pub async fn is_name_taken(pool: &PgPool, name: &String) -> Result<bool> {
-        let result = sqlx::query!("SELECT id FROM token WHERE name=$1", name)
+    pub async fn is_name_taken<T: AsRef<str>>(pool: &PgPool, name: T) -> Result<bool> {
+        let result = sqlx::query!("SELECT id FROM token WHERE name=$1", name.as_ref())
             .fetch_optional(pool)
             .await?;
         Ok(result.is_some())
@@ -199,26 +192,34 @@ impl Token {
             sqlx::query!("SELECT id, name, token, permissions, issued, expiry FROM token")
                 .fetch_all(pool)
                 .await?;
-        let mut tokens = Vec::with_capacity(results.len());
-        for result in results {
-            tokens.push(Token {
+        let tokens = results
+            .into_iter()
+            .map(|result| Token {
                 id: Some(result.id),
                 name: result.name,
                 token: result.token,
                 permissions: result.permissions,
                 issued: result.issued,
                 expiry: result.expiry,
-            });
-        }
+            })
+            .collect();
         Ok(tokens)
     }
 
     /// Delete a token by id
-    pub async fn delete_by_id(pool: &PgPool, id: i32) -> Result<()> {
+    pub async fn delete_id(pool: &PgPool, id: i32) -> Result<()> {
         sqlx::query!("DELETE FROM token WHERE id=$1", id)
             .execute(pool)
             .await?;
         Ok(())
+    }
+
+    /// Check if a token id is stored in the database
+    pub async fn id_exists(pool: &PgPool, id: i32) -> Result<bool> {
+        let result = sqlx::query!("SELECT id FROM token WHERE id=$1", id)
+            .fetch_optional(pool)
+            .await?;
+        Ok(result.is_some())
     }
 }
 

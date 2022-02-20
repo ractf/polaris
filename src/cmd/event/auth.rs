@@ -1,9 +1,9 @@
+use std::collections::HashMap;
 use crate::client::PolarisClient;
 use crate::cmd::APICommand;
-use crate::data::event::Event;
 use crate::data::token::Token;
-use chrono::prelude::*;
 use clap::Parser;
+use serde_json::json;
 
 #[derive(Debug, Parser)]
 pub struct AuthManage {
@@ -22,6 +22,14 @@ pub struct AuthManage {
     /// The names of the events to authorize the token for
     #[clap(short, long, use_delimiter = true)]
     pub authorize: Vec<String>,
+
+    /// The names of the events to revoke the token for
+    #[clap(short, long, use_delimiter = true)]
+    pub revoke: Vec<String>,
+
+    /// The names of the events to check the permission for
+    #[clap(short, long, use_delimiter = true)]
+    pub check: Vec<String>,
 }
 
 impl AuthManage {
@@ -45,21 +53,53 @@ impl APICommand for AuthManage {
     async fn run(&self, client: PolarisClient, json: bool) -> anyhow::Result<()> {
         let token = self.get_token(&client).await?;
 
+        let mut warnings: Vec<String> = Vec::new();
         for event_name in &self.authorize {
             let event = client.get_event_by_name(event_name).await?;
             let event_id = event.id.unwrap();
-            let res = client.auth_token_for_event(event_id, &token).await;
 
-            // check whether the token is valid for the event, if it is then we tried to add the
-            // row again which violated the unique constraint
+            // check whether the token is already valid for the event, if it is then we make emit
+            // a warning and continue the loop
             let valid_for_event = client.token_is_valid_for_event(event_id, &token).await?;
-            if res.is_err() && valid_for_event {
-                println!("Encountered error authorizing the token for event {event_name}.");
-                println!("This token is already valid for this event.");
-            } else {
-                // propagate the error
-                let _ = res?;
+            if valid_for_event {
+                let warning = format!("Token is already valid for event `{event_name}`.");
+                if json {
+                    warnings.push(warning);
+                } else {
+                    println!("{}", warning)
+                }
+                continue
             }
+
+            client.auth_token_for_event(event_id, &token).await?;
+        }
+
+        for event_name in &self.revoke {
+            let event = client.get_event_by_name(event_name).await?;
+            let event_id = event.id.unwrap();
+            client.revoke_token_for_event(event_id, &token).await?;
+        }
+
+        let mut valid: HashMap<String, bool> = HashMap::new();
+        for event_name in &self.check {
+            let event = client.get_event_by_name(event_name).await?;
+            let event_id = event.id.unwrap();
+            let is_valid = client.token_is_valid_for_event(event_id, &token).await?;
+            if json {
+                valid.insert(event_name.clone(), is_valid);
+            } else if is_valid {
+                println!("Token `{}` is valid for Event `{event_name}`", token.name);
+            } else {
+                println!("Token `{}` is not valid for Event `{event_name}`", token.name);
+            }
+        }
+
+        if json {
+            let val = json!({
+                "warnings": warnings,
+                "token_is_valid_for": valid,
+            });
+            println!("{}", serde_json::to_string(&val)?);
         }
 
         Ok(())

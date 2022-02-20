@@ -14,6 +14,7 @@ use anyhow::Result;
 use clap::Parser;
 use serde::Serialize;
 use std::fmt::Display;
+use serde_json::json;
 
 /// Trait implemented by all subcommands of `polaris` to define a common interface
 #[async_trait::async_trait(?Send)]
@@ -34,7 +35,7 @@ pub trait APICommand {
 macro_rules! dispatch {
     ($y:ident, $dst:expr, $($x:ident),*) => {
         match $dst {
-            $($y::$x(cmd) => cmd.run().await?,)*
+            $($y::$x(cmd) => cmd.run().await,)*
         }
     };
 }
@@ -72,19 +73,6 @@ macro_rules! api_dispatch {
     };
 }
 
-#[macro_export]
-macro_rules! output_object {
-    ($fmt:tt, $obj:expr, $json:expr) => {{
-        if $json {
-            println!("{}", serde_json::to_string(&$obj)?);
-        } else {
-            println!($fmt, $obj);
-        }
-
-        Ok(())
-    }};
-}
-
 pub fn output_object<T: Serialize + Display>(obj: T, json: bool) -> Result<()> {
     if json {
         println!("{}", serde_json::to_string(&obj)?);
@@ -109,16 +97,15 @@ pub fn output_objects<T: Serialize + Display>(objs: Vec<T>, json: bool) -> Resul
 
 pub fn deleted<T: Display>(name: T, json: bool) -> Result<()> {
     if json {
-        println!(r#"{{"message":"{name} Deleted."}}"#);
+        let val = json!({
+            "message": format!("{name} Deleted."),
+        });
+        println!("{}", serde_json::to_string(&val)?);
     } else {
         println!("{name} Deleted.")
     }
 
     Ok(())
-}
-
-pub fn sep(f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-    write!(f, "{}", if f.alternate() { "\n" } else { ", " })
 }
 
 /// RACTF Polaris

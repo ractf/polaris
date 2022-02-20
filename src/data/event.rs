@@ -1,6 +1,6 @@
 //! Database models related to events
 
-use crate::cmd::sep;
+use crate::data::sep;
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 use sqlx::types::chrono::{DateTime, Utc};
@@ -71,8 +71,8 @@ impl Event {
     }
 
     /// Get an event from a given name
-    pub async fn get_by_name(pool: &PgPool, name: &str) -> Result<Event> {
-        let result = sqlx::query!("SELECT id, name, start_time, end_time, max_cpu, max_ram, api_url, api_token FROM event WHERE name=$1", name).fetch_one(pool).await?;
+    pub async fn get_by_name<T: AsRef<str>>(pool: &PgPool, name: T) -> Result<Event> {
+        let result = sqlx::query!("SELECT id, name, start_time, end_time, max_cpu, max_ram, api_url, api_token FROM event WHERE name=$1", name.as_ref()).fetch_one(pool).await?;
         Ok(Event {
             id: Some(result.id),
             name: result.name,
@@ -102,8 +102,8 @@ impl Event {
     }
 
     /// Check if an event name is taken
-    pub async fn is_name_taken(pool: &PgPool, name: &String) -> Result<bool> {
-        let result = sqlx::query!("SELECT id FROM event WHERE name=$1", name)
+    pub async fn is_name_taken<T: AsRef<str>>(pool: &PgPool, name: T) -> Result<bool> {
+        let result = sqlx::query!("SELECT id FROM event WHERE name=$1", name.as_ref())
             .fetch_optional(pool)
             .await?;
         Ok(result.is_some())

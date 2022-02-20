@@ -6,7 +6,7 @@ use crate::api::error::APIError;
 use crate::api::AppState;
 use crate::data::event::Event;
 use crate::data::token::Token;
-use crate::require_permission;
+use crate::{handle_result, require_permission};
 
 #[post("/event")]
 pub async fn create_event(
@@ -23,17 +23,15 @@ pub async fn create_event(
         return HttpResponse::BadRequest().json(APIError::invalid_field("id"));
     }
 
-    if let Ok(taken) = Event::is_name_taken(&state.pool, &event.name).await {
-        if taken {
-            info!("Event submitted with in use name, rejecting.");
-            return HttpResponse::BadRequest().json(APIError::name_taken(event.name));
-        }
+    if let Ok(true) = Event::is_name_taken(&state.pool, &event.name).await {
+        info!("Event submitted with in use name, rejecting.");
+        return HttpResponse::BadRequest().json(APIError::name_taken(event.name));
     }
 
     info!("Creating event {}.", event.name);
     let result = event.save(&state.pool).await;
-    if result.is_err() {
-        error!("{:?}", result);
+    if let Err(e) = result {
+        error!("{:?}", e);
         return HttpResponse::InternalServerError().json(APIError::DatabaseError);
     }
 
@@ -135,13 +133,7 @@ pub async fn delete_event(
         return HttpResponse::NotFound().json(APIError::event_not_found(event_id));
     }
 
-    let event = Event::delete_id(&state.pool, event_id).await;
-
-    if event.is_ok() {
-        HttpResponse::Ok().finish()
-    } else {
-        HttpResponse::InternalServerError().json(APIError::DatabaseError)
-    }
+    handle_result!(Event::delete_id(&state.pool, event_id).await)
 }
 
 #[put("/event")]
@@ -164,11 +156,5 @@ pub async fn update_event(
     }
 
     info!("Updating event {}.", event.name);
-    let result = event.save(&state.pool).await;
-    if result.is_err() {
-        error!("{:?}", result);
-        return HttpResponse::InternalServerError().json(APIError::DatabaseError);
-    }
-
-    HttpResponse::Ok().json(event)
+    handle_result!(event.save(&state.pool).await.map(|_| event))
 }

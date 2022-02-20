@@ -88,12 +88,12 @@ fn setup_logging(config: &Config) -> Result<()> {
     Ok(())
 }
 
-fn log_rotation_from_string(rotation: &String) -> Result<Rotation> {
-    match rotation.to_ascii_lowercase().as_str() {
+fn log_rotation_from_string<T: AsRef<str>>(rotation: T) -> Result<Rotation> {
+    match rotation.as_ref().to_ascii_lowercase().as_str() {
         "daily" => Ok(Rotation::DAILY),
         "hourly" => Ok(Rotation::HOURLY),
         "minutely" => Ok(Rotation::MINUTELY),
         "never" => Ok(Rotation::NEVER),
-        _ => bail!("Invalid log rotation {}", rotation),
+        _ => bail!("Invalid log rotation {}", rotation.as_ref()),
     }
 }
