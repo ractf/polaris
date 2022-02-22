@@ -579,6 +579,68 @@
       ]
     }
   },
+  "858623c26764a0ce26cd32984b49ded35109672776aba90a890633030c4ab4e7": {
+    "query": "SELECT event.id, name, start_time, end_time, max_cpu, max_ram, api_url, api_token FROM event, token_events WHERE token_events.token_id = $1 AND event.id = token_events.event_id",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "start_time",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "end_time",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 4,
+          "name": "max_cpu",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 5,
+          "name": "max_ram",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 6,
+          "name": "api_url",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 7,
+          "name": "api_token",
+          "type_info": "Varchar"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
   "866fbcfd215caa2c2dcc78941fae948ae601b34ef255044815e7e5bea871ea43": {
     "query": "SELECT id FROM registry_tokens WHERE name=$1",
     "describe": {
@@ -656,6 +718,56 @@
       },
       "nullable": [
         false
+      ]
+    }
+  },
+  "c45494c0fde2965b39062555e4cf8bd2415302129650c404f8e518c76284c103": {
+    "query": "SELECT token.id, name, token, permissions, issued, expiry FROM token, token_events WHERE token_events.event_id = $1 AND token.id = token_events.token_id",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Int4"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 2,
+          "name": "token",
+          "type_info": "Varchar"
+        },
+        {
+          "ordinal": 3,
+          "name": "permissions",
+          "type_info": "TextArray"
+        },
+        {
+          "ordinal": 4,
+          "name": "issued",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "expiry",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int4"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        true,
+        true
       ]
     }
   },

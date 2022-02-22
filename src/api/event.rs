@@ -158,3 +158,14 @@ pub async fn update_event(
     info!("Updating event {}.", event.name);
     handle_result!(event.save(&state.pool).await.map(|_| event))
 }
+
+#[get("/event/{id}/tokens")]
+pub async fn list_tokens_valid_for_event(
+    id: Path<i32>,
+    state: Data<AppState>,
+    req: HttpRequest,
+) -> HttpResponse {
+    require_permission!(req, "root");
+    let event_id = id.into_inner();
+    handle_result!(Event::get_all_valid_tokens(&state.pool, event_id).await)
+}

@@ -7,6 +7,7 @@ use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use std::fmt;
 use std::fmt::Formatter;
+use crate::data::token::Token;
 
 /// Database model for an Event
 #[derive(Debug, Deserialize, Serialize)]
@@ -127,6 +128,26 @@ impl Event {
             });
         }
         Ok(events)
+    }
+
+    /// Get all events in the database
+    pub async fn get_all_valid_tokens(pool: &PgPool, id: i32) -> Result<Vec<Token>> {
+        let results = sqlx::query!("SELECT token.id, name, token, permissions, issued, expiry \
+                                    FROM token, token_events \
+                                    WHERE token_events.event_id = $1 \
+                                        AND token.id = token_events.token_id", id)
+            .fetch_all(pool).await?;
+        let tokens = results.into_iter()
+            .map(|result| Token {
+                id: Some(result.id),
+                name: result.name,
+                token: result.token,
+                permissions: result.permissions,
+                issued: result.issued,
+                expiry: result.expiry,
+            })
+            .collect();
+        Ok(tokens)
     }
 
     /// Check if an event id is stored in the database

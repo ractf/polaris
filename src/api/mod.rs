@@ -9,9 +9,7 @@ mod whoami;
 
 use crate::api::auth::bearer_auth_validator;
 use crate::api::error::APIError;
-use crate::api::event::{
-    create_event, delete_event, get_event, get_event_by_name, get_events, update_event,
-};
+use crate::api::event::{create_event, delete_event, get_event, get_event_by_name, get_events, list_tokens_valid_for_event, update_event};
 use crate::api::registry_tokens::{
     create_registry_token, delete_registry_token, get_registry_token, get_registry_tokens,
 };
@@ -64,6 +62,7 @@ pub async fn start_api(config: &Config, pool: &PgPool) -> Result<()> {
                     .service(delete_token)
                     .service(token_is_valid_for_event)
                     .service(list_events_token_is_valid_for)
+                    .service(list_tokens_valid_for_event)
                     .service(auth_token_for_event)
                     .service(revoke_token_for_event)
                     .service(whoami_route)
