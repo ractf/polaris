@@ -8,6 +8,7 @@ use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::PgPool;
 use std::fmt;
 use std::fmt::Formatter;
+use crate::data::event::Event;
 
 /// A token that can be used to access the Polaris API
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -204,6 +205,31 @@ impl Token {
             })
             .collect();
         Ok(tokens)
+    }
+
+    /// Get all events the given token is valid for
+    pub async fn list_events_token_valid_for(&self, pool: &PgPool) -> Result<Vec<Event>> {
+        let results =
+            sqlx::query!("SELECT event.id, name, start_time, end_time, max_cpu, max_ram, api_url, api_token \
+                          FROM event, token_events \
+                          WHERE token_events.token_id = $1 \
+                                AND event.id = token_events.event_id", self.id.unwrap())
+                .fetch_all(pool)
+                .await?;
+        let events = results
+            .into_iter()
+            .map(|result| Event {
+                id: Some(result.id),
+                name: result.name,
+                start_time: result.start_time,
+                end_time: result.end_time,
+                max_cpu: result.max_cpu,
+                max_ram: result.max_ram,
+                api_url: result.api_url,
+                api_token: result.api_token,
+            })
+            .collect();
+        Ok(events)
     }
 
     /// Delete a token by id

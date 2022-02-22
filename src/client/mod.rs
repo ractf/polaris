@@ -165,6 +165,11 @@ impl PolarisClient {
         post!(self, token, "/token/is_valid/{event_id}")
     }
 
+    /// List all events the token is valid for
+    pub async fn list_events_token_valid_for(&self, token: &Token) -> Result<Vec<Event>> {
+        post!(self, token, "/token/valid_for")
+    }
+
     /// Get the current token
     pub async fn whoami(&self) -> Result<Token> {
         get!(self, "/whoami")

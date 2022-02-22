@@ -15,7 +15,7 @@ use crate::api::event::{
 use crate::api::registry_tokens::{
     create_registry_token, delete_registry_token, get_registry_token, get_registry_tokens,
 };
-use crate::api::token::{auth_token_for_event, create_token, delete_token, get_token, get_token_by_bearer, get_token_by_name, get_tokens, revoke_token_for_event, token_is_valid_for_event};
+use crate::api::token::{auth_token_for_event, create_token, delete_token, get_token, get_token_by_bearer, get_token_by_name, get_tokens, list_events_token_is_valid_for, revoke_token_for_event, token_is_valid_for_event};
 use crate::api::whoami::whoami as whoami_route;
 use crate::config::Config;
 use actix_web::web::{scope, Data};
@@ -63,6 +63,7 @@ pub async fn start_api(config: &Config, pool: &PgPool) -> Result<()> {
                     .service(get_token_by_bearer)
                     .service(delete_token)
                     .service(token_is_valid_for_event)
+                    .service(list_events_token_is_valid_for)
                     .service(auth_token_for_event)
                     .service(revoke_token_for_event)
                     .service(whoami_route)

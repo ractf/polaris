@@ -30,6 +30,10 @@ pub struct AuthManage {
     /// The names of the events to check the permission for
     #[clap(short, long, use_delimiter = true)]
     pub check: Vec<String>,
+
+    /// List all of the events a token is valid for
+    #[clap(long)]
+    pub list_valid: bool,
 }
 
 impl AuthManage {
@@ -94,10 +98,25 @@ impl APICommand for AuthManage {
             }
         }
 
+        let valid_for = if self.list_valid {
+            let events = client.list_events_token_valid_for(&token).await?;
+            if json {
+                events
+            } else {
+                for event in events {
+                    println!("Token is valid for: {}", event);
+                }
+                vec![]
+            }
+        } else {
+            vec![]
+        };
+
         if json {
             let val = json!({
                 "warnings": warnings,
-                "token_is_valid_for": valid,
+                "token_is_valid_for_check": valid,
+                "token_is_valid_for_list": valid_for,
             });
             println!("{}", serde_json::to_string(&val)?);
         }

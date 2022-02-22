@@ -116,3 +116,13 @@ pub async fn revoke_token_for_event(
     assert_event_id_exists!(&state.pool, event_id);
     handle_result!(token.remove_event(&state.pool, event_id).await, event_id)
 }
+
+#[post("/token/valid_for")]
+pub async fn list_events_token_is_valid_for(
+    token: Json<Token>,
+    state: Data<AppState>,
+    req: HttpRequest,
+) -> HttpResponse {
+    require_permission!(req, "root");
+    handle_result!(token.list_events_token_valid_for(&state.pool).await)
+}
