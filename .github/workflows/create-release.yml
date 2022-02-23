@@ -55,10 +55,10 @@ jobs:
       - name: Cache Cargo build
         uses: actions/cache@v1
         with:
-          path: target/debug
-          key: ${{ runner.os }}-stable-debug-target-${{ hashFiles('**/Cargo.lock') }}
+          path: target/release
+          key: ${{ runner.os }}-stable-release-target-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-stable-debug-target-
+            ${{ runner.os }}-stable-release-target-
       
       - name: Install Rust
         uses: actions-rs/toolchain@v1
