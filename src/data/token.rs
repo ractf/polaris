@@ -210,10 +210,12 @@ impl Token {
     /// Get all events the given token is valid for
     pub async fn list_events_token_valid_for(&self, pool: &PgPool) -> Result<Vec<Event>> {
         let results =
-            sqlx::query!("SELECT event.id, name, start_time, end_time, max_cpu, max_ram, api_url, api_token \
-                          FROM event, token_events \
-                          WHERE token_events.token_id = $1 \
-                                AND event.id = token_events.event_id", self.id.unwrap())
+            sqlx::query!("SELECT event.id, name, start_time, end_time, max_cpu, \
+                                 max_ram, api_url, api_token \
+                          FROM event \
+                          JOIN token_events \
+                              ON event.id = event_id \
+                              WHERE token_id = $1", self.id)
                 .fetch_all(pool)
                 .await?;
         let events = results

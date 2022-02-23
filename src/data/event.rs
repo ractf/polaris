@@ -133,9 +133,10 @@ impl Event {
     /// Get all events in the database
     pub async fn get_all_valid_tokens(pool: &PgPool, id: i32) -> Result<Vec<Token>> {
         let results = sqlx::query!("SELECT token.id, name, token, permissions, issued, expiry \
-                                    FROM token, token_events \
-                                    WHERE token_events.event_id = $1 \
-                                        AND token.id = token_events.token_id", id)
+                                    FROM token \
+                                    JOIN token_events \
+                                        ON token.id = token_id \
+                                        WHERE event_id = $1", id)
             .fetch_all(pool).await?;
         let tokens = results.into_iter()
             .map(|result| Token {
