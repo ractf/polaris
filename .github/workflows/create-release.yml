@@ -55,10 +55,10 @@ jobs:
       - name: Cache Cargo build
         uses: actions/cache@v1
         with:
-          path: target/debug
-          key: ${{ runner.os }}-stable-debug-target-${{ hashFiles('**/Cargo.lock') }}
+          path: target/release
+          key: ${{ runner.os }}-stable-release-target-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-stable-debug-target-
+            ${{ runner.os }}-stable-release-target-
       
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -68,7 +68,7 @@ jobs:
 
       - name: Setup RPM tools
         if: steps.semver_change.outputs.changed == 'true'
-        run: "dnf install rpmdevtools gcc copr-cli -y && echo '%_topdir %(echo $PWD)/rpmbuild' > $HOME/.rpmmacros && rpmdev-setuptree"
+        run: "dnf install rpmdevtools gcc copr-cli systemd -y && echo '%_topdir %(echo $PWD)/rpmbuild' > $HOME/.rpmmacros && rpmdev-setuptree"
         working-directory: build
 
       - name: Update the Semver in the RPM Spec
@@ -90,6 +90,14 @@ jobs:
         working-directory: build
         env:
           VERSION: ${{ steps.semver.outputs.semver }}
+
+      - name: Install RPM
+        if: steps.semver_change.outputs.changed == 'true'
+        run: dnf install -y ./build/rpmbuild/RPMS/x86_64/polaris-${{ steps.semver.outputs.semver }}-1.x86_64.rpm
+
+      - name: Validate Unit File
+        if: steps.semver_change.outputs.changed == 'true'
+        run: systemd-analyze verify ./build/RESOURCES/usr/lib/systemd/system/polaris.service
 
       - name: Create Sentry release
         if: steps.semver_change.outputs.changed == 'true'
