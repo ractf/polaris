@@ -84,8 +84,12 @@ public class DockerRunner implements Runner<Container> {
         }
 
         var createContainerCmd = dockerClient.createContainerCmd(container.getImage());
+        var hostname = container.getId().split("-")[0] + "-" + instance.getTaskId().toString().split("-")[0] + "-" + instance.getId().split("-")[0];
+        if (hostname.length() > 64) {
+            hostname = hostname.substring(0, 64);
+        }
         createContainerCmd = createContainerCmd
-                .withHostName(container.getId().split("-")[0] + "-" + instance.getTaskId().toString().split("-")[0] + "-" + instance.getId().split("-")[0])
+                .withHostName(hostname)
                 .withEnv(container.getFullEnv())
                 .withLabels(labels)
                 .withExposedPorts(instance.getPortBindings().stream().map(x -> ExposedPort.parse(x.getInternalPort())).collect(Collectors.toList()))
