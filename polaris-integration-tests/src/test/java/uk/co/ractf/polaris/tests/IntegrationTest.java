@@ -10,23 +10,4 @@ import java.io.IOException;
 
 public abstract class IntegrationTest {
 
-    @BeforeAll
-    public static void buildDocker() throws IOException, InterruptedException {
-        new ProcessBuilder("docker-compose", "up", "-d")
-                .directory(new File(".."))
-                .inheritIO()
-                .start()
-                .waitFor();
-        Thread.sleep(3000);
-    }
-
-    @AfterAll
-    public static void teardown() throws IOException, InterruptedException {
-        new ProcessBuilder("docker-compose", "rm", "-sf")
-                .directory(new File(".."))
-                .inheritIO()
-                .start()
-                .waitFor();
-    }
-
 }
