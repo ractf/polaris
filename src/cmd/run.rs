@@ -2,6 +2,12 @@ use crate::api::start_api;
 use crate::cmd::Command;
 use crate::config::Config;
 use crate::data::token::Token;
+use crate::repo::postgres::challenge::PostgresChallengeRepo;
+use crate::repo::postgres::event::PostgresEventRepo;
+use crate::repo::postgres::node::PostgresNodeRepo;
+use crate::repo::postgres::registry::PostgresRegistryTokenRepo;
+use crate::repo::postgres::token::PostgresTokenRepo;
+use crate::sync::start_node_sync;
 use anyhow::{bail, Result};
 use clap::Parser;
 use sqlx::postgres::PgPoolOptions;
@@ -9,8 +15,8 @@ use std::io;
 use std::mem::ManuallyDrop;
 use std::path::PathBuf;
 use std::str::FromStr;
-use tracing::info;
 use tracing::{error, Level};
+use tracing::{info, warn};
 use tracing_appender::rolling::{RollingFileAppender, Rotation};
 use tracing_subscriber::fmt::format::FmtSpan;
 use tracing_subscriber::fmt::writer::MakeWriterExt;
@@ -48,9 +54,28 @@ impl Command for Run {
             error!("There are no API tokens in the database and no bootstrap token is set, the API will be inaccessible.");
         }
 
+        if &config.node.public_ip == "" {
+            warn!("No public IP set in config.");
+        }
+
         info!("Starting Polaris.");
 
-        start_api(&config, &pool).await?;
+        let token_repo = PostgresTokenRepo::new(&pool);
+        let registry_repo = PostgresRegistryTokenRepo::new(&pool);
+        let event_repo = PostgresEventRepo::new(&pool);
+        let node_repo = PostgresNodeRepo::new(&pool);
+        let challenge_repo = PostgresChallengeRepo::new(&pool);
+
+        start_node_sync(node_repo.clone(), &config.node, config.api.bind.clone()).await;
+        start_api(
+            config,
+            token_repo,
+            registry_repo,
+            event_repo,
+            node_repo,
+            challenge_repo,
+        )
+        .await?;
 
         Ok(())
     }
@@ -60,6 +85,8 @@ fn setup_logging(config: &Config) -> Result<()> {
     let stdout_layer = fmt::Layer::new()
         .with_span_events(FmtSpan::FULL)
         .with_writer(io::stdout.with_max_level(Level::from_str(&config.log.level)?));
+
+    println!("{:?}", config);
 
     if let Some(log_path) = &config.log.path {
         let file_appender = RollingFileAppender::new(

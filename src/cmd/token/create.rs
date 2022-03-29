@@ -15,7 +15,7 @@ pub struct TokenCreate {
     expiry: Option<DateTime<FixedOffset>>,
 
     /// Token Permissions
-    #[clap(long, use_delimiter = true)]
+    #[clap(long, use_value_delimiter = true)]
     permissions: Vec<String>,
 }
 

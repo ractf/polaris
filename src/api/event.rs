@@ -1,171 +1,150 @@
-use actix_web::web::{Data, Json, Path};
-use actix_web::{delete, get, post, put, HttpMessage, HttpRequest, HttpResponse};
+use actix_web::http::StatusCode;
+use actix_web::web::{delete, get, post, put, Data, Json, Path, ServiceConfig};
+use actix_web::{HttpRequest, HttpResponse};
 use tracing::{error, info};
 
 use crate::api::error::APIError;
-use crate::api::AppState;
 use crate::data::event::Event;
-use crate::data::token::Token;
-use crate::{handle_result, require_permission};
+use crate::repo::event::EventRepo;
+use crate::repo::token::TokenRepo;
+use crate::{
+    assert_name_not_taken, assert_ok, assert_some, assert_token_valid_for_event,
+    get_object_by_name_or_404, get_object_or_404, handle_result, require_permission,
+    save_object_and_return,
+};
 
-#[post("/event")]
-pub async fn create_event(
+pub fn configure_event_endpoints<T: 'static + EventRepo, R: 'static + TokenRepo>(
+    cfg: &mut ServiceConfig,
+) {
+    cfg.route("/", post().to(create_event::<T, R>))
+        .route("/{id}", get().to(get_event::<T, R>))
+        .route("/name/{name}", get().to(get_event_by_name::<T, R>))
+        .route("/", get().to(get_events::<T>))
+        .route("/{id}", delete().to(delete_event::<T, R>))
+        .route("/{id}", put().to(update_event::<T, R>))
+        .route("/{id}/tokens", get().to(get_valid_tokens::<T>));
+}
+
+pub async fn create_event<T: 'static + EventRepo, R: 'static + TokenRepo>(
     event: Json<Event>,
-    state: Data<AppState>,
+    event_repo: Data<T>,
+    token_repo: Data<R>,
     req: HttpRequest,
 ) -> HttpResponse {
     let token = require_permission!(req, "event.create");
 
-    let mut event = event.into_inner();
+    let event = event.into_inner();
 
-    if event.id.is_some() {
-        info!("Event submitted with set id, rejecting.");
-        return HttpResponse::BadRequest().json(APIError::invalid_field("id"));
-    }
-
-    if let Ok(true) = Event::is_name_taken(&state.pool, &event.name).await {
-        info!("Event submitted with in use name, rejecting.");
-        return HttpResponse::BadRequest().json(APIError::name_taken(event.name));
-    }
+    assert_name_not_taken!(event_repo, event.name);
 
     info!("Creating event {}.", event.name);
-    let result = event.save(&state.pool).await;
-    if let Err(e) = result {
-        error!("{:?}", e);
-        return HttpResponse::InternalServerError().json(APIError::DatabaseError);
-    }
+    let saved_event = assert_ok!(event_repo.save(event).await);
 
-    if let Some(id) = event.id {
-        let result = token.add_event(&state.pool, id).await;
+    let event_id = assert_some!(saved_event.id);
+    if let Some(token_id) = token.id {
+        // We don't error on token not having an id because the bootstrap token exists
+        let result = token_repo.add_event(token_id, event_id).await;
         if result.is_err() {
-            error!("Failed to add event {} to token {}", id, token.name);
+            error!("Failed to add event {} to token {}", event_id, token.name);
         }
     }
 
-    HttpResponse::Ok().json(event)
+    HttpResponse::Ok().json(saved_event)
 }
 
-#[get("/event/{id}")]
-pub async fn get_event(event: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+pub async fn get_event<T: 'static + EventRepo, R: 'static + TokenRepo>(
+    event: Path<i32>,
+    event_repo: Data<T>,
+    token_repo: Data<R>,
+    req: HttpRequest,
+) -> HttpResponse {
     let token = require_permission!(req, "event.view");
     let event_id = event.into_inner();
 
-    if !token.is_valid_for_event(&state.pool, event_id).await {
-        return HttpResponse::NotFound().json(APIError::event_not_found(event_id));
-    }
+    assert_token_valid_for_event!(token_repo, token, event_id);
 
-    let event = Event::get(&state.pool, event_id).await;
+    let mut event = get_object_or_404!(event_repo, event_id);
 
-    if let Ok(mut event) = event {
-        if !token.has_permission("event.view.sensitive") {
-            event.api_token = None
-        }
-        HttpResponse::Ok().json(event)
-    } else {
-        error!("{:?}", event);
-        HttpResponse::NotFound().json(APIError::event_not_found(event_id))
+    if !token.has_permission("event.view.sensitive") {
+        event.api_token = None
     }
+    HttpResponse::Ok().json(event)
 }
 
-#[get("/event/name/{name}")]
-pub async fn get_event_by_name(
+pub async fn get_event_by_name<T: 'static + EventRepo, R: 'static + TokenRepo>(
     event_name: Path<String>,
-    state: Data<AppState>,
+    event_repo: Data<T>,
+    token_repo: Data<R>,
     req: HttpRequest,
 ) -> HttpResponse {
     let token = require_permission!(req, "event.view");
     let event_name = event_name.into_inner();
 
-    let event = Event::get_by_name(&state.pool, &event_name).await;
+    let mut event = get_object_by_name_or_404!(event_repo, event_name);
+    let event_id = assert_some!(event.id);
+    assert_token_valid_for_event!(token_repo, token, event_id);
 
-    if let Ok(mut event) = event {
-        if let Some(event_id) = event.id {
-            if !token.is_valid_for_event(&state.pool, event_id).await {
-                return HttpResponse::NotFound().json(APIError::event_not_found(event_id));
-            }
-        } else {
-            return HttpResponse::NotFound().json(APIError::event_name_not_found(event_name));
-        }
-
-        if !token.has_permission("event.view.sensitive") {
-            event.api_token = None
-        }
-        HttpResponse::Ok().json(event)
-    } else {
-        error!("{:?}", event);
-        HttpResponse::NotFound().json(APIError::event_name_not_found(event_name))
+    if !token.has_permission("event.view.sensitive") {
+        event.api_token = None
     }
+    HttpResponse::Ok().json(event)
 }
 
-#[get("/event")]
-pub async fn get_events(state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+pub async fn get_events<T: 'static + EventRepo>(
+    event_repo: Data<T>,
+    req: HttpRequest,
+) -> HttpResponse {
     let token = require_permission!(req, "event.view.all");
 
-    let events = Event::get_all(&state.pool).await;
+    let mut events = assert_ok!(event_repo.get_all().await);
 
-    if let Ok(mut events) = events {
-        if !token.has_permission("event.view.sensitive") {
-            for event in events.iter_mut() {
-                event.api_token = None;
-            }
+    if !token.has_permission("event.view.sensitive") {
+        for event in events.iter_mut() {
+            event.api_token = None;
         }
-        HttpResponse::Ok().json(events)
-    } else {
-        HttpResponse::InternalServerError().json(APIError::DatabaseError)
     }
+    HttpResponse::Ok().json(events)
 }
 
-#[delete("/event/{id}")]
-pub async fn delete_event(
+pub async fn delete_event<T: 'static + EventRepo, R: 'static + TokenRepo>(
     event: Path<i32>,
-    state: Data<AppState>,
+    event_repo: Data<T>,
+    token_repo: Data<R>,
     req: HttpRequest,
 ) -> HttpResponse {
     let token = require_permission!(req, "event.delete");
-
     let event_id = event.into_inner();
-    if !token.is_valid_for_event(&state.pool, event_id).await {
-        return HttpResponse::NotFound().json(APIError::event_not_found(event_id));
-    }
-
-    let event_exists = Event::id_exists(&state.pool, event_id).await;
-    if !matches!(event_exists, Ok(true)) {
-        return HttpResponse::NotFound().json(APIError::event_not_found(event_id));
-    }
-
-    handle_result!(Event::delete_id(&state.pool, event_id).await)
+    assert_token_valid_for_event!(token_repo, token, event_id);
+    get_object_or_404!(event_repo, event_id);
+    handle_result!(event_repo.delete_by_id(event_id).await)
 }
 
-#[put("/event")]
-pub async fn update_event(
+pub async fn update_event<T: 'static + EventRepo, R: 'static + TokenRepo>(
     event: Json<Event>,
-    state: Data<AppState>,
+    event_repo: Data<T>,
+    token_repo: Data<R>,
     req: HttpRequest,
 ) -> HttpResponse {
     let token = require_permission!(req, "event.update");
 
-    let mut event = event.into_inner();
-
-    if event.id.is_none() {
-        return HttpResponse::BadRequest().json(APIError::invalid_field("id"));
-    }
-    let event_id = event.id.unwrap();
-
-    if !token.is_valid_for_event(&state.pool, event_id).await {
-        return HttpResponse::NotFound().json(APIError::event_not_found(event_id));
-    }
+    let event = event.into_inner();
+    let event_id = assert_some!(
+        event.id,
+        StatusCode::BAD_REQUEST,
+        APIError::invalid_field("id")
+    );
+    assert_token_valid_for_event!(token_repo, token, event_id);
 
     info!("Updating event {}.", event.name);
-    handle_result!(event.save(&state.pool).await.map(|_| event))
+    save_object_and_return!(event_repo, event)
 }
 
-#[get("/event/{id}/tokens")]
-pub async fn list_tokens_valid_for_event(
+pub async fn get_valid_tokens<T: 'static + EventRepo>(
     id: Path<i32>,
-    state: Data<AppState>,
+    event_repo: Data<T>,
     req: HttpRequest,
 ) -> HttpResponse {
     require_permission!(req, "root");
     let event_id = id.into_inner();
-    handle_result!(Event::get_all_valid_tokens(&state.pool, event_id).await)
+    handle_result!(event_repo.get_all_valid_tokens(event_id).await)
 }

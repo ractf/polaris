@@ -20,15 +20,15 @@ pub struct AuthManage {
     pub token_id: Option<i32>,
 
     /// The names of the events to authorize the token for
-    #[clap(short, long, use_delimiter = true)]
+    #[clap(short, long, use_value_delimiter = true)]
     pub authorize: Vec<String>,
 
     /// The names of the events to revoke the token for
-    #[clap(short, long, use_delimiter = true)]
+    #[clap(short, long, use_value_delimiter = true)]
     pub revoke: Vec<String>,
 
     /// The names of the events to check the permission for
-    #[clap(short, long, use_delimiter = true)]
+    #[clap(short, long, use_value_delimiter = true)]
     pub check: Vec<String>,
 
     /// List all of the events a token is valid for

@@ -13,8 +13,8 @@ use crate::cmd::token::Token;
 use anyhow::Result;
 use clap::Parser;
 use serde::Serialize;
-use std::fmt::Display;
 use serde_json::json;
+use std::fmt::Display;
 
 /// Trait implemented by all subcommands of `polaris` to define a common interface
 #[async_trait::async_trait(?Send)]

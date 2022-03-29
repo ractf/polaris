@@ -4,10 +4,12 @@ pub mod api;
 mod authentication;
 pub mod docker;
 pub mod log;
+pub mod node;
 
 use crate::config::api::APIConfig;
 use crate::config::docker::DockerConfig;
 use crate::config::log::LogConfig;
+use crate::config::node::NodeConfig;
 use serde::{Deserialize, Serialize};
 
 /// Configuration used by Polaris
@@ -25,6 +27,9 @@ pub struct Config {
     /// Docker configuration
     #[serde(default)]
     pub docker: DockerConfig,
+    /// Node configuration
+    #[serde(default)]
+    pub node: NodeConfig,
 }
 
 fn database_url() -> String {

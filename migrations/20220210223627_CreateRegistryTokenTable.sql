@@ -1,4 +1,4 @@
-CREATE TABLE registry_tokens (
+CREATE TABLE registry_token (
      id SERIAL PRIMARY KEY NOT NULL,
      name VARCHAR(255) UNIQUE NOT NULL,
      data JSONB NOT NULL

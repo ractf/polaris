@@ -2,10 +2,9 @@ use crate::credential_provider::{CacheableDockerCredentialProvider, DockerCreden
 use anyhow::Result;
 use aws_sdk_ecr::Client;
 use aws_smithy_types_convert::date_time::DateTimeExt;
-use aws_types::config::Config;
 use aws_types::credentials::SharedCredentialsProvider;
 use aws_types::region::Region;
-use aws_types::Credentials;
+use aws_types::{Credentials, SdkConfig};
 use chrono::{DateTime, Utc};
 use itertools::Itertools;
 use thiserror::Error;
@@ -30,7 +29,7 @@ impl AWSCredentialProvider {
             None,
             "Polaris",
         ));
-        let config = &Config::builder()
+        let config = &SdkConfig::builder()
             .credentials_provider(cred_provider)
             .region(Region::new(region))
             .build();

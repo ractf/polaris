@@ -1,14 +1,25 @@
 //! Database models related to pods
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Pod {
+    pub id: Option<i32>,
+    pub name: String,
+    pub max_cpu: Option<i64>,
+    pub max_ram: Option<i64>,
+    pub pod: PodType,
+}
+
 /// A pod that can be ran by Polaris
-#[derive(Debug)]
-pub enum Pod {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum PodType {
     /// An OCI Container
     OCIContainer(OCIContainer),
 }
 
 /// An OCI Container pod
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct OCIContainer {
     /// The OCI image used by this container
     pub image: String,
@@ -16,12 +27,10 @@ pub struct OCIContainer {
     pub repo_credentials: Option<i32>,
     /// The ports to expose
     pub ports: Vec<ExposedPort>,
-    /// The resource limits to apply
-    pub resource_limits: Vec<ResourceLimit>,
 }
 
 /// A port exposed by the container
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ExposedPort {
     /// The internal port number
     pub port: u16,
@@ -34,7 +43,7 @@ pub struct ExposedPort {
 }
 
 /// The protocol(s) to expose a port on
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Protocol {
     /// Expose the port on TCP
     TCP,
@@ -45,7 +54,7 @@ pub enum Protocol {
 }
 
 /// Stategies for allocating an external port
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum PortAllocationStrategy {
     /// Randomly generate a port
     Random,
@@ -53,22 +62,4 @@ pub enum PortAllocationStrategy {
     Sequential,
     /// Require a static port. Note this may make scheduling very difficult
     Static(u16),
-}
-
-/// A resource usage limit for a container
-#[derive(Debug)]
-pub struct ResourceLimit {
-    /// The resource to limit
-    pub resource: Resource,
-    /// The amount of the resource the container can use
-    pub limit: u64,
-}
-
-/// A resource that can be limited
-#[derive(Debug)]
-pub enum Resource {
-    /// CPU
-    CPU,
-    /// RAM
-    RAM,
 }

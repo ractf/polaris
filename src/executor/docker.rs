@@ -92,15 +92,15 @@ impl Executor<OCIContainer, DockerContainerHandle> for DockerExecutor {
         Ok(())
     }
 
-    async fn create_container(&self, container: &OCIContainer) -> Result<DockerContainerHandle> {
+    async fn create_container(&self, _container: &OCIContainer) -> Result<DockerContainerHandle> {
         todo!()
     }
 
-    async fn start_container(&self, container_id: &DockerContainerHandle) -> Result<()> {
+    async fn start_container(&self, _container_id: &DockerContainerHandle) -> Result<()> {
         todo!()
     }
 
-    async fn stop_container(&self, container_id: &DockerContainerHandle) -> Result<()> {
+    async fn stop_container(&self, _container_id: &DockerContainerHandle) -> Result<()> {
         todo!()
     }
 }

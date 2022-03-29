@@ -1,128 +1,179 @@
 use crate::api::error::APIError;
-use crate::api::AppState;
-use crate::data::event::Event;
-use crate::data::token::{CreateableToken, Token};
-use crate::{assert_event_id_exists, handle_result, require_permission};
-use actix_web::web::{Data, Json, Path};
-use actix_web::{delete, get, post, HttpMessage, HttpRequest, HttpResponse};
+use crate::data::token::{CreateableToken, Token, TokenEventPair};
+use crate::repo::token::TokenRepo;
+use crate::{
+    assert_name_not_taken, get_object_as_response_or_404, get_object_by_name_as_response_or_404,
+    get_object_or_404, handle_result, require_permission, save_object_and_return, assert_some
+};
+use actix_web::http::StatusCode;
+use actix_web::web::{delete, get, post, Data, Json, Path, ServiceConfig};
+use actix_web::{HttpMessage, HttpRequest, HttpResponse};
 use chrono::Utc;
 use tracing::info;
 
-#[post("/token")]
-pub async fn create_token(
+pub fn configure_token_endpoints<T: 'static + TokenRepo>(config: &mut ServiceConfig) {
+    config
+        .route("/", post().to(create_token::<T>))
+        .route("/", get().to(get_tokens::<T>))
+        .route("/{id}", get().to(get_token::<T>))
+        .route("/bearer/{bearer}", get().to(get_token_by_bearer::<T>))
+        .route("/name/{name}", get().to(get_token_by_name::<T>))
+        .route("/{id}", delete().to(delete_token::<T>))
+        .route("/is_valid", post().to(token_is_valid_for_event::<T>))
+        .route("/auth", post().to(auth_token_for_event::<T>))
+        .route("/auth/revoke", post().to(remove_auth_token_for_event::<T>))
+        .route("/self", get().to(view_self))
+        .route("/events", get().to(get_events::<T>));
+}
+
+async fn create_token<T: TokenRepo>(
     new_token: Json<CreateableToken>,
-    state: Data<AppState>,
     req: HttpRequest,
+    token_repo: Data<T>,
 ) -> HttpResponse {
     require_permission!(req, "root");
 
     let new_token = new_token.into_inner();
 
-    if let Ok(true) = Token::is_name_taken(&state.pool, &new_token.name).await {
-        info!("Token submitted with in use name, rejecting.");
-        return HttpResponse::BadRequest().json(APIError::name_taken(new_token.name));
-    }
-
+    assert_name_not_taken!(token_repo, new_token.name);
     info!("Creating token {}.", new_token.name);
+
     let mut db_token: Token = new_token.into();
     db_token.issued = Some(Utc::now());
 
-    handle_result!(db_token.save(&state.pool).await.map(|_| db_token))
+    save_object_and_return!(token_repo, db_token)
 }
 
-#[get("/token")]
-pub async fn get_tokens(state: Data<AppState>, req: HttpRequest) -> HttpResponse {
+async fn get_tokens<T: TokenRepo>(token_repo: Data<T>, req: HttpRequest) -> HttpResponse {
     require_permission!(req, "root");
-    handle_result!(Token::get_all(&state.pool).await)
+    handle_result!(
+        token_repo.get_all().await,
+        StatusCode::INTERNAL_SERVER_ERROR
+    )
 }
 
-#[get("/token/{id}")]
-pub async fn get_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    require_permission!(req, "root");
-    let token_id = id.into_inner();
-    handle_result!(Token::get(&state.pool, token_id).await, token_id)
-}
-
-#[get("/token/bearer/{bearer}")]
-pub async fn get_token_by_bearer(
-    bearer: Path<String>,
-    state: Data<AppState>,
+async fn get_token<T: TokenRepo>(
+    id: Path<i32>,
+    token_repo: Data<T>,
     req: HttpRequest,
 ) -> HttpResponse {
     require_permission!(req, "root");
+    let id = id.into_inner();
+    get_object_as_response_or_404!(token_repo, id)
+}
+
+async fn get_token_by_bearer<T: TokenRepo>(
+    bearer: Path<String>,
+    token_repo: Data<T>,
+    req: HttpRequest,
+) -> HttpResponse {
+    require_permission!(req, "root");
+
     let bearer = bearer.into_inner();
     handle_result!(
-        Token::get_by_token(&state.pool, bearer.as_str()).await,
-        bearer
+        token_repo.get_by_token(bearer.clone()).await,
+        bearer,
+        StatusCode::NOT_FOUND
     )
 }
 
-#[get("/token/name/{name}")]
-pub async fn get_token_by_name(
+async fn get_token_by_name<T: TokenRepo>(
     name: Path<String>,
-    state: Data<AppState>,
+    token_repo: Data<T>,
     req: HttpRequest,
 ) -> HttpResponse {
     require_permission!(req, "root");
+
     let token_name = name.into_inner();
+    get_object_by_name_as_response_or_404!(token_repo, &token_name)
+}
+
+async fn delete_token<T: TokenRepo>(
+    id: Path<i32>,
+    token_repo: Data<T>,
+    req: HttpRequest,
+) -> HttpResponse {
+    require_permission!(req, "root");
+
+    let token_id = id.into_inner();
+    get_object_or_404!(token_repo, token_id);
     handle_result!(
-        Token::get_by_name(&state.pool, token_name.as_str()).await,
-        token_name
+        token_repo.delete_by_id(token_id).await,
+        StatusCode::INTERNAL_SERVER_ERROR
     )
 }
 
-#[delete("/token/{id}")]
-pub async fn delete_token(id: Path<i32>, state: Data<AppState>, req: HttpRequest) -> HttpResponse {
-    require_permission!(req, "root");
-    let token_id = id.into_inner();
-    handle_result!(Token::delete_id(&state.pool, token_id).await, token_id)
-}
-
-#[post("/token/is_valid/{event_id}")]
-pub async fn token_is_valid_for_event(
-    event_id: Path<i32>,
-    token: Json<Token>,
-    state: Data<AppState>,
+async fn token_is_valid_for_event<T: TokenRepo>(
+    pair: Json<TokenEventPair>,
+    token_repo: Data<T>,
     req: HttpRequest,
 ) -> HttpResponse {
     require_permission!(req, "root");
-    let event_id = event_id.into_inner();
-    assert_event_id_exists!(&state.pool, event_id);
-    handle_result!(token.is_valid_for_event(&state.pool, event_id).await)
+
+    let pair = pair.into_inner();
+    if let Ok(token) = token_repo.get_by_id(pair.token_id).await {
+        HttpResponse::Ok().json(
+            token_repo
+                .is_token_valid_for_event(&token, pair.event_id)
+                .await,
+        )
+    } else {
+        HttpResponse::BadRequest().json(APIError::resource_not_found(pair.token_id))
+    }
 }
 
-#[post("/token/auth/{event_id}")]
-pub async fn auth_token_for_event(
-    event_id: Path<i32>,
-    token: Json<Token>,
-    state: Data<AppState>,
+async fn auth_token_for_event<T: TokenRepo>(
+    token: Json<TokenEventPair>,
+    token_repo: Data<T>,
     req: HttpRequest,
 ) -> HttpResponse {
     require_permission!(req, "root");
-    let event_id = event_id.into_inner();
-    assert_event_id_exists!(&state.pool, event_id);
-    handle_result!(token.add_event(&state.pool, event_id).await, event_id)
+
+    let pair = token.into_inner();
+    let result = token_repo.add_event(pair.token_id, pair.event_id).await;
+
+    if result.is_ok() {
+        HttpResponse::Ok().json(())
+    } else {
+        if token_repo.get_by_id(pair.token_id).await.is_ok() {
+            HttpResponse::BadRequest().json(APIError::resource_not_found(pair.token_id))
+        } else {
+            HttpResponse::BadRequest().json(APIError::resource_not_found(pair.event_id))
+        }
+    }
 }
 
-#[post("/token/revoke/{event_id}")]
-pub async fn revoke_token_for_event(
-    event_id: Path<i32>,
-    token: Json<Token>,
-    state: Data<AppState>,
+async fn remove_auth_token_for_event<T: TokenRepo>(
+    token: Json<TokenEventPair>,
+    token_repo: Data<T>,
     req: HttpRequest,
 ) -> HttpResponse {
     require_permission!(req, "root");
-    let event_id = event_id.into_inner();
-    assert_event_id_exists!(&state.pool, event_id);
-    handle_result!(token.remove_event(&state.pool, event_id).await, event_id)
+
+    let pair = token.into_inner();
+    let result = token_repo.remove_event(pair.token_id, pair.event_id).await;
+
+    if result.is_ok() {
+        HttpResponse::Ok().json(())
+    } else {
+        if token_repo.get_by_id(pair.token_id).await.is_ok() {
+            HttpResponse::BadRequest().json(APIError::resource_not_found(pair.token_id))
+        } else {
+            HttpResponse::BadRequest().json(APIError::resource_not_found(pair.event_id))
+        }
+    }
 }
 
-#[post("/token/valid_for")]
-pub async fn list_events_token_is_valid_for(
-    token: Json<Token>,
-    state: Data<AppState>,
+async fn view_self(req: HttpRequest) -> HttpResponse {
+    let exts = req.extensions();
+    let token = exts.get::<Token>().unwrap();
+    HttpResponse::Ok().json(token)
+}
+
+async fn get_events<T: TokenRepo>(
+    token_repo: Data<T>,
     req: HttpRequest,
 ) -> HttpResponse {
-    require_permission!(req, "root");
-    handle_result!(token.list_events_token_valid_for(&state.pool).await)
+    let token = require_permission!(req, "root");
+    handle_result!(token_repo.get_events(assert_some!(token.id)).await)
 }

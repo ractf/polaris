@@ -25,7 +25,7 @@ pub trait Executor<T, H: ToString> {
 
 pub fn setup_executors(config: &Config) {
     if config.docker.enabled {
-        if let Ok(docker) = DockerExecutor::new(config) {
+        if let Ok(_docker) = DockerExecutor::new(config) {
         } else {
             warn!("Failed to start docker executor");
         }

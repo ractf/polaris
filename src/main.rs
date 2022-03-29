@@ -16,6 +16,9 @@ pub mod credential_provider;
 pub mod data;
 pub mod executor;
 pub mod notification;
+pub mod repo;
+pub mod scheduler;
+pub mod sync;
 
 #[actix_web::main]
 async fn main() -> Result<()> {

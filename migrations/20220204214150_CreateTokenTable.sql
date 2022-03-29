@@ -7,10 +7,11 @@ CREATE TABLE token (
     expiry timestamptz
 );
 
-CREATE TABLE token_events (
+CREATE TABLE token_event (
     id SERIAL PRIMARY KEY NOT NULL,
     token_id INT NOT NULL,
     event_id INT NOT NULL,
     CONSTRAINT fk_token FOREIGN KEY(token_id) REFERENCES token(id),
-    CONSTRAINT fk_event FOREIGN KEY(event_id) REFERENCES event(id)
+    CONSTRAINT fk_event FOREIGN KEY(event_id) REFERENCES event(id),
+    constraint unique_token_event UNIQUE (token_id, event_id)
 )
