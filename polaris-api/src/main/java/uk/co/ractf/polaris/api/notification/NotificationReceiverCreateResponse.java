@@ -8,13 +8,8 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NotificationReceiverCreateResponse extends JsonRepresentable {
 
-    public enum Status {
-        OK, FORBIDDEN_NAMESPACE, DUPLICATE, TOO_BROAD
-    }
-
     private final Status status;
     private final String id;
-
     public NotificationReceiverCreateResponse(final Status status, final String id) {
         this.status = status;
         this.id = id;
@@ -39,5 +34,9 @@ public class NotificationReceiverCreateResponse extends JsonRepresentable {
     @Override
     public int hashCode() {
         return Objects.hash(status, id);
+    }
+
+    public enum Status {
+        OK, FORBIDDEN_NAMESPACE, DUPLICATE, TOO_BROAD
     }
 }

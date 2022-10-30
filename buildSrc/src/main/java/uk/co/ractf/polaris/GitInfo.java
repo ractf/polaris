@@ -10,7 +10,7 @@ public class GitInfo {
     public static String getGitCommit() {
         try {
             final var process = Runtime.getRuntime().exec("git rev-parse --short HEAD");
-            try(final var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+            try (final var reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
                 return reader.readLine();
             }
         } catch (final IOException exception) {

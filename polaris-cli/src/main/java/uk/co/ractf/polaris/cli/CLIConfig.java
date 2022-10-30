@@ -24,18 +24,6 @@ public class CLIConfig extends JsonRepresentable {
         this.password = password;
     }
 
-    public String getHost() {
-        return host;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
     public static boolean doesFileExist() {
         return Path.of(System.getProperty("user.home"), ".polaris", "config.json").toFile().exists();
     }
@@ -46,6 +34,18 @@ public class CLIConfig extends JsonRepresentable {
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public void save() {

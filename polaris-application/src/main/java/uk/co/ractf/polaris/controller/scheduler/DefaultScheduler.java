@@ -97,5 +97,6 @@ public class DefaultScheduler implements Scheduler, Managed {
     }
 
     @Override
-    public void stop() {}
+    public void stop() {
+    }
 }

@@ -1,8 +1,8 @@
 package uk.co.ractf.polaris.controller.metrics;
 
 import com.codahale.metrics.Gauge;
-import uk.co.ractf.polaris.api.pod.ResourceLimited;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
+import uk.co.ractf.polaris.api.pod.ResourceLimited;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.HashMap;

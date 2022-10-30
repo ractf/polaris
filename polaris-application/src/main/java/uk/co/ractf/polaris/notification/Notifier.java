@@ -6,13 +6,13 @@ import uk.co.ractf.polaris.api.notification.SlackWebhook;
 
 public interface Notifier {
 
-    void notify(final Notification notification);
-
     static Notifier from(final NotificationReceiver receiver) {
         if (receiver instanceof SlackWebhook) {
             return new SlackNotifier((SlackWebhook) receiver);
         }
         return null;
     }
+
+    void notify(final Notification notification);
 
 }

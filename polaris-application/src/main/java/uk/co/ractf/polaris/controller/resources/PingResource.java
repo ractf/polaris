@@ -3,7 +3,6 @@ package uk.co.ractf.polaris.controller.resources;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
-import uk.co.ractf.polaris.security.PolarisSecurityContext;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;

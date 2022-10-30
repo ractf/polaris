@@ -1,7 +1,7 @@
 package uk.co.ractf.polaris.apiclient.command;
 
-import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
+import uk.co.ractf.polaris.api.task.Task;
 import uk.co.ractf.polaris.apiclient.AbstractCommand;
 import uk.co.ractf.polaris.apiclient.transport.APIClientTransport;
 

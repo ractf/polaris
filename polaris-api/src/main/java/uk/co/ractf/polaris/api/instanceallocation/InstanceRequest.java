@@ -29,8 +29,8 @@ public class InstanceRequest extends JsonRepresentable {
 
     /**
      * @param taskId the challenge id
-     * @param user      the user id
-     * @param team      the team id
+     * @param user   the user id
+     * @param team   the team id
      */
     @Contract(pure = true)
     public InstanceRequest(

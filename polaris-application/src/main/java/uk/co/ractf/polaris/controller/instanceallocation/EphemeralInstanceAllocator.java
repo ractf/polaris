@@ -6,8 +6,8 @@ import com.google.common.collect.Multimaps;
 import org.jetbrains.annotations.Nullable;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.instanceallocation.InstanceRequest;
-import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
+import uk.co.ractf.polaris.api.task.Challenge;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import java.util.ArrayList;

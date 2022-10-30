@@ -16,7 +16,9 @@
   "osVersion": "5.10.16-arch1-1",
   "cpuLoad": 6.22,
   "portAllocations": {
-    "tcp": [2],
+    "tcp": [
+      2
+    ],
     "udp": []
   },
   "podImages": [],

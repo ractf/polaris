@@ -10,13 +10,8 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskSubmitResponse extends JsonRepresentable {
 
-    public enum Status {
-        OK, DUPLICATE, INVALID, BAD_NAMESPACE, FORBIDDEN_NAMESPACE;
-    }
-
     private final TaskSubmitResponse.Status status;
     private final NamespacedId id;
-
     public TaskSubmitResponse(
             @JsonProperty("status") final Status status,
             @JsonProperty("id") final NamespacedId id) {
@@ -43,5 +38,9 @@ public class TaskSubmitResponse extends JsonRepresentable {
     @Override
     public int hashCode() {
         return Objects.hash(status, id);
+    }
+
+    public enum Status {
+        OK, DUPLICATE, INVALID, BAD_NAMESPACE, FORBIDDEN_NAMESPACE;
     }
 }

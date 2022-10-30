@@ -56,10 +56,10 @@ public class PortAllocator {
                     }
                     portBindings.put(new PortMapping(portMapping.getPort(), "tcp", portMapping.isAdvertise()),
                             new PortBinding(new Ports.Binding("0.0.0.0", lastUdpPort + "/udp"),
-                            new ExposedPort(portMapping.getPort(), InternetProtocol.UDP)));
+                                    new ExposedPort(portMapping.getPort(), InternetProtocol.UDP)));
                     portBindings.put(new PortMapping(portMapping.getPort(), "udp", portMapping.isAdvertise()),
                             new PortBinding(new Ports.Binding("0.0.0.0", lastUdpPort + "/tcp"),
-                            new ExposedPort(portMapping.getPort(), InternetProtocol.TCP)));
+                                    new ExposedPort(portMapping.getPort(), InternetProtocol.TCP)));
                     break;
                 }
             }

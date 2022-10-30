@@ -85,6 +85,6 @@
       "advertise": true
     }
   ],
-  "autoUpdate":false,
-  "tag":"latest"
+  "autoUpdate": false,
+  "tag": "latest"
 }

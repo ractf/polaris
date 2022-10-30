@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.TaskAction;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,7 +46,8 @@ public class GenerateReflectConfigTask extends DefaultTask {
                 "META-INF", "native-image", (String) getProject().getGroup(), getProject().getName(),
                 "reflect-config.json");
         if (configPath.toFile().exists()) {
-            reflectConfig.addAll(new ObjectMapper().readValue(Files.readString(configPath), new TypeReference<List<Map<String, Object>>>() {}));
+            reflectConfig.addAll(new ObjectMapper().readValue(Files.readString(configPath), new TypeReference<List<Map<String, Object>>>() {
+            }));
         } else {
             configPath.getParent().toFile().mkdirs();
         }
