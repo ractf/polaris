@@ -6,13 +6,8 @@ import java.util.Objects;
 
 public class NamespaceCreateResponse extends JsonRepresentable {
 
-    public enum Status {
-        OK, DUPLICATE;
-    }
-
     private final Status status;
     private final String name;
-
     public NamespaceCreateResponse(final Status status, final String name) {
         this.status = status;
         this.name = name;
@@ -37,5 +32,9 @@ public class NamespaceCreateResponse extends JsonRepresentable {
     @Override
     public int hashCode() {
         return Objects.hash(status, name);
+    }
+
+    public enum Status {
+        OK, DUPLICATE;
     }
 }

@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.random.RandomEnv;
 import uk.co.ractf.polaris.api.task.Challenge;
-import uk.co.ractf.polaris.api.namespace.NamespacedId;
 
 import java.util.List;
 import java.util.Map;
@@ -35,11 +35,11 @@ public class Instance extends JsonRepresentable {
 
 
     /**
-     * @param id id of the instance
+     * @param id           id of the instance
      * @param namespacedId the task id
-     * @param hostId the node id
+     * @param hostId       the node id
      * @param portBindings which ports should be bound
-     * @param randomEnv the random env vars
+     * @param randomEnv    the random env vars
      */
     @Contract(pure = true)
     public Instance(@JsonProperty("id") final String id,

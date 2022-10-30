@@ -24,7 +24,7 @@ public class SendTcpPayload extends TcpPayload {
     /**
      * Create a SendTcpPayload
      *
-     * @param hex  the hex encoded bytes to send
+     * @param hex the hex encoded bytes to send
      */
     @Contract(pure = true)
     public SendTcpPayload(

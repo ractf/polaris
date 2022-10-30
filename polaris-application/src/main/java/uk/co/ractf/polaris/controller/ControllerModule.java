@@ -3,15 +3,12 @@ package uk.co.ractf.polaris.controller;
 import com.codahale.metrics.MetricRegistry;
 import com.google.inject.Singleton;
 import com.orbitz.consul.Consul;
-import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.Duration;
 import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 import uk.co.ractf.polaris.api.annotation.ExcludeFromGeneratedTestReport;
 import uk.co.ractf.polaris.controller.metrics.PolarisMetricSetRegistrationService;
 import uk.co.ractf.polaris.controller.scheduler.SchedulerModule;
 import uk.co.ractf.polaris.controller.service.ControllerServiceModule;
-import uk.co.ractf.polaris.state.ClusterState;
-import uk.co.ractf.polaris.state.ConsulState;
 
 import java.util.concurrent.ScheduledExecutorService;
 

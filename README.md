@@ -59,23 +59,31 @@
 </div>
 
 ## Table of Contents
+
 - [Features](#Features)
 - [Installation](#Installation)
 - [Support](#Support)
 - [License](#License)
 
 ## Features
+
 - __Robust:__ tested on a live event with several thousand users, and artifically stress tested to many more.
-- __Split architecture:__ our architecture allows you to run various components on different hosts for increased performance.
+- __Split architecture:__ our architecture allows you to run various components on different hosts for increased
+  performance.
 - __Highly configurable:__ we have a huge array of options you can configure for your event.
 - __Really awesome:__ it's in the name, after all!
 
 ## Installation
-Check out the [Installer](https://github.com/ractf/install/). Want a more custom deployment? Check out our [installation docs](https://docs.ractf.co.uk/installer).
+
+Check out the [Installer](https://github.com/ractf/install/). Want a more custom deployment? Check out
+our [installation docs](https://docs.ractf.co.uk/installer).
 
 ## Support
-If you need support, check out our [Discord](https://discord.gg/FfW2xXR), or if you've found a bug with the framework, open an issue.
+
+If you need support, check out our [Discord](https://discord.gg/FfW2xXR), or if you've found a bug with the framework,
+open an issue.
 > 🔒 Found a security issue? Email us at `security@ractf.co.uk`.
 
 ## License
+
 [AGPLv3](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0))

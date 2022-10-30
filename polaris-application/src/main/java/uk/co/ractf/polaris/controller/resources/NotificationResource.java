@@ -36,7 +36,7 @@ public class NotificationResource extends SecureResource {
     @Timed
     @ExceptionMetered
     @RolesAllowed("NOTIFICATION_ADD")
-    @Operation(summary = "Add Notification Receiver", tags = {"Notification"}, 
+    @Operation(summary = "Add Notification Receiver", tags = {"Notification"},
             description = "Adds a notification receiver")
     public Response addNotificationReceiver(@Context final SecurityContext securityContext,
                                             @RequestBody final NotificationReceiver receiver) {
@@ -48,7 +48,7 @@ public class NotificationResource extends SecureResource {
                     .build();
         }
 
-        if (!context.isRoot() && (receiver.isGlobal() || receiver.isSystem() || 
+        if (!context.isRoot() && (receiver.isGlobal() || receiver.isSystem() ||
                 !context.isUserInNamespace(receiver.getId().getNamespace()))) {
             return Response.status(403)
                     .entity(new NotificationReceiverCreateResponse(
@@ -112,7 +112,7 @@ public class NotificationResource extends SecureResource {
         if (!context.isRoot() && !context.isUserInNamespace(id.getNamespace())) {
             return Response.status(403).build();
         }
-        
+
         return Response.ok(clusterState.getNotificationReceiver(id)).build();
     }
 
@@ -123,7 +123,7 @@ public class NotificationResource extends SecureResource {
     @Operation(summary = "Update Notification Receiver", tags = {"Notification"},
             description = "Updates a notification receiver")
     public Response updateNotificationReceiver(@Context final SecurityContext securityContext,
-                                            @RequestBody final NotificationReceiver receiver) {
+                                               @RequestBody final NotificationReceiver receiver) {
         final var context = convertContext(securityContext);
         if (!context.isUserInNamespace(receiver.getId().getNamespace())) {
             return Response.status(403)
@@ -184,5 +184,5 @@ public class NotificationResource extends SecureResource {
                         NotificationReceiverDeleteResponse.Status.OK, id.toString()))
                 .build();
     }
-    
+
 }

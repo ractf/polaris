@@ -24,7 +24,8 @@ public class JacksonTester {
 
     public static <T> void validateObjectIgnoreProperties(final Class<T> clazz, final String fixture) {
         try {
-            final Map<String, Object> map = objectMapper.readValue(fixture, new TypeReference<>() {});
+            final Map<String, Object> map = objectMapper.readValue(fixture, new TypeReference<>() {
+            });
             map.put("UNKNOWN_PROPERTY_KEY", "UNKNOWN_PROPERTY_VALUE");
             final T t = objectMapper.readValue(objectMapper.writeValueAsString(map), clazz);
             final String result = objectMapper.writeValueAsString(t);

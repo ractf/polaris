@@ -187,7 +187,7 @@ public class AndromedaEmulationResource extends SecureResource {
     @Operation(summary = "Request Instance Reset", tags = {"Andromeda"},
             description = "Reset an instance allocation from polaris in andromda's format")
     public Response resetInstance(@Context final SecurityContext securityContext,
-                                           @RequestBody final AndromedaInstanceRequest request) {
+                                  @RequestBody final AndromedaInstanceRequest request) {
         final var context = convertContext(securityContext);
         final var namespace = context.isRoot() ? "polaris" : context.getNamespaces().get(0);
         final var task = clusterState.getTask(new NamespacedId(namespace, request.getJob()));

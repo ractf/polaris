@@ -3,7 +3,6 @@ package uk.co.ractf.polaris.api.healthcheck;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.jetbrains.annotations.Contract;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
 /**

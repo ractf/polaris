@@ -6,13 +6,8 @@ import java.util.Objects;
 
 public class NamespaceDeleteResponse extends JsonRepresentable {
 
-    public enum Status {
-        OK, NOT_FOUND;
-    }
-
     private final Status status;
     private final String name;
-
     public NamespaceDeleteResponse(final Status status, final String name) {
         this.status = status;
         this.name = name;
@@ -37,5 +32,9 @@ public class NamespaceDeleteResponse extends JsonRepresentable {
     @Override
     public int hashCode() {
         return Objects.hash(status, name);
+    }
+
+    public enum Status {
+        OK, NOT_FOUND;
     }
 }

@@ -120,6 +120,7 @@ public class Container extends Pod implements ResourceLimited, PodWithPorts, Pod
 
     /**
      * Creates a container
+     *
      * @param type               the type of the pod (container)
      * @param id                 the id of the container
      * @param image              the image to use

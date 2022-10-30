@@ -5,10 +5,11 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.inject.Inject;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.namespace.NamespacedId;
-import uk.co.ractf.polaris.api.task.*;
-import uk.co.ractf.polaris.security.PolarisSecurityContext;
+import uk.co.ractf.polaris.api.task.Task;
+import uk.co.ractf.polaris.api.task.TaskDeleteResponse;
+import uk.co.ractf.polaris.api.task.TaskSubmitResponse;
+import uk.co.ractf.polaris.api.task.TaskUpdateResponse;
 import uk.co.ractf.polaris.state.ClusterState;
 
 import javax.annotation.security.RolesAllowed;

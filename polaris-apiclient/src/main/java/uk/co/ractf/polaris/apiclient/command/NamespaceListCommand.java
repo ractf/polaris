@@ -14,6 +14,7 @@ public class NamespaceListCommand extends AbstractCommand<Map<String, Namespace>
 
     @Override
     public Map<String, Namespace> exec() {
-        return apiClientTransport.get("/namespaces", new TypeReference<>(){});
+        return apiClientTransport.get("/namespaces", new TypeReference<>() {
+        });
     }
 }

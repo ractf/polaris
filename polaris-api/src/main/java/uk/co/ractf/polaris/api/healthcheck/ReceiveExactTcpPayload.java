@@ -22,7 +22,7 @@ public class ReceiveExactTcpPayload extends TcpPayload {
     private final String hex;
 
     /**
-     * @param hex  the hex bytes to expect exactly
+     * @param hex the hex bytes to expect exactly
      */
     @Contract(pure = true)
     public ReceiveExactTcpPayload(

@@ -13,6 +13,7 @@ public class PingCommand extends AbstractCommand<Map<String, String>> {
 
     @Override
     public Map<String, String> exec() {
-        return apiClientTransport.get("/ping", new TypeReference<>(){});
+        return apiClientTransport.get("/ping", new TypeReference<>() {
+        });
     }
 }

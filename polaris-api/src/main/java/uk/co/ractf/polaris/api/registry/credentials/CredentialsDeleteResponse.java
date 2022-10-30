@@ -10,13 +10,8 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CredentialsDeleteResponse extends JsonRepresentable {
 
-    public enum Status {
-        OK, NOT_FOUND, INVALID, BAD_NAMESPACE, FORBIDDEN_NAMESPACE;
-    }
-
     private final Status status;
     private final NamespacedId id;
-
     public CredentialsDeleteResponse(
             @JsonProperty("status") final Status status,
             @JsonProperty("id") final NamespacedId id) {
@@ -43,5 +38,9 @@ public class CredentialsDeleteResponse extends JsonRepresentable {
     @Override
     public int hashCode() {
         return Objects.hash(status, id);
+    }
+
+    public enum Status {
+        OK, NOT_FOUND, INVALID, BAD_NAMESPACE, FORBIDDEN_NAMESPACE;
     }
 }

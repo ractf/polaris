@@ -1,1 +1,261 @@
-[{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.namespace.Namespace","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.deployment.StaticReplication","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.deployment.Replication","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.deployment.Allocation","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.instance.InstancePortBinding","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.instance.Instance","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.random.RandomEnv","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.random.RandomEnvString","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.random.RandomEnvInteger","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.task.TaskDeleteResponse","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.task.TaskUpdateResponse","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.task.Task","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.task.TaskSubmitResponse","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.task.Challenge","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.node.PortAllocations","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.node.NodeInfo","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.pod.Container","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.pod.ResourceQuota","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.pod.Pod","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.pod.PortMapping","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.andromeda.AndromedaAuthentication","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.andromeda.AndromedaChallenge","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.andromeda.AndromedaResources","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.andromeda.AndromedaInstanceRequest","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.andromeda.AndromedaChallengeSubmitResponse","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.andromeda.AndromedaInstance","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.instanceallocation.InstanceRequest","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.instanceallocation.InstanceResponse","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.healthcheck.TcpPayload","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.healthcheck.ReceiveRegexTcpPayload","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.healthcheck.HttpHealthCheck","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.healthcheck.CommandHealthCheck","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.healthcheck.TcpPayloadHealthCheck","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.healthcheck.HealthCheck","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.healthcheck.TcpHealthCheck","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.healthcheck.SendTcpPayload","allDeclaredMethods":true,"allPublicMethods":true},{"allDeclaredConstructors":true,"allPublicConstructors":true,"name":"uk.co.ractf.polaris.api.healthcheck.ReceiveExactTcpPayload","allDeclaredMethods":true,"allPublicMethods":true}]
+[
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.namespace.Namespace",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.deployment.StaticReplication",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.deployment.Replication",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.deployment.Allocation",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.instance.InstancePortBinding",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.instance.Instance",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.random.RandomEnv",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.random.RandomEnvString",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.random.RandomEnvInteger",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.task.TaskDeleteResponse",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.task.TaskUpdateResponse",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.task.Task",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.task.TaskSubmitResponse",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.task.Challenge",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.node.PortAllocations",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.node.NodeInfo",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.pod.Container",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.pod.ResourceQuota",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.pod.Pod",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.pod.PortMapping",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.andromeda.AndromedaAuthentication",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.andromeda.AndromedaChallenge",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.andromeda.AndromedaResources",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.andromeda.AndromedaInstanceRequest",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.andromeda.AndromedaChallengeSubmitResponse",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.andromeda.AndromedaInstance",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.instanceallocation.InstanceRequest",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.instanceallocation.InstanceResponse",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.healthcheck.TcpPayload",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.healthcheck.ReceiveRegexTcpPayload",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.healthcheck.HttpHealthCheck",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.healthcheck.CommandHealthCheck",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.healthcheck.TcpPayloadHealthCheck",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.healthcheck.HealthCheck",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.healthcheck.TcpHealthCheck",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.healthcheck.SendTcpPayload",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allPublicConstructors": true,
+    "name": "uk.co.ractf.polaris.api.healthcheck.ReceiveExactTcpPayload",
+    "allDeclaredMethods": true,
+    "allPublicMethods": true
+  }
+]

@@ -53,7 +53,7 @@ public interface Runner<T extends Pod> {
     /**
      * Update a {@link Pod} if an update is available.
      *
-     * @param pod      the pod
+     * @param pod the pod
      */
     void updatePod(final Task task, final T pod);
 
@@ -125,8 +125,8 @@ public interface Runner<T extends Pod> {
     /**
      * Creates a network between a list of pods.
      *
-     * @param pods the pods to network
-     * @param task the task the pods belong to.
+     * @param pods     the pods to network
+     * @param task     the task the pods belong to.
      * @param instance the instance
      */
     void createNetwork(final List<T> pods, final Task task, final Instance instance);

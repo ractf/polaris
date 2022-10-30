@@ -22,7 +22,7 @@ public abstract class RandomEnv extends JsonRepresentable {
     private final String display;
 
     /**
-     * @param type the type of random env
+     * @param type    the type of random env
      * @param display
      */
     @Contract(pure = true)

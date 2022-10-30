@@ -95,7 +95,7 @@ public class InstanceReconciliationService extends AbstractScheduledService {
                 recentlyStartedInstances.put(instance.getId(), "");
                 if (task.getPods().size() > 1) {
                     /* TODO: This is assuming theres only one runner, thats a safe assumption now, the code shouldn't
-                    *  be written assuming it is. */
+                     *  be written assuming it is. */
                     log.info("Networking pods from task {} and instance {}...", task.getId(), instance.getId());
                     getRunner(task.getPods().get(0)).createNetwork(task.getPods(), task, instance);
                 }

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import uk.co.ractf.polaris.api.common.JsonRepresentable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PortAllocations extends JsonRepresentable {
@@ -17,6 +19,10 @@ public class PortAllocations extends JsonRepresentable {
             @JsonProperty("udp") final List<Integer> udp) {
         this.tcp = tcp;
         this.udp = udp;
+    }
+
+    public static PortAllocations empty() {
+        return new PortAllocations(new ArrayList<>(), new ArrayList<>());
     }
 
     public List<Integer> getTcp() {
@@ -38,10 +44,6 @@ public class PortAllocations extends JsonRepresentable {
     @Override
     public int hashCode() {
         return Objects.hash(tcp, udp);
-    }
-
-    public static PortAllocations empty() {
-        return new PortAllocations(new ArrayList<>(), new ArrayList<>());
     }
 
 }

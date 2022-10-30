@@ -3,7 +3,6 @@ package uk.co.ractf.polaris.notification;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.graph.Graph;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +69,7 @@ public class NotificationFacade {
     }
 
     public void warning(final NotificationTarget target, final Namespace namespace,
-                      final String summary, final String detail) {
+                        final String summary, final String detail) {
         notify(new Notification(NotificationLevel.WARNING, target, namespace, summary, detail));
     }
 
@@ -79,7 +78,7 @@ public class NotificationFacade {
     }
 
     public void info(final NotificationTarget target, final Namespace namespace,
-                      final String summary, final String detail) {
+                     final String summary, final String detail) {
         notify(new Notification(NotificationLevel.INFO, target, namespace, summary, detail));
     }
 

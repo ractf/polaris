@@ -5,13 +5,13 @@ import com.google.inject.ImplementedBy;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.co.ractf.polaris.api.authentication.APIToken;
-import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials;
 import uk.co.ractf.polaris.api.instance.Instance;
 import uk.co.ractf.polaris.api.namespace.Namespace;
+import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.api.node.NodeInfo;
 import uk.co.ractf.polaris.api.notification.NotificationReceiver;
+import uk.co.ractf.polaris.api.registry.credentials.ContainerRegistryCredentials;
 import uk.co.ractf.polaris.api.task.Task;
-import uk.co.ractf.polaris.api.namespace.NamespacedId;
 import uk.co.ractf.polaris.node.Node;
 
 import java.util.List;
