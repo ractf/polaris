@@ -1,0 +1,9 @@
+root = true
+
+[*.java]
+ij_java_do_while_brace_force = always
+ij_java_for_brace_force = always
+ij_java_if_brace_force = always
+ij_java_while_brace_force = always
+ij_java_generate_final_locals = true
+ij_java_generate_final_parameters = true
