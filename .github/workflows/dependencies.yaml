@@ -16,3 +16,14 @@ jobs:
 
       - name: Run snapshot action
         uses: mikepenz/gradle-dependency-submission@v0.8.4
+        with:
+          sub-module-mode: INDIVIDUAL_DEEP
+          gradle-build-module: |-
+            :
+            :polaris-api
+            :polaris-apiclient
+            :polaris-application
+            :polaris-cli
+            :polaris-integration-tests
+            :polaris-testlib
+        
