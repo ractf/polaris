@@ -6,7 +6,7 @@ dependencies {
     implementation "io.dropwizard:dropwizard-jackson:$dropwizardVersion"
     implementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
     implementation 'org.mockito:mockito-core:3.11.2'
-    implementation 'org.assertj:assertj-core:3.20.2'
+    implementation 'org.assertj:assertj-core:3.27.7'
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
 }
 
